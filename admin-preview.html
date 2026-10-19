@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>Ink 后台设置页 · 静态预览</title>
+<style>
+body { margin: 0; padding: 26px 30px 60px; background: #f0f0f1;
+  font: 13px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; color: #1d2321; }
+.wp { max-width: 900px; margin: 0 auto; }
+.note { margin: 0 0 16px; padding: 10px 14px; border-radius: 8px; background: #fff8e5;
+  border: 1px solid #f0e0b0; font-size: 12px; color: #7a6320; }
+</style>
+<style>
+.ink-set { --ink-ink: #1d2321; --ink-2: #59645f; --ink-3: #8d9a94; --ink-line: #e3e8e5;
+  --ink-teal: #1f7a74; --ink-teal-2: #3fa8a0; --ink-bg: #f6f8f7;
+  font-size: 13px; color: var(--ink-ink); }
+.ink-set * { box-sizing: border-box; }
+
+.ink-set .ink-hero {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 18px 20px; margin: 0 0 16px;
+  border: 1px solid var(--ink-line); border-radius: 12px;
+  background: linear-gradient(135deg, #f3f9f8, #fbfdfc 60%, #f3f9f8);
+}
+.ink-set .ink-hero svg { width: 34px; height: 34px; flex: none; }
+.ink-set .ink-hero h2 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 17px; font-weight: 600; }
+.ink-set .ink-hero p { margin: 3px 0 0; font-size: 12px; color: var(--ink-3); }
+.ink-set .ink-hero .ink-ver {
+  margin-left: auto; padding: 3px 10px; border-radius: 99px;
+  font-size: 11.5px; letter-spacing: .06em; color: var(--ink-teal);
+  background: rgba(31, 122, 116, .1);
+}
+
+.ink-set details.ink-sec {
+  margin: 0 0 10px; border: 1px solid var(--ink-line); border-radius: 12px;
+  background: #fff; overflow: hidden;
+}
+.ink-set details.ink-sec[open] { box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+.ink-set details.ink-sec > summary {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 13px 18px; cursor: pointer; list-style: none; user-select: none;
+  background: var(--ink-bg); border-bottom: 1px solid transparent;
+}
+.ink-set details.ink-sec[open] > summary { border-bottom-color: var(--ink-line); }
+.ink-set details.ink-sec > summary::-webkit-details-marker { display: none; }
+.ink-set details.ink-sec > summary::after {
+  content: ""; margin-left: auto; width: 7px; height: 7px;
+  border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3);
+  transform: rotate(45deg) translateY(-2px); transition: transform .2s;
+}
+.ink-set details.ink-sec[open] > summary::after { transform: rotate(-135deg) translateY(-2px); }
+.ink-set summary .ink-sec-t { font-size: 13.5px; font-weight: 600; }
+.ink-set summary .ink-sec-d { font-size: 12px; color: var(--ink-3); }
+
+.ink-set .ink-body { padding: 6px 18px 14px; }
+.ink-set .ink-row {
+  display: grid; grid-template-columns: 168px 1fr; gap: 6px 18px;
+  padding: 13px 0; border-bottom: 1px dashed var(--ink-line);
+}
+.ink-set .ink-row:last-child { border-bottom: 0; }
+.ink-set .ink-row > label { font-size: 13px; font-weight: 600; padding-top: 5px; }
+.ink-set .ink-row .ink-input input[type=text],
+.ink-set .ink-row .ink-input textarea,
+.ink-set .ink-row .ink-input select {
+  width: 100%; max-width: 520px; min-height: 32px;
+  padding: 5px 9px; border: 1px solid #d7dedb; border-radius: 7px;
+  font-size: 13px; color: var(--ink-ink); background: #fff;
+  transition: border-color .2s, box-shadow .2s;
+}
+.ink-set .ink-row .ink-input input[type=text]:focus,
+.ink-set .ink-row .ink-input textarea:focus,
+.ink-set .ink-row .ink-input select:focus {
+  border-color: var(--ink-teal); box-shadow: 0 0 0 3px rgba(31,122,116,.12); outline: none;
+}
+.ink-set .ink-row .ink-input textarea { min-height: 62px; resize: vertical; line-height: 1.7; }
+.ink-set .ink-row .description {
+  grid-column: 2; margin: 2px 0 0; font-size: 12px; line-height: 1.75; color: var(--ink-3);
+}
+.ink-set .ink-row .description code { font-size: 11.5px; padding: 1px 4px; border-radius: 3px; background: #f0f3f2; }
+
+.ink-set .ink-sub {
+  grid-column: 1 / -1; margin: 4px 0 2px; font-size: 12px; font-weight: 600;
+  letter-spacing: .08em; color: var(--ink-teal);
+}
+
+.ink-set .ink-now {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  padding: 11px 16px; margin: 0 0 14px;
+  border: 1px dashed var(--ink-line); border-radius: 10px; background: #fff;
+  font-size: 12.5px;
+}
+.ink-set .ink-now-row { display: flex; align-items: center; gap: 7px; }
+.ink-set .ink-now-k { color: var(--ink-3); }
+.ink-set .ink-now-x { color: var(--ink-2); }
+.ink-set .ink-now b { font-weight: 600; }
+.ink-set .ink-now-dot {
+  width: 13px; height: 13px; border-radius: 50%; display: block;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+}
+
+.ink-set .ink-sub-line {
+  display: flex; align-items: baseline; gap: 9px;
+  margin: 16px 0 2px; padding-top: 14px;
+  border-top: 1px solid var(--ink-line);
+  font-size: 12px;
+}
+.ink-set .ink-sub-line:first-child { margin-top: 6px; padding-top: 0; border-top: 0; }
+.ink-set .ink-sub-line .ink-sub { margin: 0; }
+.ink-set .ink-sub-line .ink-sub-s {
+  padding: 1px 7px; border-radius: 99px; font-size: 11px;
+  color: var(--ink-teal); background: rgba(31,122,116,.09);
+}
+
+.ink-set .ink-tip {
+  margin: 14px 0 0; padding: 12px 15px; border-radius: 9px;
+  font-size: 12px; line-height: 1.85; color: var(--ink-2);
+  background: rgba(31, 122, 116, .06); border: 1px solid rgba(31, 122, 116, .14);
+}
+.ink-set .ink-tip b { color: var(--ink-teal); }
+.ink-set .ink-swatches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.ink-set .ink-swatches i {
+  width: 22px; height: 22px; border-radius: 50%; display: block;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+}
+@media (max-width: 782px) {
+  .ink-set .ink-row { grid-template-columns: 1fr; }
+  .ink-set .ink-row .description { grid-column: 1; }
+}
+
+</style></head>
+<body><div class="wp">
+<p class="note">后台设置页静态预览：按 <b>functions.php</b> 里的分组、字段与样式复刻而来，只用来核对排版，不参与主题运行。改动以真实后台为准。</p>
+<div class="ink-set">
+<div class="ink-hero"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="#1f7a74" stroke-width="8"/><path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="#1f7a74"/><g fill="none" stroke="#1f7a74" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g><circle cx="62" cy="150" r="6.5" fill="#1f7a74"/></svg><div><h2>墨 Ink 主题设置</h2><p>改完点页面底部的「保存设置」。前台刷新即可看到，样式表带文件时间戳，不用担心缓存。</p></div><span class="ink-ver">v1.3.2</span></div>
+<div class="ink-now"><div class="ink-now-row"><span class="ink-now-k">配色</span><i class="ink-now-dot" style="background:linear-gradient(135deg,#1f7a74,#3fa8a0)"></i><b>青瓷</b><span class="ink-now-x">左对齐</span></div><div class="ink-now-row"><span class="ink-now-k">正文</span><span class="ink-now-x">17px / 行高 1.9 / 纸宽 840px</span></div></div>
+<details class="ink-sec" open><summary><span class="ink-sec-t">首页</span><span class="ink-sec-d">首屏第一眼看到的东西</span></summary><div class="ink-body"><div class="ink-row" data-field="heroTitle"><label>首页大标题</label><div class="ink-input"><input type="text" name="heroTitle" value="读墨记"></div><p class="description">显示在首页目录上方。留空则用站点描述，描述也空则用站点标题。想让某几个字变成渐变强调色，用 &lt;em&gt; 包起来。</p></div><div class="ink-row" data-field="heroIntro"><label>站点描述</label><div class="ink-input"><textarea name="heroIntro" rows="3"></textarea></div><p class="description">写进页面 description 标签，就是搜索结果里那两行摘要。留空则用后台「站点信息」里的描述。</p></div></div></details>
+<details class="ink-sec"><summary><span class="ink-sec-t">外观</span><span class="ink-sec-d">配色、强调色、标题对齐</span></summary><div class="ink-body"><div class="ink-sub-line"><span class="ink-sub">配色</span></div><div class="ink-row" data-field="palette"><label>默认配色</label><div class="ink-input"><select name="palette"><option value="auto" selected>跟随访客（推荐）</option><option value="celadon">青瓷</option><option value="cinnabar">朱砂</option><option value="pine">松烟</option><option value="indigo">靛蓝</option><option value="plum">绛紫</option><option value="amber">赭石</option></select></div><p class="description">访客第一次打开时用哪套。选「跟随访客」时，会记住访客上次选的（存在 cookie 里），没有记录就用青瓷。</p></div><div class="ink-row" data-field="accentMode"><label>强调色来源</label><div class="ink-input"><select name="accentMode"><option value="palette" selected>跟随配色方案</option><option value="custom">自定义色值</option></select></div><p class="description">「跟随配色」最稳；「自定义」可以填一个色值覆盖标题渐变、进度线、链接等所有强调色，适合想用品牌色的时候。palette跟随配色方案custom自定义色值</p></div><div class="ink-row" data-field="accent"><label>自定义强调色</label><div class="ink-input"><input type="text" name="accent" value=""></div><p class="description">十六进制，例如 #1f7a74。只在上面选了「自定义」时生效，留空等于不覆盖。</p></div><div class="ink-sub-line"><span class="ink-sub">版式</span></div><div class="ink-row" data-field="align"><label>首页标题对齐</label><div class="ink-input"><select name="align"><option value="left" selected>左对齐（默认）</option><option value="right">靠右</option><option value="right-block">靠右 + 分隔线收短</option></select></div><p class="description">标题区靠右会让页面多一次折返的阅读路径，左边留白更安静。手机上一律左对齐。left左对齐（默认）right靠右right-block靠右 + 分隔线收短</p></div><div class="ink-row" data-field="navCats"><label>导航平铺分类</label><div class="ink-input"><select name="navCats"><option value="1" selected>显示</option><option value="0">不显示</option></select></div><p class="description">把全部分类铺在顶部导航里。分类多时导航可以横向滚动。1显示0不显示</p></div></div></details>
+<details class="ink-sec"><summary><span class="ink-sec-t">字体</span><span class="ink-sec-d">标题与正文分别用什么字</span></summary><div class="ink-body"><div class="ink-row" data-field="fontPreset"><label>字体风格</label><div class="ink-input"><select name="fontPreset"><option value="serif" selected>标题衬线 + 正文黑体（默认）</option><option value="sans">全黑体</option><option value="book">全衬线（书页感）</option><option value="mono">标题等宽（极客感）</option></select></div><p class="description">标题衬线、正文黑体是这套主题的默认气质。可以整体换成「全黑体」或「正文也用衬线」。serif标题衬线 + 正文黑体（默认）sans全黑体book全衬线（书页感）mono标题等宽（极客感）</p></div><div class="ink-row" data-field="fontSerif"><label>自定义标题字体</label><div class="ink-input"><input type="text" name="fontSerif" value=""></div><p class="description">填完整的 font-family 值，例如 "LXGW WenKai", "KaiTi", serif。留空用预设。</p></div><div class="ink-row" data-field="fontBody"><label>自定义正文字体</label><div class="ink-input"><input type="text" name="fontBody" value=""></div><p class="description">同上，作用于正文。留空用预设。</p></div></div></details>
+<details class="ink-sec"><summary><span class="ink-sec-t">字号与版面</span><span class="ink-sec-d">读起来舒不舒服全在这几项</span></summary><div class="ink-body"><div class="ink-row" data-field="fontSize"><label>正文字号</label><div class="ink-input"><input type="text" name="fontSize" value=""></div><p class="description">只填数字，单位 px，默认 17。14 寸屏 1080p 下 16–17 比较舒服。</p></div><div class="ink-row" data-field="lineHeight"><label>正文行高</label><div class="ink-input"><input type="text" name="lineHeight" value=""></div><p class="description">倍数，默认 1.9。中文长文建议 1.8–2.0。</p></div><div class="ink-row" data-field="sheetWidth"><label>纸张宽度</label><div class="ink-input"><input type="text" name="sheetWidth" value=""></div><p class="description">只填数字，单位 px，默认 840。含左右内边距。</p></div><div class="ink-row" data-field="sheetPad"><label>纸张内边距</label><div class="ink-input"><input type="text" name="sheetPad" value=""></div><p class="description">只填数字，单位 px，默认 56。窄屏会自动缩小。</p></div></div></details>
+<details class="ink-sec"><summary><span class="ink-sec-t">页脚</span><span class="ink-sec-d">版权与备案</span></summary><div class="ink-body"><div class="ink-row" data-field="footerText"><label>页脚文字</label><div class="ink-input"><input type="text" name="footerText" value=""></div><p class="description">显示在左下角，支持 HTML。留空则显示 © 年份 + 站点标题。</p></div><div class="ink-row" data-field="icp"><label>备案号</label><div class="ink-input"><input type="text" name="icp" value=""></div><p class="description">留空则不显示。例如：京ICP备00000000号，会自动链到工信部备案系统。</p></div></div></details>
+<details class="ink-sec"><summary><span class="ink-sec-t">导航图标</span><span class="ink-sec-d">最多 5 个，链接留空即不显示</span></summary><div class="ink-body"><div class="ink-tip">图标名取自 <b>草莓图标库</b>，例如 <code>github</code>、<code>rss</code>、<code>paper-plane</code>、<code>search-l</code>。链接留空这一项就不显示；只填链接、图标名留空时会按网址自动猜。</div><div class="ink-sub-line"><span class="ink-sub">图标 1</span><span class="ink-sub-s">已启用</span></div><div class="ink-row" data-field="icon1"><label>图标 1</label><div class="ink-input"><input type="text" name="icon1" value="github"></div></div><div class="ink-row" data-field="iconUrl1"><label>图标 1 链接</label><div class="ink-input"><input type="text" name="iconUrl1" value="https://github.com/MemoryCollection"></div></div><div class="ink-row" data-field="iconLabel1"><label>图标 1 文字</label><div class="ink-input"><input type="text" name="iconLabel1" value=""></div></div><div class="ink-row" data-field="iconBlank1"><label>图标 1 新窗口</label><div class="ink-input"><select name="iconBlank1"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 2</span><span class="ink-sub-s">已启用</span></div><div class="ink-row" data-field="icon2"><label>图标 2</label><div class="ink-input"><input type="text" name="icon2" value=""></div></div><div class="ink-row" data-field="iconUrl2"><label>图标 2 链接</label><div class="ink-input"><input type="text" name="iconUrl2" value="mailto:hi@example.com"></div></div><div class="ink-row" data-field="iconLabel2"><label>图标 2 文字</label><div class="ink-input"><input type="text" name="iconLabel2" value=""></div></div><div class="ink-row" data-field="iconBlank2"><label>图标 2 新窗口</label><div class="ink-input"><select name="iconBlank2"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 3</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon3"><label>图标 3</label><div class="ink-input"><input type="text" name="icon3" value=""></div></div><div class="ink-row" data-field="iconUrl3"><label>图标 3 链接</label><div class="ink-input"><input type="text" name="iconUrl3" value=""></div></div><div class="ink-row" data-field="iconLabel3"><label>图标 3 文字</label><div class="ink-input"><input type="text" name="iconLabel3" value=""></div></div><div class="ink-row" data-field="iconBlank3"><label>图标 3 新窗口</label><div class="ink-input"><select name="iconBlank3"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 4</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon4"><label>图标 4</label><div class="ink-input"><input type="text" name="icon4" value=""></div></div><div class="ink-row" data-field="iconUrl4"><label>图标 4 链接</label><div class="ink-input"><input type="text" name="iconUrl4" value=""></div></div><div class="ink-row" data-field="iconLabel4"><label>图标 4 文字</label><div class="ink-input"><input type="text" name="iconLabel4" value=""></div></div><div class="ink-row" data-field="iconBlank4"><label>图标 4 新窗口</label><div class="ink-input"><select name="iconBlank4"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 5</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon5"><label>图标 5</label><div class="ink-input"><input type="text" name="icon5" value=""></div></div><div class="ink-row" data-field="iconUrl5"><label>图标 5 链接</label><div class="ink-input"><input type="text" name="iconUrl5" value=""></div></div><div class="ink-row" data-field="iconLabel5"><label>图标 5 文字</label><div class="ink-input"><input type="text" name="iconLabel5" value=""></div></div><div class="ink-row" data-field="iconBlank5"><label>图标 5 新窗口</label><div class="ink-input"><select name="iconBlank5"><option value="1">是</option><option value="0" selected>否</option></select></div></div></div></details>
+<div class="ink-tip">想改字体文件、行间距这些更细的东西，可以直接改 <b>style.css</b> 顶部的变量层，那里注释写得很清楚。前台预览：主题目录下的 <b>preview.html</b>。</div>
+</div>
+</div></body></html>

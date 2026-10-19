@@ -4,7 +4,7 @@
  *
  * @package 墨 Ink
  * @author Wu
- * @version 1.3.1
+ * @version 1.3.2
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
@@ -12,7 +12,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /** 主题版本，仅用于前台注释标记 */
-define('INK_VERSION', '1.3.1');
+define('INK_VERSION', '1.3.2');
 
 /* ---------------------------------------------------------
  * 兼容层：Typecho 1.2 用下划线类名，1.3 起命名空间类才是本体
@@ -54,61 +54,461 @@ function ink_asset($path)
 
 /* ---------------------------------------------------------
  * 后台主题设置
+ *
+ * Typecho 的外观设置页只能一列到底地堆字段，字段一多就难找。
+ * 这里在主题里自己画样式：按 section 分组、加折叠、章节标题、
+ * 说明卡片和「当前外观」预览，不依赖后台是否支持自定义 HTML。
  * ------------------------------------------------------- */
-function themeConfig($form)
+
+/**
+ * 设置项清单
+ *
+ * 每一项：array(type, name, default, label, desc[, choices])
+ * 分组见 themeConfigHtml()，只影响显示，不影响取值。
+ */
+function ink_setting_fields()
 {
+    $palettes = array('auto' => _t('跟随访客（推荐）'));
+    foreach (ink_palettes() as $key => $info) {
+        $palettes[$key] = $info[0];
+    }
+
     $fields = array(
+        /* —— 首页 —— */
         array('Text', 'heroTitle', '', _t('首页大标题'),
-            _t('显示在首页目录上方。留空则使用站点描述；描述也为空时使用站点标题。支持用 &lt;em&gt; 包裹的字变成渐变强调色。')),
+            _t('显示在首页目录上方。留空则用站点描述，描述也空则用站点标题。'
+                . '想让某几个字变成渐变强调色，用 &lt;em&gt; 包起来。')),
         array('Textarea', 'heroIntro', '', _t('站点描述'),
-            _t('用于 HTML 的 description 标签（搜索结果摘要）。留空则使用后台的站点描述。')),
-        array('Select', 'navCats', '1', _t('导航栏平铺分类'),
-            _t('把全部分类平铺在顶部导航。分类较多时导航可横向滚动。'), array('1' => _t('显示'), '0' => _t('不显示'))),
+            _t('写进页面 description 标签，就是搜索结果里那两行摘要。留空则用后台「站点信息」里的描述。')),
+
+        /* —— 外观 —— */
         array('Select', 'palette', 'auto', _t('默认配色'),
-            _t('前台导航右侧可以随时切换，这里定的是访客第一次打开时用哪套。「跟随访客」= 记住访客上次选的（存在 cookie 里），没有记录时用青瓷。'),
+            _t('访客第一次打开时用哪套。选「跟随访客」时，会记住访客上次选的（存在 cookie 里），没有记录就用青瓷。'),
+            $palettes),
+        array('Select', 'accentMode', 'palette', _t('强调色来源'),
+            _t('「跟随配色」最稳；「自定义」可以填一个色值覆盖标题渐变、进度线、链接等所有强调色，适合想用品牌色的时候。'),
+            array('palette' => _t('跟随配色方案'), 'custom' => _t('自定义色值'))),
+        array('Text', 'accent', '', _t('自定义强调色'),
+            _t('十六进制，例如 #1f7a74。只在上面选了「自定义」时生效，留空等于不覆盖。')),
+        array('Select', 'align', 'left', _t('首页标题对齐'),
+            _t('标题区靠右会让页面多一次折返的阅读路径，左边留白更安静。手机上一律左对齐。'),
+            array('left' => _t('左对齐（默认）'), 'right' => _t('靠右'), 'right-block' => _t('靠右 + 分隔线收短'))),
+        array('Select', 'navCats', '1', _t('导航平铺分类'),
+            _t('把全部分类铺在顶部导航里。分类多时导航可以横向滚动。'),
+            array('1' => _t('显示'), '0' => _t('不显示'))),
+
+        /* —— 字体 —— */
+        array('Select', 'fontPreset', 'serif', _t('字体风格'),
+            _t('标题衬线、正文黑体是这套主题的默认气质。可以整体换成「全黑体」或「正文也用衬线」。'),
             array(
-                'auto'     => _t('跟随访客（推荐）'),
-                'celadon'  => _t('青瓷'),
-                'cinnabar' => _t('朱砂'),
-                'pine'     => _t('松烟'),
-                'indigo'   => _t('靛蓝'),
-                'plum'     => _t('绛紫'),
-                'amber'    => _t('赭石'),
+                'serif' => _t('标题衬线 + 正文黑体（默认）'),
+                'sans'  => _t('全黑体'),
+                'book'  => _t('全衬线（书页感）'),
+                'mono'  => _t('标题等宽（极客感）'),
             )),
+        array('Text', 'fontSerif', '', _t('自定义标题字体'),
+            _t('填完整的 font-family 值，例如 "LXGW WenKai", "KaiTi", serif。留空用预设。')),
+        array('Text', 'fontBody', '', _t('自定义正文字体'),
+            _t('同上，作用于正文。留空用预设。')),
+
+        /* —— 字号与版面 —— */
+        array('Text', 'fontSize', '', _t('正文字号'),
+            _t('只填数字，单位 px，默认 17。14 寸屏 1080p 下 16–17 比较舒服。')),
+        array('Text', 'lineHeight', '', _t('正文行高'),
+            _t('倍数，默认 1.9。中文长文建议 1.8–2.0。')),
+        array('Text', 'sheetWidth', '', _t('纸张宽度'),
+            _t('只填数字，单位 px，默认 840。含左右内边距。')),
+        array('Text', 'sheetPad', '', _t('纸张内边距'),
+            _t('只填数字，单位 px，默认 56。窄屏会自动缩小。')),
+
+        /* —— 页脚 —— */
         array('Text', 'footerText', '', _t('页脚文字'),
-            _t('显示在左下角。支持 HTML。留空则显示「站点标题」。')),
+            _t('显示在左下角，支持 HTML。留空则显示 © 年份 + 站点标题。')),
         array('Text', 'icp', '', _t('备案号'),
-            _t('留空则不显示。例如：京ICP备00000000号。')),
+            _t('留空则不显示。例如：京ICP备00000000号，会自动链到工信部备案系统。')),
     );
 
     /* 导航右侧图标（最多 5 个，用草莓图标库） */
-    $iconHelp = _t('图标名填草莓图标库（czs-）的名字，例如 github、rss、paper-plane、search-l。'
-        . '链接留空则这一项不显示；只填链接、图标名留空时会按网址自动猜一个图标。'
-        . '完整列表见主题 assets/css/icons.css。');
     for ($i = 1; $i <= 5; $i++) {
-        $fields[] = array('Text', 'icon' . $i, '', sprintf(_t('图标 %d'), $i), $iconHelp);
+        $fields[] = array('Text', 'icon' . $i, '', sprintf(_t('图标 %d'), $i),
+            $i === 1
+                ? _t('填草莓图标库的名字，例如 github、rss、paper-plane、search-l，不用带 czs- 前缀。'
+                    . '完整 380 枚见主题目录下的 icons.css。')
+                : '');
         $fields[] = array('Text', 'iconUrl' . $i, '', sprintf(_t('图标 %d 链接'), $i),
-            _t('必填。留空则整项不渲染。'));
+            $i === 1 ? _t('必填，留空则这一项不渲染。只填链接、图标名留空时会按网址自动猜一个图标。') : '');
         $fields[] = array('Text', 'iconLabel' . $i, '', sprintf(_t('图标 %d 文字'), $i),
-            _t('鼠标悬停与读屏使用的说明，例如 GitHub。留空时用图标名。'));
+            _t('鼠标悬停与读屏用的说明，例如 GitHub。留空时用图标名。'));
         $fields[] = array('Select', 'iconBlank' . $i, '0', sprintf(_t('图标 %d 新窗口'), $i),
-            _t('在浏览器新标签页打开。'), array('1' => _t('是'), '0' => _t('否')));
+            '', array('1' => _t('是'), '0' => _t('否')));
     }
 
-    foreach ($fields as $field) {
-        $type = $field[0];
-        $name = $field[1];
-        $default = $field[2] === '' ? null : $field[2];
-        $label = $field[3];
-        $desc  = $field[4];
-        $choices = isset($field[5]) ? $field[5] : null;
+    return $fields;
+}
 
-        $args = ($type === 'Select')
-            ? array($name, $choices, $default, $label, $desc)
-            : array($name, null, $field[2], $label, $desc);
+/**
+ * 设置项分组
+ *
+ * array(标题, 副标题, 字段名列表 | 'icon')
+ * 列表项可以写成 array('小标题', array(字段…))，用来在一个分组里再分小节。
+ */
+function ink_setting_groups()
+{
+    return array(
+        array('首页', '首屏第一眼看到的东西', array('heroTitle', 'heroIntro')),
+        array('外观', '配色、强调色、标题对齐', array(
+            array('配色', array('palette', 'accentMode', 'accent')),
+            array('版式', array('align', 'navCats')),
+        )),
+        array('字体', '标题与正文分别用什么字', array('fontPreset', 'fontSerif', 'fontBody')),
+        array('字号与版面', '读起来舒不舒服全在这几项', array('fontSize', 'lineHeight', 'sheetWidth', 'sheetPad')),
+        array('页脚', '版权与备案', array('footerText', 'icp')),
+        array('导航图标', '最多 5 个，链接留空即不显示', 'icon'),
+    );
+}
 
-        $element = ink_form_element($type, $args);
+/** 后台设置页的样式，只在主题设置页生效 */
+function ink_admin_style()
+{
+    echo <<<'CSS'
+<style id="ink-admin-style">
+.ink-set { --ink-ink: #1d2321; --ink-2: #59645f; --ink-3: #8d9a94; --ink-line: #e3e8e5;
+  --ink-teal: #1f7a74; --ink-teal-2: #3fa8a0; --ink-bg: #f6f8f7;
+  font-size: 13px; color: var(--ink-ink); }
+.ink-set * { box-sizing: border-box; }
 
+.ink-set .ink-hero {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 18px 20px; margin: 0 0 16px;
+  border: 1px solid var(--ink-line); border-radius: 12px;
+  background: linear-gradient(135deg, #f3f9f8, #fbfdfc 60%, #f3f9f8);
+}
+.ink-set .ink-hero svg { width: 34px; height: 34px; flex: none; }
+.ink-set .ink-hero h2 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 17px; font-weight: 600; }
+.ink-set .ink-hero p { margin: 3px 0 0; font-size: 12px; color: var(--ink-3); }
+.ink-set .ink-hero .ink-ver {
+  margin-left: auto; padding: 3px 10px; border-radius: 99px;
+  font-size: 11.5px; letter-spacing: .06em; color: var(--ink-teal);
+  background: rgba(31, 122, 116, .1);
+}
+
+.ink-set details.ink-sec {
+  margin: 0 0 10px; border: 1px solid var(--ink-line); border-radius: 12px;
+  background: #fff; overflow: hidden;
+}
+.ink-set details.ink-sec[open] { box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+.ink-set details.ink-sec > summary {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 13px 18px; cursor: pointer; list-style: none; user-select: none;
+  background: var(--ink-bg); border-bottom: 1px solid transparent;
+}
+.ink-set details.ink-sec[open] > summary { border-bottom-color: var(--ink-line); }
+.ink-set details.ink-sec > summary::-webkit-details-marker { display: none; }
+.ink-set details.ink-sec > summary::after {
+  content: ""; margin-left: auto; width: 7px; height: 7px;
+  border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3);
+  transform: rotate(45deg) translateY(-2px); transition: transform .2s;
+}
+.ink-set details.ink-sec[open] > summary::after { transform: rotate(-135deg) translateY(-2px); }
+.ink-set summary .ink-sec-t { font-size: 13.5px; font-weight: 600; }
+.ink-set summary .ink-sec-d { font-size: 12px; color: var(--ink-3); }
+
+.ink-set .ink-body { padding: 6px 18px 14px; }
+.ink-set .ink-row {
+  display: grid; grid-template-columns: 168px 1fr; gap: 6px 18px;
+  padding: 13px 0; border-bottom: 1px dashed var(--ink-line);
+}
+.ink-set .ink-row:last-child { border-bottom: 0; }
+.ink-set .ink-row > label { font-size: 13px; font-weight: 600; padding-top: 5px; }
+.ink-set .ink-row .ink-input input[type=text],
+.ink-set .ink-row .ink-input textarea,
+.ink-set .ink-row .ink-input select {
+  width: 100%; max-width: 520px; min-height: 32px;
+  padding: 5px 9px; border: 1px solid #d7dedb; border-radius: 7px;
+  font-size: 13px; color: var(--ink-ink); background: #fff;
+  transition: border-color .2s, box-shadow .2s;
+}
+.ink-set .ink-row .ink-input input[type=text]:focus,
+.ink-set .ink-row .ink-input textarea:focus,
+.ink-set .ink-row .ink-input select:focus {
+  border-color: var(--ink-teal); box-shadow: 0 0 0 3px rgba(31,122,116,.12); outline: none;
+}
+.ink-set .ink-row .ink-input textarea { min-height: 62px; resize: vertical; line-height: 1.7; }
+.ink-set .ink-row .description {
+  grid-column: 2; margin: 2px 0 0; font-size: 12px; line-height: 1.75; color: var(--ink-3);
+}
+.ink-set .ink-row .description code { font-size: 11.5px; padding: 1px 4px; border-radius: 3px; background: #f0f3f2; }
+
+.ink-set .ink-sub {
+  grid-column: 1 / -1; margin: 4px 0 2px; font-size: 12px; font-weight: 600;
+  letter-spacing: .08em; color: var(--ink-teal);
+}
+
+.ink-set .ink-now {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  padding: 11px 16px; margin: 0 0 14px;
+  border: 1px dashed var(--ink-line); border-radius: 10px; background: #fff;
+  font-size: 12.5px;
+}
+.ink-set .ink-now-row { display: flex; align-items: center; gap: 7px; }
+.ink-set .ink-now-k { color: var(--ink-3); }
+.ink-set .ink-now-x { color: var(--ink-2); }
+.ink-set .ink-now b { font-weight: 600; }
+.ink-set .ink-now-dot {
+  width: 13px; height: 13px; border-radius: 50%; display: block;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+}
+
+.ink-set .ink-sub-line {
+  display: flex; align-items: baseline; gap: 9px;
+  margin: 16px 0 2px; padding-top: 14px;
+  border-top: 1px solid var(--ink-line);
+  font-size: 12px;
+}
+.ink-set .ink-sub-line:first-child { margin-top: 6px; padding-top: 0; border-top: 0; }
+.ink-set .ink-sub-line .ink-sub { margin: 0; }
+.ink-set .ink-sub-line .ink-sub-s {
+  padding: 1px 7px; border-radius: 99px; font-size: 11px;
+  color: var(--ink-teal); background: rgba(31,122,116,.09);
+}
+
+.ink-set .ink-tip {
+  margin: 14px 0 0; padding: 12px 15px; border-radius: 9px;
+  font-size: 12px; line-height: 1.85; color: var(--ink-2);
+  background: rgba(31, 122, 116, .06); border: 1px solid rgba(31, 122, 116, .14);
+}
+.ink-set .ink-tip b { color: var(--ink-teal); }
+.ink-set .ink-swatches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.ink-set .ink-swatches i {
+  width: 22px; height: 22px; border-radius: 50%; display: block;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+}
+@media (max-width: 782px) {
+  .ink-set .ink-row { grid-template-columns: 1fr; }
+  .ink-set .ink-row .description { grid-column: 1; }
+}
+</style>
+CSS;
+}
+
+/**
+ * 取字段的输入框 HTML
+ *
+ * 元素能用就让 Typecho 自己渲染，元素造不出来时退回手写的纯表单控件，
+ * 这样任何版本的后台都不会出现一整行空白。
+ */
+function ink_field_input($element, $field)
+{
+    if ($element !== null && method_exists($element, 'input')) {
+        ob_start();
+        try {
+            $element->input();
+        } catch (Exception $e) {
+            ob_end_clean();
+            return ink_fallback_input($field);
+        } catch (Throwable $e) {
+            ob_end_clean();
+            return ink_fallback_input($field);
+        }
+        $raw = trim(ob_get_clean());
+        if ($raw !== '') {
+            return $raw;
+        }
+    }
+
+    return ink_fallback_input($field);
+}
+
+/**
+ * 把一条字段定义塞进自己的行样式里
+ *
+ * 说明与标题都取自字段定义（就是 addInput 时传进去的那份），
+ * 不再向元素要 description —— 有些版本的元素在取值时会连带要选项，
+ * 拿不到就抛错，反而把整页设置弄白。
+ */
+function ink_field_row($field)
+{
+    $input = '';
+    $name = $field[1];
+
+    $raw = ink_field_input(ink_make_element($field), $field);
+    if ($raw !== '') {
+        $input = '<div class="ink-input">' . $raw . '</div>';
+    }
+
+    $label = htmlspecialchars($field[3], ENT_QUOTES, 'UTF-8');
+    $desc  = isset($field[4]) ? (string) $field[4] : '';
+    $descHtml = $desc !== '' ? '<p class="description">' . $desc . '</p>' : '';
+
+    echo '<div class="ink-row" data-field="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '">'
+        . '<label>' . $label . '</label>'
+        . $input . $descHtml . '</div>';
+}
+
+/**
+ * 元素没造出来时的兜底输入框
+ *
+ * 正常环境走不到这里；走到说明当前 Typecho 版本找不到表单元素类，
+ * 与其整页空白不如给一个纯文本输入框。
+ */
+function ink_fallback_input($field)
+{
+    $name = $field[1];
+    $value = htmlspecialchars((string) ink_opt($name, $field[2]), ENT_QUOTES, 'UTF-8');
+
+    if ($field[0] === 'Select' && isset($field[5])) {
+        $html = '<select name="' . $name . '">';
+        $now = (string) ink_opt($name, $field[2]);
+        foreach ($field[5] as $k => $v) {
+            $sel = ((string) $k === $now) ? ' selected' : '';
+            $html .= '<option value="' . htmlspecialchars((string) $k, ENT_QUOTES, 'UTF-8') . '"' . $sel . '>'
+                . htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8') . '</option>';
+        }
+        return $html . '</select>';
+    }
+
+    if ($field[0] === 'Textarea') {
+        return '<textarea name="' . $name . '" rows="3">' . $value . '</textarea>';
+    }
+
+    return '<input type="text" name="' . $name . '" value="' . $value . '">';
+}
+
+/**
+ * 直接把整页设置画成自己的样式
+ *
+ * 返回值不影响 Typecho 自己那套表单（$form 里已经 addInput 过，保存逻辑照旧），
+ * 这里只是把同一批字段排得更好看、能折叠。
+ */
+function themeConfigHtml($form, $options = null)
+{
+    $fields = array();
+    foreach (ink_setting_fields() as $field) {
+        $fields[$field[1]] = $field;
+    }
+
+    $align = ink_opt('align', 'left');
+    $paletteNow = ink_current_palette();
+    $palList = ink_palettes();
+    $palNow = isset($palList[$paletteNow]) ? $palList[$paletteNow] : reset($palList);
+
+    ink_admin_style();
+
+    echo '<div class="ink-set">';
+
+    /* 顶部说明 */
+    echo '<div class="ink-hero">'
+        . '<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="#1f7a74" stroke-width="8"/>'
+        . '<path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="#1f7a74"/>'
+        . '<g fill="none" stroke="#1f7a74" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">'
+        . '<path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g>'
+        . '<circle cx="62" cy="150" r="6.5" fill="#1f7a74"/></svg>'
+        . '<div><h2>墨 Ink 主题设置</h2><p>改完点页面底部的「保存设置」。前台刷新即可看到，'
+        . '样式表带文件时间戳，不用担心缓存。</p></div>'
+        . '<span class="ink-ver">v' . INK_VERSION . '</span>'
+        . '</div>';
+
+    /* 当前外观：色卡 + 字体现状，改之前先知道自己站在哪 */
+    $lhNow = trim((string) ink_opt('lineHeight', ''));
+    echo '<div class="ink-now">'
+        . '<div class="ink-now-row"><span class="ink-now-k">配色</span>'
+        . '<i class="ink-now-dot" style="background:linear-gradient(135deg,' . $palNow[1] . ',' . $palNow[2] . ')"></i>'
+        . '<b>' . htmlspecialchars($palNow[0], ENT_QUOTES, 'UTF-8') . '</b>'
+        . '<span class="ink-now-x">'
+        . ($align === 'left' ? '左对齐' : ($align === 'right' ? '标题靠右' : '标题靠右 + 短线'))
+        . '</span></div>'
+        . '<div class="ink-now-row"><span class="ink-now-k">正文</span>'
+        . '<span class="ink-now-x">' . (ink_px_opt('fontSize', 13, 24) ?: 17) . 'px / 行高 '
+        . htmlspecialchars($lhNow !== '' ? $lhNow : '1.9', ENT_QUOTES, 'UTF-8')
+        . ' / 纸宽 ' . (ink_px_opt('sheetWidth', 560, 1280) ?: 840) . 'px'
+        . ' / 页边 ' . (ink_px_opt('sheetPad', 16, 120) ?: 56) . 'px</span>'
+        . '</div>'
+        . '</div>';
+
+    $open = true;
+
+    foreach (ink_setting_groups() as $group) {
+        list($title, $sub, $keys) = $group;
+
+        echo '<details class="ink-sec"' . ($open ? ' open' : '') . '>'
+            . '<summary><span class="ink-sec-t">' . $title . '</span>'
+            . '<span class="ink-sec-d">' . $sub . '</span></summary>'
+            . '<div class="ink-body">';
+
+        $open = false;
+
+        if ($keys === 'icon') {
+            echo '<div class="ink-tip">图标名取自 <b>草莓图标库</b>，例如 <code>github</code>、'
+                . '<code>rss</code>、<code>paper-plane</code>、<code>search-l</code>。'
+                . '链接留空这一项就不显示；只填链接、图标名留空时会按网址自动猜。</div>';
+
+            for ($i = 1; $i <= 5; $i++) {
+                echo '<div class="ink-sub-line"><span class="ink-sub">图标 ' . $i . '</span>'
+                    . '<span class="ink-sub-s">' . (ink_opt('iconUrl' . $i, '') !== '' ? '已启用' : '未启用') . '</span></div>';
+
+                foreach (array('icon' . $i, 'iconUrl' . $i, 'iconLabel' . $i, 'iconBlank' . $i) as $name) {
+                    if (isset($fields[$name])) {
+                        ink_field_row($fields[$name]);
+                    }
+                }
+            }
+        } else {
+            foreach ($keys as $key) {
+                if (is_array($key)) {
+                    echo '<div class="ink-sub-line"><span class="ink-sub">' . $key[0] . '</span></div>';
+                    foreach ($key[1] as $name) {
+                        if (isset($fields[$name])) {
+                            ink_field_row($fields[$name]);
+                        }
+                    }
+                    continue;
+                }
+                if (isset($fields[$key])) {
+                    ink_field_row($fields[$key]);
+                }
+            }
+        }
+
+        echo '</div></details>';
+    }
+
+    echo '<div class="ink-tip">想改字体文件、行间距这些更细的东西，'
+        . '可以直接改 <b>style.css</b> 顶部的变量层，那里注释写得很清楚。'
+        . '前台预览：主题目录下的 <b>preview.html</b>。</div>';
+
+    echo '</div>';
+}
+
+/** 按字段定义造一个 Typecho 表单元素（供自定义排版复用） */
+function ink_make_element($field)
+{
+    $type = $field[0];
+    $name = $field[1];
+    $label = $field[3];
+    $desc  = isset($field[4]) ? $field[4] : '';
+
+    if ($type === 'Select') {
+        $choices = isset($field[5]) && is_array($field[5]) ? $field[5] : array();
+        // Select 的构造签名是 (name, options, value, label, description)
+        $args = array($name, $choices, $field[2], $label, $desc);
+    } else {
+        // 其余元素是 (name, options, value, label, description)，options 恒为 null
+        $args = array($name, null, $field[2], $label, $desc);
+    }
+
+    return ink_form_element($type, $args);
+}
+
+/**
+ * 注册设置
+ *
+ * 保留 $form->addInput()，保存逻辑和升级兼容都靠它；
+ * themeConfigHtml() 只负责把页面画好看。
+ */
+function themeConfig($form)
+{
+    foreach (ink_setting_fields() as $field) {
+        $element = ink_make_element($field);
         if ($element) {
             $form->addInput($element);
         }
@@ -134,6 +534,115 @@ function ink_accent()
     return preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $accent)
         ? $accent
         : '';
+}
+
+/** 实际生效的强调色：只有选了「自定义」且色值合法才覆盖 */
+function ink_custom_accent()
+{
+    if (ink_opt('accentMode', 'palette') !== 'custom') {
+        return '';
+    }
+    return ink_accent();
+}
+
+/** 字体预设：返回 array(标题栈, 正文栈)，空串表示用 style.css 里的默认 */
+function ink_font_presets()
+{
+    return array(
+        'serif' => array('', ''),
+        'sans'  => array(
+            '-apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif',
+            '',
+        ),
+        'book'  => array(
+            '"Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif',
+            '"Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif',
+        ),
+        'mono'  => array(
+            'ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, Menlo, monospace',
+            '',
+        ),
+    );
+}
+
+/** 只保留安全的 font-family 字符，防止把 CSS 写坏 */
+function ink_safe_font($value)
+{
+    $value = trim((string) $value);
+    if ($value === '' || strlen($value) > 200) {
+        return '';
+    }
+    return preg_match('~^[A-Za-z0-9\s,"\'\-\_\.]+$~', $value) ? $value : '';
+}
+
+/** 取一个正整数设置（带上下限），没填返回 0 表示不覆盖 */
+function ink_px_opt($key, $min, $max)
+{
+    $raw = trim((string) ink_opt($key, ''));
+    if ($raw === '' || !is_numeric($raw)) {
+        return 0;
+    }
+    $n = (int) round((float) $raw);
+    if ($n < $min || $n > $max) {
+        return 0;
+    }
+    return $n;
+}
+
+/**
+ * 后台设置 → CSS 变量
+ *
+ * 字体、字号、行高、纸宽这些都做成变量覆盖，前台只在 <head> 里追加几条
+ * :root 规则，不给样式表加分支。没填的项直接跳过，保持 style.css 的默认。
+ */
+function ink_css_vars()
+{
+    $out = '';
+
+    $presets = ink_font_presets();
+    $preset = ink_opt('fontPreset', 'serif');
+    if (isset($presets[$preset])) {
+        if ($presets[$preset][0] !== '') {
+            $out .= '  --serif: ' . $presets[$preset][0] . ";\n";
+        }
+        if ($presets[$preset][1] !== '') {
+            $out .= '  --sans: ' . $presets[$preset][1] . ";\n";
+        }
+    }
+
+    $serif = ink_safe_font(ink_opt('fontSerif', ''));
+    if ($serif !== '') {
+        $out .= '  --serif: ' . $serif . ";\n";
+    }
+    $body = ink_safe_font(ink_opt('fontBody', ''));
+    if ($body !== '') {
+        $out .= '  --sans: ' . $body . ";\n";
+    }
+
+    $size = ink_px_opt('fontSize', 13, 24);
+    if ($size > 0) {
+        $out .= '  --fs-body: ' . $size . "px;\n";
+    }
+
+    $lh = trim((string) ink_opt('lineHeight', ''));
+    if ($lh !== '' && is_numeric($lh)) {
+        $lh = (float) $lh;
+        if ($lh >= 1.3 && $lh <= 2.6) {
+            $out .= '  --lh-body: ' . rtrim(rtrim(sprintf('%.2f', $lh), '0'), '.') . ";\n";
+        }
+    }
+
+    $w = ink_px_opt('sheetWidth', 560, 1280);
+    if ($w > 0) {
+        $out .= '  --sheet-w: ' . $w . "px;\n";
+    }
+
+    $pad = ink_px_opt('sheetPad', 16, 120);
+    if ($pad > 0) {
+        $out .= '  --sheet-pad: ' . $pad . "px;\n";
+    }
+
+    return $out;
 }
 
 /** 可用的配色方案：键为 data-palette 值，值为前台显示名与两个色点 */

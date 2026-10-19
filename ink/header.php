@@ -4,6 +4,7 @@ $inkPalette = ink_current_palette();
 $inkDefault = ink_default_palette();
 $inkPal = ink_palettes();
 $inkDot = isset($inkPal[$inkPalette]) ? $inkPal[$inkPalette] : $inkPal[$inkDefault];
+$inkAlign = ink_opt('align', 'left');
 /* favicon 跟着主题配色走：同一个圆章，用当前配色的两个色值现画一份 */
 $inkFavicon = 'data:image/svg+xml,' . rawurlencode(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">'
@@ -18,7 +19,7 @@ $inkFavicon = 'data:image/svg+xml,' . rawurlencode(
 );
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN"<?php if ($inkPalette !== $inkDefault): ?> data-palette="<?php echo $inkPalette; ?>"<?php endif; ?>>
+<html lang="zh-CN"<?php if ($inkPalette !== $inkDefault): ?> data-palette="<?php echo $inkPalette; ?>"<?php endif; ?><?php if ($inkAlign === 'right' || $inkAlign === 'right-block'): ?> data-align="<?php echo $inkAlign; ?>"<?php endif; ?>>
 <head>
 <meta charset="<?php $this->options->charset(); ?>">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -68,13 +69,21 @@ if ($this->is('single')) {
 })();
 </script>
 <style>
-<?php $inkAccent = ink_accent(); ?>
-<?php if ($inkAccent !== ''): ?>
+<?php
+/* 后台设置转成 CSS 变量：只输出真正被改动过的项，没动过就用 style.css 里的默认值 */
+$inkVars = ink_css_vars();
+echo $inkVars !== '' ? ":root {\n" . $inkVars . "}\n" : '';
+
+/* 自定义强调色：覆盖配色方案里的 --accent，暗色下用同一个色值稍亮一点 */
+$inkAccent = ink_custom_accent();
+if ($inkAccent !== ''):
+?>
 :root {
   --accent: <?php echo $inkAccent; ?>;
   --accent-soft: <?php echo ink_hex_rgba($inkAccent, 0.09); ?>;
 }
 [data-theme="dark"] {
+  --accent: <?php echo ink_hex_rgba($inkAccent, 1); ?>;
   --accent-soft: <?php echo ink_hex_rgba($inkAccent, 0.14); ?>;
 }
 <?php endif; ?>

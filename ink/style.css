@@ -831,6 +831,66 @@ body.is-single .progress { display: block; }
 }
 .idx-meta b { font-weight: 600; color: var(--ink-2); }
 
+/* ---- 可选：标题区整体靠右（后台「首页标题对齐」） ---- */
+/* 版心不动，只把文字推到右边；分隔线仍是满宽，保持和列表同一根轴线 */
+[data-align="right"] .idx-head { text-align: right; }
+[data-align="right"] .section-tag { margin-right: 0; margin-left: 10px; }
+
+/* 连分隔线一起收短，空出左边一大片；
+   列表保持左对齐，形成「右下标题 / 左上目录」的错位 */
+[data-align="right-block"] .idx-head {
+  text-align: right;
+  border-bottom: 0;
+  padding-bottom: calc(var(--idx-bot) - 6px);
+}
+[data-align="right-block"] .idx-head::after {
+  content: "";
+  display: block;
+  width: 22%;
+  height: 1px;
+  margin: 14px 0 0 auto;
+  background: var(--rule);
+}
+[data-align="right-block"] .section-tag { margin-right: 0; margin-left: 10px; }
+
+/* 首页目录的日期列：靠右时把日期挪到标题右边，
+   让每一行的「头」和上面的标题同一边，不然两股轴打架 */
+[data-align="right"] .archive-item,
+[data-align="right-block"] .archive-item { flex-direction: row-reverse; }
+[data-align="right"] .archive-item .day,
+[data-align="right-block"] .archive-item .day {
+  width: calc(var(--day-w) - 18px);
+  padding-right: 0;
+  padding-left: 18px;
+  border-right: 0;
+  border-left: 1px solid var(--rule-soft);
+  text-align: right;
+}
+[data-align="right"] .archive-item .ttl,
+[data-align="right-block"] .archive-item .ttl { text-align: right; }
+
+/* 手机上一律回到左对齐：窄屏右对齐只显得飘 */
+@media (max-width: 640px) {
+  [data-align="right"] .idx-head,
+  [data-align="right-block"] .idx-head { text-align: left; }
+  [data-align="right"] .section-tag,
+  [data-align="right-block"] .section-tag { margin-left: 0; margin-right: 8px; }
+  [data-align="right-block"] .idx-head { border-bottom: 1px solid var(--rule); padding-bottom: var(--idx-bot); }
+  [data-align="right-block"] .idx-head::after { display: none; }
+  [data-align="right"] .archive-item,
+  [data-align="right-block"] .archive-item { flex-direction: row; }
+  [data-align="right"] .archive-item .day,
+  [data-align="right-block"] .archive-item .day {
+    padding-left: 0;
+    padding-right: 18px;
+    border-left: 0;
+    border-right: 1px solid var(--rule-soft);
+    text-align: left;
+  }
+  [data-align="right"] .archive-item .ttl,
+  [data-align="right-block"] .archive-item .ttl { text-align: left; }
+}
+
 /* =========================================================
    6. 元信息
    ========================================================= */
