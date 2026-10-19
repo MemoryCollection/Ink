@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>墨 Ink — 图标清单</title>
+<link rel="stylesheet" href="ink/assets/css/icons.css">
+<style>
+  :root {
+    --paper: #f7faf9; --ink: #16211f; --ink-2: #4a5a57; --ink-3: #83938f;
+    --rule: #d9e4e2; --accent: #1f7a74; --accent-2: #3fa8a0;
+    --serif: "Noto Serif SC", "Songti SC", SimSun, Georgia, serif;
+    --sans: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  [data-theme="dark"] {
+    --paper: #101716; --ink: #e2ecea; --ink-2: #9fb0ad; --ink-3: #6b7d79; --rule: #24312f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 44px 24px 90px; background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 14px; -webkit-font-smoothing: antialiased; }
+  .page { width: min(1000px, 100%); margin: 0 auto; }
+  h1 { margin: 0 0 6px; font-family: var(--serif); font-size: 1.5rem; font-weight: 600; }
+  .sub { margin: 0 0 26px; color: var(--ink-3); font-size: 13px; }
+  .sub code { background: rgba(127,127,127,.13); padding: 1px 5px; border-radius: 4px; }
+  .search { width: 100%; max-width: 320px; margin-bottom: 24px; padding: 9px 13px;
+    border: 1px solid var(--rule); border-radius: 9px; background: transparent;
+    color: var(--ink); font-size: 13px; outline: none; }
+  .search:focus { border-color: var(--accent); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 8px; }
+  .ic { display: flex; flex-direction: column; align-items: center; gap: 9px;
+    padding: 16px 6px 12px; border-radius: 10px; color: var(--ink-2);
+    transition: background-color .2s, color .2s; }
+  .ic i { font-size: 22px; color: var(--ink); }
+  .ic span { font-size: 10.5px; font-family: ui-monospace, Consolas, monospace;
+    color: var(--ink-3); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ic:hover { background: rgba(127,127,127,.09); color: var(--accent); }
+  .ic.is-copied span { color: var(--accent); }
+  .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 12px);
+    padding: 9px 18px; border-radius: 999px; background: var(--ink); color: var(--paper);
+    font-size: 12.5px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+  .toast.is-show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>草莓图标 · 380 枚</h1>
+  <p class="sub">点任意图标复制名字，填进主题设置里的「图标 N」即可（不用带 <code>czs-</code> 前缀，带了也认）。</p>
+  <input class="search" id="q" type="search" placeholder="搜索图标名，例如 github / rss / sun">
+  <div class="grid" id="grid">
+    <button class="ic" type="button" data-name="about"><i class="czs-about"></i><span>about</span></button>
+    <button class="ic" type="button" data-name="about-l"><i class="czs-about-l"></i><span>about-l</span></button>
+    <button class="ic" type="button" data-name="add"><i class="czs-add"></i><span>add</span></button>
+    <button class="ic" type="button" data-name="airplane"><i class="czs-airplane"></i><span>airplane</span></button>
+    <button class="ic" type="button" data-name="airplane-l"><i class="czs-airplane-l"></i><span>airplane-l</span></button>
+    <button class="ic" type="button" data-name="alipay"><i class="czs-alipay"></i><span>alipay</span></button>
+    <button class="ic" type="button" data-name="analysis"><i class="czs-analysis"></i><span>analysis</span></button>
+    <button class="ic" type="button" data-name="android"><i class="czs-android"></i><span>android</span></button>
+    <button class="ic" type="button" data-name="angle-down-l"><i class="czs-angle-down-l"></i><span>angle-down-l</span></button>
+    <button class="ic" type="button" data-name="angle-left-l"><i class="czs-angle-left-l"></i><span>angle-left-l</span></button>
+    <button class="ic" type="button" data-name="angle-right-l"><i class="czs-angle-right-l"></i><span>angle-right-l</span></button>
+    <button class="ic" type="button" data-name="angle-up-l"><i class="czs-angle-up-l"></i><span>angle-up-l</span></button>
+    <button class="ic" type="button" data-name="apple"><i class="czs-apple"></i><span>apple</span></button>
+    <button class="ic" type="button" data-name="arrow-down-l"><i class="czs-arrow-down-l"></i><span>arrow-down-l</span></button>
+    <button class="ic" type="button" data-name="arrow-up-l"><i class="czs-arrow-up-l"></i><span>arrow-up-l</span></button>
+    <button class="ic" type="button" data-name="baiduwangpan"><i class="czs-baiduwangpan"></i><span>baiduwangpan</span></button>
+    <button class="ic" type="button" data-name="bar-chart"><i class="czs-bar-chart"></i><span>bar-chart</span></button>
+    <button class="ic" type="button" data-name="bar-chart-l"><i class="czs-bar-chart-l"></i><span>bar-chart-l</span></button>
+    <button class="ic" type="button" data-name="battery"><i class="czs-battery"></i><span>battery</span></button>
+    <button class="ic" type="button" data-name="battery-l"><i class="czs-battery-l"></i><span>battery-l</span></button>
+    <button class="ic" type="button" data-name="bell"><i class="czs-bell"></i><span>bell</span></button>
+    <button class="ic" type="button" data-name="bell-l"><i class="czs-bell-l"></i><span>bell-l</span></button>
+    <button class="ic" type="button" data-name="bevel"><i class="czs-bevel"></i><span>bevel</span></button>
+    <button class="ic" type="button" data-name="bilibili"><i class="czs-bilibili"></i><span>bilibili</span></button>
+    <button class="ic" type="button" data-name="bitcoin"><i class="czs-bitcoin"></i><span>bitcoin</span></button>
+    <button class="ic" type="button" data-name="blackboard"><i class="czs-blackboard"></i><span>blackboard</span></button>
+    <button class="ic" type="button" data-name="blackboard-l"><i class="czs-blackboard-l"></i><span>blackboard-l</span></button>
+    <button class="ic" type="button" data-name="block"><i class="czs-block"></i><span>block</span></button>
+    <button class="ic" type="button" data-name="block-l"><i class="czs-block-l"></i><span>block-l</span></button>
+    <button class="ic" type="button" data-name="bluetooth"><i class="czs-bluetooth"></i><span>bluetooth</span></button>
+    <button class="ic" type="button" data-name="bluetooth-l"><i class="czs-bluetooth-l"></i><span>bluetooth-l</span></button>
+    <button class="ic" type="button" data-name="board"><i class="czs-board"></i><span>board</span></button>
+    <button class="ic" type="button" data-name="board-l"><i class="czs-board-l"></i><span>board-l</span></button>
+    <button class="ic" type="button" data-name="book"><i class="czs-book"></i><span>book</span></button>
+    <button class="ic" type="button" data-name="book-l"><i class="czs-book-l"></i><span>book-l</span></button>
+    <button class="ic" type="button" data-name="bookmark"><i class="czs-bookmark"></i><span>bookmark</span></button>
+    <button class="ic" type="button" data-name="bookmark-l"><i class="czs-bookmark-l"></i><span>bookmark-l</span></button>
+    <button class="ic" type="button" data-name="box"><i class="czs-box"></i><span>box</span></button>
+    <button class="ic" type="button" data-name="box-l"><i class="czs-box-l"></i><span>box-l</span></button>
+    <button class="ic" type="button" data-name="briefcase"><i class="czs-briefcase"></i><span>briefcase</span></button>
+    <button class="ic" type="button" data-name="briefcase-l"><i class="czs-briefcase-l"></i><span>briefcase-l</span></button>
+    <button class="ic" type="button" data-name="brush"><i class="czs-brush"></i><span>brush</span></button>
+    <button class="ic" type="button" data-name="brush-l"><i class="czs-brush-l"></i><span>brush-l</span></button>
+    <button class="ic" type="button" data-name="bug"><i class="czs-bug"></i><span>bug</span></button>
+    <button class="ic" type="button" data-name="bug-l"><i class="czs-bug-l"></i><span>bug-l</span></button>
+    <button class="ic" type="button" data-name="building"><i class="czs-building"></i><span>building</span></button>
+    <button class="ic" type="button" data-name="building-l"><i class="czs-building-l"></i><span>building-l</span></button>
+    <button class="ic" type="button" data-name="buy"><i class="czs-buy"></i><span>buy</span></button>
+    <button class="ic" type="button" data-name="buy-l"><i class="czs-buy-l"></i><span>buy-l</span></button>
+    <button class="ic" type="button" data-name="calculator"><i class="czs-calculator"></i><span>calculator</span></button>
+    <button class="ic" type="button" data-name="calculator-l"><i class="czs-calculator-l"></i><span>calculator-l</span></button>
+    <button class="ic" type="button" data-name="calendar"><i class="czs-calendar"></i><span>calendar</span></button>
+    <button class="ic" type="button" data-name="calendar-l"><i class="czs-calendar-l"></i><span>calendar-l</span></button>
+    <button class="ic" type="button" data-name="camber"><i class="czs-camber"></i><span>camber</span></button>
+    <button class="ic" type="button" data-name="camber-l"><i class="czs-camber-l"></i><span>camber-l</span></button>
+    <button class="ic" type="button" data-name="camber-o"><i class="czs-camber-o"></i><span>camber-o</span></button>
+    <button class="ic" type="button" data-name="camera"><i class="czs-camera"></i><span>camera</span></button>
+    <button class="ic" type="button" data-name="camera-l"><i class="czs-camera-l"></i><span>camera-l</span></button>
+    <button class="ic" type="button" data-name="category-l"><i class="czs-category-l"></i><span>category-l</span></button>
+    <button class="ic" type="button" data-name="certificate"><i class="czs-certificate"></i><span>certificate</span></button>
+    <button class="ic" type="button" data-name="certificate-l"><i class="czs-certificate-l"></i><span>certificate-l</span></button>
+    <button class="ic" type="button" data-name="chemistry"><i class="czs-chemistry"></i><span>chemistry</span></button>
+    <button class="ic" type="button" data-name="chemistry-l"><i class="czs-chemistry-l"></i><span>chemistry-l</span></button>
+    <button class="ic" type="button" data-name="choose-list-l"><i class="czs-choose-list-l"></i><span>choose-list-l</span></button>
+    <button class="ic" type="button" data-name="chrome"><i class="czs-chrome"></i><span>chrome</span></button>
+    <button class="ic" type="button" data-name="circle"><i class="czs-circle"></i><span>circle</span></button>
+    <button class="ic" type="button" data-name="circle-l"><i class="czs-circle-l"></i><span>circle-l</span></button>
+    <button class="ic" type="button" data-name="circle-o"><i class="czs-circle-o"></i><span>circle-o</span></button>
+    <button class="ic" type="button" data-name="clip-l"><i class="czs-clip-l"></i><span>clip-l</span></button>
+    <button class="ic" type="button" data-name="clock"><i class="czs-clock"></i><span>clock</span></button>
+    <button class="ic" type="button" data-name="clock-l"><i class="czs-clock-l"></i><span>clock-l</span></button>
+    <button class="ic" type="button" data-name="close-l"><i class="czs-close-l"></i><span>close-l</span></button>
+    <button class="ic" type="button" data-name="clothes"><i class="czs-clothes"></i><span>clothes</span></button>
+    <button class="ic" type="button" data-name="clothes-l"><i class="czs-clothes-l"></i><span>clothes-l</span></button>
+    <button class="ic" type="button" data-name="cloud"><i class="czs-cloud"></i><span>cloud</span></button>
+    <button class="ic" type="button" data-name="cloud-download-l"><i class="czs-cloud-download-l"></i><span>cloud-download-l</span></button>
+    <button class="ic" type="button" data-name="cloud-l"><i class="czs-cloud-l"></i><span>cloud-l</span></button>
+    <button class="ic" type="button" data-name="cloud-upload-l"><i class="czs-cloud-upload-l"></i><span>cloud-upload-l</span></button>
+    <button class="ic" type="button" data-name="code-branch"><i class="czs-code-branch"></i><span>code-branch</span></button>
+    <button class="ic" type="button" data-name="code-file"><i class="czs-code-file"></i><span>code-file</span></button>
+    <button class="ic" type="button" data-name="code-file-l"><i class="czs-code-file-l"></i><span>code-file-l</span></button>
+    <button class="ic" type="button" data-name="code-fork"><i class="czs-code-fork"></i><span>code-fork</span></button>
+    <button class="ic" type="button" data-name="code-l"><i class="czs-code-l"></i><span>code-l</span></button>
+    <button class="ic" type="button" data-name="coin"><i class="czs-coin"></i><span>coin</span></button>
+    <button class="ic" type="button" data-name="coin-l"><i class="czs-coin-l"></i><span>coin-l</span></button>
+    <button class="ic" type="button" data-name="collection"><i class="czs-collection"></i><span>collection</span></button>
+    <button class="ic" type="button" data-name="come-l"><i class="czs-come-l"></i><span>come-l</span></button>
+    <button class="ic" type="button" data-name="command"><i class="czs-command"></i><span>command</span></button>
+    <button class="ic" type="button" data-name="command-l"><i class="czs-command-l"></i><span>command-l</span></button>
+    <button class="ic" type="button" data-name="commed2"><i class="czs-commed2"></i><span>commed2</span></button>
+    <button class="ic" type="button" data-name="commed2-l"><i class="czs-commed2-l"></i><span>commed2-l</span></button>
+    <button class="ic" type="button" data-name="comment"><i class="czs-comment"></i><span>comment</span></button>
+    <button class="ic" type="button" data-name="comment-l"><i class="czs-comment-l"></i><span>comment-l</span></button>
+    <button class="ic" type="button" data-name="computer"><i class="czs-computer"></i><span>computer</span></button>
+    <button class="ic" type="button" data-name="computer-l"><i class="czs-computer-l"></i><span>computer-l</span></button>
+    <button class="ic" type="button" data-name="configuration"><i class="czs-configuration"></i><span>configuration</span></button>
+    <button class="ic" type="button" data-name="configuration-l"><i class="czs-configuration-l"></i><span>configuration-l</span></button>
+    <button class="ic" type="button" data-name="control"><i class="czs-control"></i><span>control</span></button>
+    <button class="ic" type="button" data-name="control-rank"><i class="czs-control-rank"></i><span>control-rank</span></button>
+    <button class="ic" type="button" data-name="credit-card"><i class="czs-credit-card"></i><span>credit-card</span></button>
+    <button class="ic" type="button" data-name="credit-card-l"><i class="czs-credit-card-l"></i><span>credit-card-l</span></button>
+    <button class="ic" type="button" data-name="crown"><i class="czs-crown"></i><span>crown</span></button>
+    <button class="ic" type="button" data-name="crown-l"><i class="czs-crown-l"></i><span>crown-l</span></button>
+    <button class="ic" type="button" data-name="css3"><i class="czs-css3"></i><span>css3</span></button>
+    <button class="ic" type="button" data-name="cup"><i class="czs-cup"></i><span>cup</span></button>
+    <button class="ic" type="button" data-name="cup-l"><i class="czs-cup-l"></i><span>cup-l</span></button>
+    <button class="ic" type="button" data-name="dashboard"><i class="czs-dashboard"></i><span>dashboard</span></button>
+    <button class="ic" type="button" data-name="dashboard-l"><i class="czs-dashboard-l"></i><span>dashboard-l</span></button>
+    <button class="ic" type="button" data-name="diamond"><i class="czs-diamond"></i><span>diamond</span></button>
+    <button class="ic" type="button" data-name="diamond-l"><i class="czs-diamond-l"></i><span>diamond-l</span></button>
+    <button class="ic" type="button" data-name="doc-edit"><i class="czs-doc-edit"></i><span>doc-edit</span></button>
+    <button class="ic" type="button" data-name="doc-edit-l"><i class="czs-doc-edit-l"></i><span>doc-edit-l</span></button>
+    <button class="ic" type="button" data-name="doc-file"><i class="czs-doc-file"></i><span>doc-file</span></button>
+    <button class="ic" type="button" data-name="doc-file-l"><i class="czs-doc-file-l"></i><span>doc-file-l</span></button>
+    <button class="ic" type="button" data-name="download-l"><i class="czs-download-l"></i><span>download-l</span></button>
+    <button class="ic" type="button" data-name="dribbble"><i class="czs-dribbble"></i><span>dribbble</span></button>
+    <button class="ic" type="button" data-name="dropbox"><i class="czs-dropbox"></i><span>dropbox</span></button>
+    <button class="ic" type="button" data-name="earth"><i class="czs-earth"></i><span>earth</span></button>
+    <button class="ic" type="button" data-name="earth-l"><i class="czs-earth-l"></i><span>earth-l</span></button>
+    <button class="ic" type="button" data-name="eye"><i class="czs-eye"></i><span>eye</span></button>
+    <button class="ic" type="button" data-name="eye-l"><i class="czs-eye-l"></i><span>eye-l</span></button>
+    <button class="ic" type="button" data-name="face"><i class="czs-face"></i><span>face</span></button>
+    <button class="ic" type="button" data-name="facebook"><i class="czs-facebook"></i><span>facebook</span></button>
+    <button class="ic" type="button" data-name="face-l"><i class="czs-face-l"></i><span>face-l</span></button>
+    <button class="ic" type="button" data-name="file"><i class="czs-file"></i><span>file</span></button>
+    <button class="ic" type="button" data-name="file-l"><i class="czs-file-l"></i><span>file-l</span></button>
+    <button class="ic" type="button" data-name="film"><i class="czs-film"></i><span>film</span></button>
+    <button class="ic" type="button" data-name="film-l"><i class="czs-film-l"></i><span>film-l</span></button>
+    <button class="ic" type="button" data-name="fire-l"><i class="czs-fire-l"></i><span>fire-l</span></button>
+    <button class="ic" type="button" data-name="firewall"><i class="czs-firewall"></i><span>firewall</span></button>
+    <button class="ic" type="button" data-name="firewall-l"><i class="czs-firewall-l"></i><span>firewall-l</span></button>
+    <button class="ic" type="button" data-name="folder"><i class="czs-folder"></i><span>folder</span></button>
+    <button class="ic" type="button" data-name="folder-l"><i class="czs-folder-l"></i><span>folder-l</span></button>
+    <button class="ic" type="button" data-name="forum"><i class="czs-forum"></i><span>forum</span></button>
+    <button class="ic" type="button" data-name="forum-l"><i class="czs-forum-l"></i><span>forum-l</span></button>
+    <button class="ic" type="button" data-name="game"><i class="czs-game"></i><span>game</span></button>
+    <button class="ic" type="button" data-name="game-l"><i class="czs-game-l"></i><span>game-l</span></button>
+    <button class="ic" type="button" data-name="gift"><i class="czs-gift"></i><span>gift</span></button>
+    <button class="ic" type="button" data-name="gift-l"><i class="czs-gift-l"></i><span>gift-l</span></button>
+    <button class="ic" type="button" data-name="github"><i class="czs-github"></i><span>github</span></button>
+    <button class="ic" type="button" data-name="github-logo"><i class="czs-github-logo"></i><span>github-logo</span></button>
+    <button class="ic" type="button" data-name="greatwall"><i class="czs-greatwall"></i><span>greatwall</span></button>
+    <button class="ic" type="button" data-name="hacker"><i class="czs-hacker"></i><span>hacker</span></button>
+    <button class="ic" type="button" data-name="hacker-l"><i class="czs-hacker-l"></i><span>hacker-l</span></button>
+    <button class="ic" type="button" data-name="hammer"><i class="czs-hammer"></i><span>hammer</span></button>
+    <button class="ic" type="button" data-name="hammer-l"><i class="czs-hammer-l"></i><span>hammer-l</span></button>
+    <button class="ic" type="button" data-name="hand-bevel"><i class="czs-hand-bevel"></i><span>hand-bevel</span></button>
+    <button class="ic" type="button" data-name="hand-button"><i class="czs-hand-button"></i><span>hand-button</span></button>
+    <button class="ic" type="button" data-name="hande-vertical"><i class="czs-hande-vertical"></i><span>hande-vertical</span></button>
+    <button class="ic" type="button" data-name="hand-gather"><i class="czs-hand-gather"></i><span>hand-gather</span></button>
+    <button class="ic" type="button" data-name="hand-grasp"><i class="czs-hand-grasp"></i><span>hand-grasp</span></button>
+    <button class="ic" type="button" data-name="hand-horizontal"><i class="czs-hand-horizontal"></i><span>hand-horizontal</span></button>
+    <button class="ic" type="button" data-name="hand-pointer"><i class="czs-hand-pointer"></i><span>hand-pointer</span></button>
+    <button class="ic" type="button" data-name="hand-slide"><i class="czs-hand-slide"></i><span>hand-slide</span></button>
+    <button class="ic" type="button" data-name="hand-stop"><i class="czs-hand-stop"></i><span>hand-stop</span></button>
+    <button class="ic" type="button" data-name="hand-touch"><i class="czs-hand-touch"></i><span>hand-touch</span></button>
+    <button class="ic" type="button" data-name="hdmi"><i class="czs-hdmi"></i><span>hdmi</span></button>
+    <button class="ic" type="button" data-name="hdmi-l"><i class="czs-hdmi-l"></i><span>hdmi-l</span></button>
+    <button class="ic" type="button" data-name="headset"><i class="czs-headset"></i><span>headset</span></button>
+    <button class="ic" type="button" data-name="headset-l"><i class="czs-headset-l"></i><span>headset-l</span></button>
+    <button class="ic" type="button" data-name="heart"><i class="czs-heart"></i><span>heart</span></button>
+    <button class="ic" type="button" data-name="heart-l"><i class="czs-heart-l"></i><span>heart-l</span></button>
+    <button class="ic" type="button" data-name="home"><i class="czs-home"></i><span>home</span></button>
+    <button class="ic" type="button" data-name="home-l"><i class="czs-home-l"></i><span>home-l</span></button>
+    <button class="ic" type="button" data-name="html5"><i class="czs-html5"></i><span>html5</span></button>
+    <button class="ic" type="button" data-name="image"><i class="czs-image"></i><span>image</span></button>
+    <button class="ic" type="button" data-name="image-l"><i class="czs-image-l"></i><span>image-l</span></button>
+    <button class="ic" type="button" data-name="inbox"><i class="czs-inbox"></i><span>inbox</span></button>
+    <button class="ic" type="button" data-name="inbox-l"><i class="czs-inbox-l"></i><span>inbox-l</span></button>
+    <button class="ic" type="button" data-name="key"><i class="czs-key"></i><span>key</span></button>
+    <button class="ic" type="button" data-name="keyboard"><i class="czs-keyboard"></i><span>keyboard</span></button>
+    <button class="ic" type="button" data-name="keyboard-l"><i class="czs-keyboard-l"></i><span>keyboard-l</span></button>
+    <button class="ic" type="button" data-name="key-l"><i class="czs-key-l"></i><span>key-l</span></button>
+    <button class="ic" type="button" data-name="label-info"><i class="czs-label-info"></i><span>label-info</span></button>
+    <button class="ic" type="button" data-name="label-info-l"><i class="czs-label-info-l"></i><span>label-info-l</span></button>
+    <button class="ic" type="button" data-name="laptop"><i class="czs-laptop"></i><span>laptop</span></button>
+    <button class="ic" type="button" data-name="laptop-l"><i class="czs-laptop-l"></i><span>laptop-l</span></button>
+    <button class="ic" type="button" data-name="layers"><i class="czs-layers"></i><span>layers</span></button>
+    <button class="ic" type="button" data-name="layout-grid"><i class="czs-layout-grid"></i><span>layout-grid</span></button>
+    <button class="ic" type="button" data-name="layout-grids"><i class="czs-layout-grids"></i><span>layout-grids</span></button>
+    <button class="ic" type="button" data-name="layout-list"><i class="czs-layout-list"></i><span>layout-list</span></button>
+    <button class="ic" type="button" data-name="light"><i class="czs-light"></i><span>light</span></button>
+    <button class="ic" type="button" data-name="light-flash-l"><i class="czs-light-flash-l"></i><span>light-flash-l</span></button>
+    <button class="ic" type="button" data-name="light-l"><i class="czs-light-l"></i><span>light-l</span></button>
+    <button class="ic" type="button" data-name="lightning"><i class="czs-lightning"></i><span>lightning</span></button>
+    <button class="ic" type="button" data-name="lightning-l"><i class="czs-lightning-l"></i><span>lightning-l</span></button>
+    <button class="ic" type="button" data-name="link-l"><i class="czs-link-l"></i><span>link-l</span></button>
+    <button class="ic" type="button" data-name="linux"><i class="czs-linux"></i><span>linux</span></button>
+    <button class="ic" type="button" data-name="list-clipboard"><i class="czs-list-clipboard"></i><span>list-clipboard</span></button>
+    <button class="ic" type="button" data-name="list-clipboard-l"><i class="czs-list-clipboard-l"></i><span>list-clipboard-l</span></button>
+    <button class="ic" type="button" data-name="location"><i class="czs-location"></i><span>location</span></button>
+    <button class="ic" type="button" data-name="location-l"><i class="czs-location-l"></i><span>location-l</span></button>
+    <button class="ic" type="button" data-name="lock"><i class="czs-lock"></i><span>lock</span></button>
+    <button class="ic" type="button" data-name="lock-l"><i class="czs-lock-l"></i><span>lock-l</span></button>
+    <button class="ic" type="button" data-name="map"><i class="czs-map"></i><span>map</span></button>
+    <button class="ic" type="button" data-name="map-l"><i class="czs-map-l"></i><span>map-l</span></button>
+    <button class="ic" type="button" data-name="medal"><i class="czs-medal"></i><span>medal</span></button>
+    <button class="ic" type="button" data-name="medal-l"><i class="czs-medal-l"></i><span>medal-l</span></button>
+    <button class="ic" type="button" data-name="menu-l"><i class="czs-menu-l"></i><span>menu-l</span></button>
+    <button class="ic" type="button" data-name="message"><i class="czs-message"></i><span>message</span></button>
+    <button class="ic" type="button" data-name="message-l"><i class="czs-message-l"></i><span>message-l</span></button>
+    <button class="ic" type="button" data-name="microchip"><i class="czs-microchip"></i><span>microchip</span></button>
+    <button class="ic" type="button" data-name="microchip-l"><i class="czs-microchip-l"></i><span>microchip-l</span></button>
+    <button class="ic" type="button" data-name="microphone"><i class="czs-microphone"></i><span>microphone</span></button>
+    <button class="ic" type="button" data-name="microphone-l"><i class="czs-microphone-l"></i><span>microphone-l</span></button>
+    <button class="ic" type="button" data-name="microsoft"><i class="czs-microsoft"></i><span>microsoft</span></button>
+    <button class="ic" type="button" data-name="mobile"><i class="czs-mobile"></i><span>mobile</span></button>
+    <button class="ic" type="button" data-name="mobile-l"><i class="czs-mobile-l"></i><span>mobile-l</span></button>
+    <button class="ic" type="button" data-name="moments"><i class="czs-moments"></i><span>moments</span></button>
+    <button class="ic" type="button" data-name="money"><i class="czs-money"></i><span>money</span></button>
+    <button class="ic" type="button" data-name="moon"><i class="czs-moon"></i><span>moon</span></button>
+    <button class="ic" type="button" data-name="moon-l"><i class="czs-moon-l"></i><span>moon-l</span></button>
+    <button class="ic" type="button" data-name="more"><i class="czs-more"></i><span>more</span></button>
+    <button class="ic" type="button" data-name="mouse"><i class="czs-mouse"></i><span>mouse</span></button>
+    <button class="ic" type="button" data-name="mouse-l"><i class="czs-mouse-l"></i><span>mouse-l</span></button>
+    <button class="ic" type="button" data-name="music"><i class="czs-music"></i><span>music</span></button>
+    <button class="ic" type="button" data-name="music-file"><i class="czs-music-file"></i><span>music-file</span></button>
+    <button class="ic" type="button" data-name="music-file-l"><i class="czs-music-file-l"></i><span>music-file-l</span></button>
+    <button class="ic" type="button" data-name="music-l"><i class="czs-music-l"></i><span>music-l</span></button>
+    <button class="ic" type="button" data-name="music-note"><i class="czs-music-note"></i><span>music-note</span></button>
+    <button class="ic" type="button" data-name="music-note-l"><i class="czs-music-note-l"></i><span>music-note-l</span></button>
+    <button class="ic" type="button" data-name="nail"><i class="czs-nail"></i><span>nail</span></button>
+    <button class="ic" type="button" data-name="nail-l"><i class="czs-nail-l"></i><span>nail-l</span></button>
+    <button class="ic" type="button" data-name="network"><i class="czs-network"></i><span>network</span></button>
+    <button class="ic" type="button" data-name="network-l"><i class="czs-network-l"></i><span>network-l</span></button>
+    <button class="ic" type="button" data-name="new"><i class="czs-new"></i><span>new</span></button>
+    <button class="ic" type="button" data-name="new-l"><i class="czs-new-l"></i><span>new-l</span></button>
+    <button class="ic" type="button" data-name="newspaper"><i class="czs-newspaper"></i><span>newspaper</span></button>
+    <button class="ic" type="button" data-name="newspaper-l"><i class="czs-newspaper-l"></i><span>newspaper-l</span></button>
+    <button class="ic" type="button" data-name="operation"><i class="czs-operation"></i><span>operation</span></button>
+    <button class="ic" type="button" data-name="operation-l"><i class="czs-operation-l"></i><span>operation-l</span></button>
+    <button class="ic" type="button" data-name="out-l"><i class="czs-out-l"></i><span>out-l</span></button>
+    <button class="ic" type="button" data-name="pad"><i class="czs-pad"></i><span>pad</span></button>
+    <button class="ic" type="button" data-name="pad-l"><i class="czs-pad-l"></i><span>pad-l</span></button>
+    <button class="ic" type="button" data-name="paper"><i class="czs-paper"></i><span>paper</span></button>
+    <button class="ic" type="button" data-name="paper-l"><i class="czs-paper-l"></i><span>paper-l</span></button>
+    <button class="ic" type="button" data-name="paper-plane"><i class="czs-paper-plane"></i><span>paper-plane</span></button>
+    <button class="ic" type="button" data-name="paper-plane-l"><i class="czs-paper-plane-l"></i><span>paper-plane-l</span></button>
+    <button class="ic" type="button" data-name="pause-l"><i class="czs-pause-l"></i><span>pause-l</span></button>
+    <button class="ic" type="button" data-name="paypal"><i class="czs-paypal"></i><span>paypal</span></button>
+    <button class="ic" type="button" data-name="pen"><i class="czs-pen"></i><span>pen</span></button>
+    <button class="ic" type="button" data-name="pen-write"><i class="czs-pen-write"></i><span>pen-write</span></button>
+    <button class="ic" type="button" data-name="people"><i class="czs-people"></i><span>people</span></button>
+    <button class="ic" type="button" data-name="phone"><i class="czs-phone"></i><span>phone</span></button>
+    <button class="ic" type="button" data-name="phone-l"><i class="czs-phone-l"></i><span>phone-l</span></button>
+    <button class="ic" type="button" data-name="pinterest"><i class="czs-pinterest"></i><span>pinterest</span></button>
+    <button class="ic" type="button" data-name="play-l"><i class="czs-play-l"></i><span>play-l</span></button>
+    <button class="ic" type="button" data-name="plugin"><i class="czs-plugin"></i><span>plugin</span></button>
+    <button class="ic" type="button" data-name="pokemon-ball"><i class="czs-pokemon-ball"></i><span>pokemon-ball</span></button>
+    <button class="ic" type="button" data-name="port"><i class="czs-port"></i><span>port</span></button>
+    <button class="ic" type="button" data-name="port-l"><i class="czs-port-l"></i><span>port-l</span></button>
+    <button class="ic" type="button" data-name="printer"><i class="czs-printer"></i><span>printer</span></button>
+    <button class="ic" type="button" data-name="printer-l"><i class="czs-printer-l"></i><span>printer-l</span></button>
+    <button class="ic" type="button" data-name="product"><i class="czs-product"></i><span>product</span></button>
+    <button class="ic" type="button" data-name="program"><i class="czs-program"></i><span>program</span></button>
+    <button class="ic" type="button" data-name="program-l"><i class="czs-program-l"></i><span>program-l</span></button>
+    <button class="ic" type="button" data-name="qq"><i class="czs-qq"></i><span>qq</span></button>
+    <button class="ic" type="button" data-name="qrcode-l"><i class="czs-qrcode-l"></i><span>qrcode-l</span></button>
+    <button class="ic" type="button" data-name="quote-left"><i class="czs-quote-left"></i><span>quote-left</span></button>
+    <button class="ic" type="button" data-name="quote-right"><i class="czs-quote-right"></i><span>quote-right</span></button>
+    <button class="ic" type="button" data-name="qzone"><i class="czs-qzone"></i><span>qzone</span></button>
+    <button class="ic" type="button" data-name="raspberry"><i class="czs-raspberry"></i><span>raspberry</span></button>
+    <button class="ic" type="button" data-name="raspberry-l"><i class="czs-raspberry-l"></i><span>raspberry-l</span></button>
+    <button class="ic" type="button" data-name="read"><i class="czs-read"></i><span>read</span></button>
+    <button class="ic" type="button" data-name="read-l"><i class="czs-read-l"></i><span>read-l</span></button>
+    <button class="ic" type="button" data-name="red-envelope"><i class="czs-red-envelope"></i><span>red-envelope</span></button>
+    <button class="ic" type="button" data-name="renew"><i class="czs-renew"></i><span>renew</span></button>
+    <button class="ic" type="button" data-name="right-clipboard"><i class="czs-right-clipboard"></i><span>right-clipboard</span></button>
+    <button class="ic" type="button" data-name="right-clipboard-l"><i class="czs-right-clipboard-l"></i><span>right-clipboard-l</span></button>
+    <button class="ic" type="button" data-name="robot"><i class="czs-robot"></i><span>robot</span></button>
+    <button class="ic" type="button" data-name="robot2"><i class="czs-robot2"></i><span>robot2</span></button>
+    <button class="ic" type="button" data-name="robot2-l"><i class="czs-robot2-l"></i><span>robot2-l</span></button>
+    <button class="ic" type="button" data-name="robot-l"><i class="czs-robot-l"></i><span>robot-l</span></button>
+    <button class="ic" type="button" data-name="rocket"><i class="czs-rocket"></i><span>rocket</span></button>
+    <button class="ic" type="button" data-name="rocket-l"><i class="czs-rocket-l"></i><span>rocket-l</span></button>
+    <button class="ic" type="button" data-name="rollerbrush"><i class="czs-rollerbrush"></i><span>rollerbrush</span></button>
+    <button class="ic" type="button" data-name="rollerbrush-l"><i class="czs-rollerbrush-l"></i><span>rollerbrush-l</span></button>
+    <button class="ic" type="button" data-name="router"><i class="czs-router"></i><span>router</span></button>
+    <button class="ic" type="button" data-name="router-l"><i class="czs-router-l"></i><span>router-l</span></button>
+    <button class="ic" type="button" data-name="rss"><i class="czs-rss"></i><span>rss</span></button>
+    <button class="ic" type="button" data-name="ruler"><i class="czs-ruler"></i><span>ruler</span></button>
+    <button class="ic" type="button" data-name="ruler-l"><i class="czs-ruler-l"></i><span>ruler-l</span></button>
+    <button class="ic" type="button" data-name="save"><i class="czs-save"></i><span>save</span></button>
+    <button class="ic" type="button" data-name="save-l"><i class="czs-save-l"></i><span>save-l</span></button>
+    <button class="ic" type="button" data-name="scan-l"><i class="czs-scan-l"></i><span>scan-l</span></button>
+    <button class="ic" type="button" data-name="scissors"><i class="czs-scissors"></i><span>scissors</span></button>
+    <button class="ic" type="button" data-name="sdcard"><i class="czs-sdcard"></i><span>sdcard</span></button>
+    <button class="ic" type="button" data-name="sdcard-l"><i class="czs-sdcard-l"></i><span>sdcard-l</span></button>
+    <button class="ic" type="button" data-name="search-l"><i class="czs-search-l"></i><span>search-l</span></button>
+    <button class="ic" type="button" data-name="server"><i class="czs-server"></i><span>server</span></button>
+    <button class="ic" type="button" data-name="server-l"><i class="czs-server-l"></i><span>server-l</span></button>
+    <button class="ic" type="button" data-name="servers"><i class="czs-servers"></i><span>servers</span></button>
+    <button class="ic" type="button" data-name="setting"><i class="czs-setting"></i><span>setting</span></button>
+    <button class="ic" type="button" data-name="setting-l"><i class="czs-setting-l"></i><span>setting-l</span></button>
+    <button class="ic" type="button" data-name="share"><i class="czs-share"></i><span>share</span></button>
+    <button class="ic" type="button" data-name="shield"><i class="czs-shield"></i><span>shield</span></button>
+    <button class="ic" type="button" data-name="shield-l"><i class="czs-shield-l"></i><span>shield-l</span></button>
+    <button class="ic" type="button" data-name="shop"><i class="czs-shop"></i><span>shop</span></button>
+    <button class="ic" type="button" data-name="shop-l"><i class="czs-shop-l"></i><span>shop-l</span></button>
+    <button class="ic" type="button" data-name="shopping-cart"><i class="czs-shopping-cart"></i><span>shopping-cart</span></button>
+    <button class="ic" type="button" data-name="shopping-cart-l"><i class="czs-shopping-cart-l"></i><span>shopping-cart-l</span></button>
+    <button class="ic" type="button" data-name="site-folder"><i class="czs-site-folder"></i><span>site-folder</span></button>
+    <button class="ic" type="button" data-name="site-folder-l"><i class="czs-site-folder-l"></i><span>site-folder-l</span></button>
+    <button class="ic" type="button" data-name="slider-l"><i class="czs-slider-l"></i><span>slider-l</span></button>
+    <button class="ic" type="button" data-name="square"><i class="czs-square"></i><span>square</span></button>
+    <button class="ic" type="button" data-name="square-l"><i class="czs-square-l"></i><span>square-l</span></button>
+    <button class="ic" type="button" data-name="square-o"><i class="czs-square-o"></i><span>square-o</span></button>
+    <button class="ic" type="button" data-name="star"><i class="czs-star"></i><span>star</span></button>
+    <button class="ic" type="button" data-name="star-l"><i class="czs-star-l"></i><span>star-l</span></button>
+    <button class="ic" type="button" data-name="steam"><i class="czs-steam"></i><span>steam</span></button>
+    <button class="ic" type="button" data-name="storage"><i class="czs-storage"></i><span>storage</span></button>
+    <button class="ic" type="button" data-name="storage-l"><i class="czs-storage-l"></i><span>storage-l</span></button>
+    <button class="ic" type="button" data-name="sun"><i class="czs-sun"></i><span>sun</span></button>
+    <button class="ic" type="button" data-name="sun-l"><i class="czs-sun-l"></i><span>sun-l</span></button>
+    <button class="ic" type="button" data-name="sword"><i class="czs-sword"></i><span>sword</span></button>
+    <button class="ic" type="button" data-name="sword-l"><i class="czs-sword-l"></i><span>sword-l</span></button>
+    <button class="ic" type="button" data-name="tab"><i class="czs-tab"></i><span>tab</span></button>
+    <button class="ic" type="button" data-name="tab-l"><i class="czs-tab-l"></i><span>tab-l</span></button>
+    <button class="ic" type="button" data-name="tag"><i class="czs-tag"></i><span>tag</span></button>
+    <button class="ic" type="button" data-name="tag-l"><i class="czs-tag-l"></i><span>tag-l</span></button>
+    <button class="ic" type="button" data-name="taiji"><i class="czs-taiji"></i><span>taiji</span></button>
+    <button class="ic" type="button" data-name="talk"><i class="czs-talk"></i><span>talk</span></button>
+    <button class="ic" type="button" data-name="talk-l"><i class="czs-talk-l"></i><span>talk-l</span></button>
+    <button class="ic" type="button" data-name="taobao"><i class="czs-taobao"></i><span>taobao</span></button>
+    <button class="ic" type="button" data-name="telegram"><i class="czs-telegram"></i><span>telegram</span></button>
+    <button class="ic" type="button" data-name="text-l"><i class="czs-text-l"></i><span>text-l</span></button>
+    <button class="ic" type="button" data-name="thumbs-up"><i class="czs-thumbs-up"></i><span>thumbs-up</span></button>
+    <button class="ic" type="button" data-name="thumbs-up-l"><i class="czs-thumbs-up-l"></i><span>thumbs-up-l</span></button>
+    <button class="ic" type="button" data-name="ticket"><i class="czs-ticket"></i><span>ticket</span></button>
+    <button class="ic" type="button" data-name="ticket-l"><i class="czs-ticket-l"></i><span>ticket-l</span></button>
+    <button class="ic" type="button" data-name="time"><i class="czs-time"></i><span>time</span></button>
+    <button class="ic" type="button" data-name="time-l"><i class="czs-time-l"></i><span>time-l</span></button>
+    <button class="ic" type="button" data-name="tmall"><i class="czs-tmall"></i><span>tmall</span></button>
+    <button class="ic" type="button" data-name="transmission-l"><i class="czs-transmission-l"></i><span>transmission-l</span></button>
+    <button class="ic" type="button" data-name="transport"><i class="czs-transport"></i><span>transport</span></button>
+    <button class="ic" type="button" data-name="trash"><i class="czs-trash"></i><span>trash</span></button>
+    <button class="ic" type="button" data-name="trash-l"><i class="czs-trash-l"></i><span>trash-l</span></button>
+    <button class="ic" type="button" data-name="triangle"><i class="czs-triangle"></i><span>triangle</span></button>
+    <button class="ic" type="button" data-name="triangle-l"><i class="czs-triangle-l"></i><span>triangle-l</span></button>
+    <button class="ic" type="button" data-name="triangle-o"><i class="czs-triangle-o"></i><span>triangle-o</span></button>
+    <button class="ic" type="button" data-name="truck"><i class="czs-truck"></i><span>truck</span></button>
+    <button class="ic" type="button" data-name="truck-l"><i class="czs-truck-l"></i><span>truck-l</span></button>
+    <button class="ic" type="button" data-name="tv"><i class="czs-tv"></i><span>tv</span></button>
+    <button class="ic" type="button" data-name="tv-l"><i class="czs-tv-l"></i><span>tv-l</span></button>
+    <button class="ic" type="button" data-name="twitter"><i class="czs-twitter"></i><span>twitter</span></button>
+    <button class="ic" type="button" data-name="upload-l"><i class="czs-upload-l"></i><span>upload-l</span></button>
+    <button class="ic" type="button" data-name="usb"><i class="czs-usb"></i><span>usb</span></button>
+    <button class="ic" type="button" data-name="usb-l"><i class="czs-usb-l"></i><span>usb-l</span></button>
+    <button class="ic" type="button" data-name="user"><i class="czs-user"></i><span>user</span></button>
+    <button class="ic" type="button" data-name="user-l"><i class="czs-user-l"></i><span>user-l</span></button>
+    <button class="ic" type="button" data-name="v2ex"><i class="czs-v2ex"></i><span>v2ex</span></button>
+    <button class="ic" type="button" data-name="video-camera"><i class="czs-video-camera"></i><span>video-camera</span></button>
+    <button class="ic" type="button" data-name="video-camera-l"><i class="czs-video-camera-l"></i><span>video-camera-l</span></button>
+    <button class="ic" type="button" data-name="video-file"><i class="czs-video-file"></i><span>video-file</span></button>
+    <button class="ic" type="button" data-name="video-file-l"><i class="czs-video-file-l"></i><span>video-file-l</span></button>
+    <button class="ic" type="button" data-name="vimeo"><i class="czs-vimeo"></i><span>vimeo</span></button>
+    <button class="ic" type="button" data-name="volume"><i class="czs-volume"></i><span>volume</span></button>
+    <button class="ic" type="button" data-name="volume-l"><i class="czs-volume-l"></i><span>volume-l</span></button>
+    <button class="ic" type="button" data-name="volume-x-l"><i class="czs-volume-x-l"></i><span>volume-x-l</span></button>
+    <button class="ic" type="button" data-name="warning"><i class="czs-warning"></i><span>warning</span></button>
+    <button class="ic" type="button" data-name="warning-l"><i class="czs-warning-l"></i><span>warning-l</span></button>
+    <button class="ic" type="button" data-name="watch"><i class="czs-watch"></i><span>watch</span></button>
+    <button class="ic" type="button" data-name="watch-l"><i class="czs-watch-l"></i><span>watch-l</span></button>
+    <button class="ic" type="button" data-name="webcam"><i class="czs-webcam"></i><span>webcam</span></button>
+    <button class="ic" type="button" data-name="webcam-l"><i class="czs-webcam-l"></i><span>webcam-l</span></button>
+    <button class="ic" type="button" data-name="web-edit"><i class="czs-web-edit"></i><span>web-edit</span></button>
+    <button class="ic" type="button" data-name="web-edit-l"><i class="czs-web-edit-l"></i><span>web-edit-l</span></button>
+    <button class="ic" type="button" data-name="weibo"><i class="czs-weibo"></i><span>weibo</span></button>
+    <button class="ic" type="button" data-name="weixin"><i class="czs-weixin"></i><span>weixin</span></button>
+    <button class="ic" type="button" data-name="weixinzhifu"><i class="czs-weixinzhifu"></i><span>weixinzhifu</span></button>
+    <button class="ic" type="button" data-name="wifi"><i class="czs-wifi"></i><span>wifi</span></button>
+    <button class="ic" type="button" data-name="wordpress"><i class="czs-wordpress"></i><span>wordpress</span></button>
+    <button class="ic" type="button" data-name="wrench"><i class="czs-wrench"></i><span>wrench</span></button>
+    <button class="ic" type="button" data-name="wrench-l"><i class="czs-wrench-l"></i><span>wrench-l</span></button>
+    <button class="ic" type="button" data-name="write-l"><i class="czs-write-l"></i><span>write-l</span></button>
+    <button class="ic" type="button" data-name="x-buy-l"><i class="czs-x-buy-l"></i><span>x-buy-l</span></button>
+    <button class="ic" type="button" data-name="youtube"><i class="czs-youtube"></i><span>youtube</span></button>
+    <button class="ic" type="button" data-name="zhihu"><i class="czs-zhihu"></i><span>zhihu</span></button>
+    <button class="ic" type="button" data-name="zip-folder"><i class="czs-zip-folder"></i><span>zip-folder</span></button>
+    <button class="ic" type="button" data-name="zip-folder-l"><i class="czs-zip-folder-l"></i><span>zip-folder-l</span></button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function () {
+  var grid = document.getElementById('grid');
+  var q = document.getElementById('q');
+  var toast = document.getElementById('toast');
+  var timer;
+
+  function say(text) {
+    toast.textContent = text;
+    toast.classList.add('is-show');
+    clearTimeout(timer);
+    timer = setTimeout(function () { toast.classList.remove('is-show'); }, 1600);
+  }
+
+  q.addEventListener('input', function () {
+    var k = q.value.trim().toLowerCase();
+    Array.prototype.forEach.call(grid.children, function (b) {
+      b.hidden = k !== '' && b.getAttribute('data-name').indexOf(k) < 0;
+    });
+  });
+
+  grid.addEventListener('click', function (e) {
+    var b = e.target.closest('.ic');
+    if (!b) { return; }
+    var name = b.getAttribute('data-name');
+    var done = function () {
+      b.classList.add('is-copied');
+      setTimeout(function () { b.classList.remove('is-copied'); }, 900);
+      say('已复制 ' + name);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(name).then(done, function () { say(name); });
+    } else {
+      var t = document.createElement('textarea');
+      t.value = name;
+      document.body.appendChild(t);
+      t.select();
+      try { document.execCommand('copy'); } catch (err) {}
+      document.body.removeChild(t);
+      done();
+    }
+  });
+
+  var t;
+  try { t = localStorage.getItem('ink-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</body>
+</html>

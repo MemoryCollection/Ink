@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>墨 Ink — 主题预览</title>
+<script>
+(function () {
+  var t;
+  try {
+    t = localStorage.getItem('ink-theme');
+    if (t !== 'light' && t !== 'dark') {
+      t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+  } catch (e) { t = 'light'; }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<link rel="stylesheet" href="ink/style.css">
+<link rel="stylesheet" href="ink/assets/css/icons.css">
+<style>
+  .preview-bar {
+    position: fixed;
+    left: 20px; bottom: 22px;
+    z-index: 500;
+    display: flex;
+    gap: 2px;
+    padding: 4px;
+    background: #1f1d1a;
+    border-radius: 999px;
+    box-shadow: 0 10px 34px rgba(0, 0, 0, .22);
+  }
+  .preview-bar button {
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: rgba(255, 255, 255, .58);
+    transition: color .2s, background-color .2s;
+    white-space: nowrap;
+  }
+  .preview-bar button:hover { color: #fff; }
+  .preview-bar button.on { background: rgba(255, 255, 255, .14); color: #fff; }
+  @media (max-width: 620px) {
+    .preview-bar { left: 12px; right: 12px; bottom: 12px; justify-content: space-between; }
+    .preview-bar button { padding: 7px 10px; font-size: 11.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+<div class="progress"><span id="progressBar"></span></div>
+
+<header class="site-head" id="siteHead">
+  <div class="wrap head-inner">
+    <a class="site-name" href="#home"><svg class="site-mark" viewBox="0 0 200 200" width="24" height="24" aria-hidden="true">
+          <defs><linearGradient id="markGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:var(--accent-2)"/></linearGradient></defs>
+          <circle cx="100" cy="100" r="74" fill="none" stroke="url(#markGrad)" stroke-width="7"/>
+          <path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="url(#markGrad)"/>
+          <g fill="none" stroke="url(#markGrad)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g>
+          <circle cx="62" cy="150" r="6.5" fill="url(#markGrad)"/>
+        </svg><span class="site-word">墨 Ink</span></a>
+    <nav class="site-nav">
+      <a href="#cat" class="is-current">Android</a>
+      <a href="#cat">工程</a>
+      <a href="#cat">随笔</a>
+      <a href="#cat">读书</a>
+    </nav>
+    <div class="head-tools">
+      <div class="head-icons">
+        <a class="head-icon" href="#" title="GitHub" aria-label="GitHub"><i class="czs-github" aria-hidden="true"></i></a>
+        <a class="head-icon" href="#" title="RSS" aria-label="RSS"><i class="czs-rss" aria-hidden="true"></i></a>
+        <a class="head-icon" href="#" title="邮件" aria-label="邮件"><i class="czs-paper-plane" aria-hidden="true"></i></a>
+      </div>
+      <div class="swatches">
+        <button class="swatch-pick" id="palettePick" type="button" aria-expanded="false" aria-label="配色与明暗" title="配色与明暗" data-default="celadon">
+          <span class="sp-a"></span><span class="sp-b"></span>
+        </button>
+        <div class="swatch-panel" id="palettePanel">
+          <button class="swatch" type="button" data-palette-set="celadon" aria-pressed="true"><span class="swatch-dot" style="background:linear-gradient(135deg,#1f7a74,#3fa8a0)"></span><span class="swatch-name">青瓷</span></button>
+          <button class="swatch" type="button" data-palette-set="cinnabar"><span class="swatch-dot" style="background:linear-gradient(135deg,#b23a2e,#c9703a)"></span><span class="swatch-name">朱砂</span></button>
+          <button class="swatch" type="button" data-palette-set="pine"><span class="swatch-dot" style="background:linear-gradient(135deg,#2f6b4f,#58a05f)"></span><span class="swatch-name">松烟</span></button>
+          <button class="swatch" type="button" data-palette-set="indigo"><span class="swatch-dot" style="background:linear-gradient(135deg,#2f5b9c,#3f9bb5)"></span><span class="swatch-name">靛蓝</span></button>
+          <button class="swatch" type="button" data-palette-set="plum"><span class="swatch-dot" style="background:linear-gradient(135deg,#8b3a62,#c2596f)"></span><span class="swatch-name">绛紫</span></button>
+          <button class="swatch" type="button" data-palette-set="amber"><span class="swatch-dot" style="background:linear-gradient(135deg,#9d6a1e,#c9922f)"></span><span class="swatch-name">赭石</span></button>
+          <div class="swatch-sep" aria-hidden="true"></div>
+          <div class="mode-row">
+            <button class="mode-btn" type="button" data-mode-set="light" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><span>浅色</span></button>
+            <button class="mode-btn" type="button" data-mode-set="dark" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1Z"/></svg><span>深色</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 首页：全站目录 ============ -->
+<section id="view-home">
+  <div class="wrap">
+    <header class="idx-head">
+      <h1 class="idx-title">写点<em>东西</em>，慢慢写。</h1>
+      <p class="idx-meta"><span class="idx-meta-indent" aria-hidden="true"></span><b>36</b> 篇 &nbsp;·&nbsp; 最近更新 <b>2026.10.12</b></p>
+    </header>
+
+    <ul class="archive-list">
+      <li><a class="archive-item" href="#post"><span class="day">2026.10.12</span><span class="ttl">AccessibilityService 悬浮窗的 Z 序，在六台机器上跑了一遍</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.10.08</span><span class="ttl">用 Typecho 而不是 WordPress 的第七个理由</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.09.29</span><span class="ttl">Room 迁移里那些不报错但会丢数据的地方</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.09.17</span><span class="ttl">骑行风向数据的一点可视化尝试</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.08.30</span><span class="ttl">关于「工具应该安静」这件事</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.08.11</span><span class="ttl">把博客从动态改成静态，我又改回来了</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.07.02</span><span class="ttl">Kotlin 扩展函数在无障碍服务里的几种写法</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2025.12.03</span><span class="ttl">一次失败的重构，和它教会我的事</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2025.10.19</span><span class="ttl">为什么我不再给每个项目配 CI</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2025.06.14</span><span class="ttl">读《设计中的设计》的一点笔记</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2025.03.08</span><span class="ttl">在火车上写完的一个小工具</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2024.11.27</span><span class="ttl">从零写一个 AccessibilityService 有多难</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2024.09.05</span><span class="ttl">关于字体的三个偏见</span></a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 文章页 ============ -->
+<section id="view-post" hidden>
+  <div class="wrap">
+    <article class="post">
+      <header class="post-head">
+        <div class="post-meta">
+          <time datetime="2026-10-12">2026.10.12</time>
+          <span class="dot"></span>
+          <span class="post-cat"><a href="#cat">Android</a></span>
+          <span class="dot"></span>
+          <span class="post-wordcount">约 1,860 字</span>
+        </div>
+        <h1 class="post-title">AccessibilityService 悬浮窗的 Z 序，在六台机器上跑了一遍</h1>
+      </header>
+
+      <div class="post-content content">
+        <p>同一个 <code>WindowManager.LayoutParams</code>，同一个 <code>TYPE_APPLICATION_OVERLAY</code>，在一台机器上盖住了输入法，在另一台机器上被输入法盖住。这件事没有一个官方的答案，只能自己试。</p>
+
+        <h2>问题从哪来</h2>
+        <p>做群发助手的时候，需要在聊天界面上显示一个悬浮面板，告诉用户进度到哪了、还剩多久。面板必须压在所有东西上面，否则用户一滑就被挡住，然后以为卡死了。</p>
+        <p>Android 8.0 之后，<code>TYPE_SYSTEM_OVERLAY</code> 被废弃，官方推荐 <code>TYPE_APPLICATION_OVERLAY</code>。文档写得很清楚：它会显示在应用程序窗口之上，但会位于系统关键窗口（状态栏、输入法、锁屏）之下。</p>
+        <p>问题就在最后那句「之下」。</p>
+
+        <blockquote>
+          <p>系统的定义是「应用窗口」，但每个厂商对「应用窗口」的理解都不一样。有的 ROM 把输入法算作系统窗口，有的算作应用窗口。</p>
+        </blockquote>
+
+        <h2>TYPE_APPLICATION_OVERLAY 不是银弹</h2>
+        <p>我拿了六台机器做对照：Pixel 6（Android 14 原生）、小米 13（HyperOS）、一加 11（ColorOS）、vivo X90（OriginOS）、三星 S23（One UI），还有一台老的红米 Note 8（MIUI 11）。</p>
+        <p>测试方法很简单：在聊天界面弹一个悬浮窗，然后点输入框，看悬浮窗还在不在最上面。</p>
+
+        <figure>
+          <svg viewBox="0 0 640 260" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="640" height="260" fill="none"/>
+            <g font-family="-apple-system, 'PingFang SC', sans-serif" font-size="12" fill="#918a7e">
+              <text x="20" y="22">窗口层级（从上到下）</text>
+              <text x="360" y="22">输入法弹出后，悬浮窗是否仍可见</text>
+            </g>
+            <g stroke="#e2ded3" stroke-width="1">
+              <line x1="20" y1="40" x2="300" y2="40"/>
+              <line x1="20" y1="86" x2="300" y2="86"/>
+              <line x1="20" y1="132" x2="300" y2="132"/>
+              <line x1="20" y1="178" x2="300" y2="178"/>
+              <line x1="20" y1="224" x2="300" y2="224"/>
+            </g>
+            <g font-family="-apple-system, 'PingFang SC', sans-serif" font-size="12.5" fill="#57524a">
+              <text x="32" y="66">系统关键窗口（状态栏 / 锁屏）</text>
+              <text x="32" y="112">输入法窗口</text>
+              <text x="32" y="158">TYPE_APPLICATION_OVERLAY</text>
+              <text x="32" y="204">应用主窗口</text>
+              <text x="32" y="250">TYPE_SYSTEM_ALERT（已废弃）</text>
+            </g>
+            <g font-family="-apple-system, 'PingFang SC', sans-serif" font-size="12" fill="#b23a2e">
+              <text x="360" y="66">— 不可覆盖</text>
+              <text x="360" y="112">4 台在下方 / 2 台在上方</text>
+              <text x="360" y="158">—</text>
+              <text x="360" y="204">—</text>
+              <text x="360" y="250">6 台都在最上层，但都要求额外权限</text>
+            </g>
+          </svg>
+          <figcaption>图 1：六台设备上实际观察到的窗口层级</figcaption>
+        </figure>
+
+        <h3>厂商 ROM 的差异</h3>
+        <p>小米和 vivo 把输入法算进了「系统关键窗口」，所以悬浮窗会被压下去。三星和一加则相反，悬浮窗会盖在输入法上，导致用户看不见自己在打字。</p>
+        <p>两种都很难受，只是难受的方式不同。前者让用户以为面板消失了，后者让用户没法输入。</p>
+
+        <h2>一个可用的折中</h2>
+        <p>最后的做法是：不跟输入法抢层级，而是监听输入法的可见性，在它弹出的时候主动把面板移走。</p>
+
+        <pre><code class="language-kotlin">private fun watchImeVisibility(window: View) {
+    val params = window.layoutParams as WindowManager.LayoutParams
+    ViewCompat.setOnApplyWindowInsetsListener(window) { _, insets -&gt;
+        val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+        val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+        if (imeVisible) {
+            // 把面板挪到输入法上方，留 12dp 呼吸空间
+            params.y = -imeHeight - dp(12)
+            windowManager.updateViewLayout(window, params)
+        } else {
+            params.y = 0
+            windowManager.updateViewLayout(window, params)
+        }
+        insets
+    }
+}</code></pre>
+
+        <p>这段代码在五台机器上表现一致，只有 MIUI 11 那台老红米还有问题——它的 <code>imeHeight</code> 偶尔返回 0。最后给了一个兜底：拿不到高度就按屏幕高度的 40% 估算。</p>
+
+        <h2>还没解决的部分</h2>
+        <p>分屏模式下，输入法高度和窗口位置的关系又变了，目前只能做到「不遮挡输入框」，做不到「面板始终在视野里」。这部分我先记着，等有精力再折腾。</p>
+        <p>记录这些不是为了给谁一个答案，是因为我在这上面花了大概两天，希望下一个人少花一天。</p>
+      </div>
+
+      <nav class="post-nav">
+        <div class="nav-prev">
+          <span class="dir">上一篇</span>
+          <span class="label"><a href="#post">用 Typecho 而不是 WordPress 的第七个理由</a></span>
+        </div>
+        <div class="nav-next">
+          <span class="dir">下一篇</span>
+          <span class="label"><a href="#post">Room 迁移里那些不报错但会丢数据的地方</a></span>
+        </div>
+      </nav>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 分类页 ============ -->
+<section id="view-cat" hidden>
+  <div class="wrap">
+    <header class="idx-head">
+      <h1 class="idx-title"><span class="section-tag">分类</span>Android</h1>
+      <p class="idx-meta"><span class="idx-meta-indent" aria-hidden="true"></span>共 <b>12</b> 篇</p>
+    </header>
+
+    <ul class="archive-list">
+      <li><a class="archive-item" href="#post"><span class="day">2026.10.12</span><span class="ttl">AccessibilityService 悬浮窗的 Z 序，在六台机器上跑了一遍</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.09.29</span><span class="ttl">Room 迁移里那些不报错但会丢数据的地方</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.07.02</span><span class="ttl">Kotlin 扩展函数在无障碍服务里的几种写法</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.05.18</span><span class="ttl">AccessibilityService 被系统杀掉之后</span></a></li>
+      <li><a class="archive-item" href="#post"><span class="day">2026.02.09</span><span class="ttl">通知栏监听在 Android 14 上的权限变化</span></a></li>
+    </ul>
+
+    <ol class="page-navigator">
+      <li class="current"><span>1</span></li>
+      <li><a href="#cat">2</a></li>
+      <li><a href="#cat">3</a></li>
+      <li class="next"><a href="#cat">下一页</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 404 ============ -->
+<section id="view-404" hidden>
+  <div class="wrap">
+    <div class="err-wrap">
+      <p class="err-code">4<span>0</span>4</p>
+      <p class="err-text">这一页不在了。可能是链接写错，也可能它从来没存在过。<br>好在这里还有别的东西可看。</p>
+      <a class="err-back" href="#home">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11.5 18.5 5 12l6.5-6.5"/></svg>
+        回到首页
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="wrap foot-inner">
+    <div class="foot-tip">&copy; 2026 <a href="#home">墨 Ink</a></div>
+    <div class="foot-links">
+      <a href="#home">京ICP备00000000号</a>
+    </div>
+  </div>
+</footer>
+</div><!-- /.sheet -->
+
+<button class="to-top" id="toTop" type="button" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></svg>
+</button>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="图片预览">
+  <button class="lb-close" id="lbClose" type="button" aria-label="关闭">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <img id="lbImage" alt="">
+  <p class="lb-hint">ESC / 点击空白处关闭</p>
+</div>
+
+<div class="preview-bar">
+  <button type="button" data-view="home" class="on">首页</button>
+  <button type="button" data-view="post">文章页</button>
+  <button type="button" data-view="cat">分类页</button>
+  <button type="button" data-view="404">404</button>
+</div>
+
+<script src="ink/assets/js/ink-highlight.js"></script>
+<script src="ink/assets/js/ink.js"></script>
+<script>
+(function () {
+  var views = ['home', 'post', 'cat', '404'];
+
+  function show(name) {
+    views.forEach(function (v) {
+      var el = document.getElementById('view-' + v);
+      if (el) { el.hidden = v !== name; }
+    });
+
+    document.body.classList.toggle('is-single', name === 'post');
+
+    document.querySelectorAll('.preview-bar button').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-view') === name);
+    });
+
+    window.scrollTo(0, 0);
+    window.dispatchEvent(new Event('scroll'));
+  }
+
+  document.querySelectorAll('.preview-bar button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      show(b.getAttribute('data-view'));
+    });
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href').slice(1);
+      if (views.indexOf(id) > -1) {
+        e.preventDefault();
+        show(id);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

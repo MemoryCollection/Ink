@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="墨 Ink">
+  <title>墨 Ink</title>
+  <defs>
+    <linearGradient id="inkGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f7a74"/>
+      <stop offset="1" stop-color="#3fa8a0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 圆章：一圈细环，环里是一枚墨滴与简笔「墨」 -->
+  <circle cx="100" cy="100" r="74" fill="none" stroke="url(#inkGrad)" stroke-width="7"/>
+
+  <!-- 墨滴：上尖下圆，落笔将尽的那一点 -->
+  <path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="url(#inkGrad)"/>
+
+  <!-- 墨：横平竖直的几何骨架 -->
+  <g fill="none" stroke="url(#inkGrad)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M100 68h36"/>
+    <path d="M118 68v66"/>
+    <path d="M100 98h36"/>
+    <path d="M100 132h36"/>
+  </g>
+
+  <circle cx="62" cy="150" r="6.5" fill="url(#inkGrad)"/>
+</svg>

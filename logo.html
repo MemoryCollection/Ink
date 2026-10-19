@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>墨 Ink — Logo 方案</title>
+<style>
+  :root {
+    --paper: #f7faf9;
+    --ink:   #16211f;
+    --ink-2: #4a5a57;
+    --ink-3: #83938f;
+    --rule:  #d9e4e2;
+    --accent: #1f7a74;
+    --accent-2: #3fa8a0;
+    --logo-a: #1f7a74;
+    --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, Menlo, monospace;
+  }
+  [data-theme="dark"] {
+    --paper: #101716; --ink: #e2ecea; --ink-2: #9fb0ad; --ink-3: #6b7d79; --rule: #24312f;
+    --accent: #4fb3ab; --accent-2: #86d4c9; --logo-a: #4fb3ab;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 48px 24px 80px;
+    background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { width: min(940px, 100%); margin: 0 auto; }
+  h1 { margin: 0 0 6px; font-family: var(--serif); font-size: 1.6rem; font-weight: 600; }
+  .sub { margin: 0 0 40px; color: var(--ink-3); font-size: 13px; letter-spacing: .04em; }
+  h2 { margin: 52px 0 18px; font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--ink-2); }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .card {
+    border: 1px solid var(--rule); border-radius: 14px; padding: 30px 18px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    background: #fff;
+  }
+  [data-theme="dark"] .card { background: #17211f; }
+  .card.dark { background: #101716; border-color: #24312f; }
+  .card .name { font-family: var(--serif); font-size: 13.5px; color: var(--ink-2); }
+  .card .name b { font-weight: 600; color: var(--ink); }
+  .card .desc { font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.7; margin: 0; }
+  .row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .band {
+    border: 1px solid var(--rule); border-radius: 14px; padding: 22px 26px;
+    display: flex; align-items: center; gap: 26px; flex-wrap: wrap;
+    background: #fff;
+  }
+  [data-theme="dark"] .band { background: #17211f; }
+  .lockup { display: flex; align-items: center; gap: 12px; }
+  .lockup .word {
+    font-family: var(--serif); font-size: 22px; font-weight: 600; letter-spacing: .02em;
+    color: var(--ink);
+  }
+  .lockup .word span {
+    background-image: linear-gradient(100deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .tip { font-size: 12.5px; color: var(--ink-3); line-height: 1.9; }
+  .tip code { font-family: var(--mono); font-size: 12px; background: rgba(127,127,127,.12); padding: 1px 5px; border-radius: 4px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>墨 Ink · Logo 方案</h1>
+  <p class="sub">三版同源：字形「墨」的几何化 + 一滴落墨。配色沿用主题的青瓷渐变。#1f7a74 → #3fa8a0<br><b>已选用 B 圆章 · 水滴</b>，已接入导航左上角与 favicon。</p>
+
+  <h2>三版对照</h2>
+  <div class="grid">
+    <div class="card">
+      <svg viewBox="0 0 200 200" width="120" height="120" aria-label="方案 A">
+        <defs>
+          <linearGradient id="aG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f7a74"/><stop offset="1" stop-color="#3fa8a0"/></linearGradient>
+          <clipPath id="aC"><rect x="26" y="26" width="148" height="148" rx="34"/></clipPath>
+        </defs>
+        <rect x="26" y="26" width="148" height="148" rx="34" fill="url(#aG)"/>
+        <g clip-path="url(#aC)"><circle cx="150" cy="34" r="72" fill="#fff" opacity=".10"/><circle cx="150" cy="34" r="42" fill="#fff" opacity=".08"/></g>
+        <g fill="none" stroke="#fff" stroke-width="8.5" stroke-linecap="round"><path d="M84 78h32"/><path d="M100 78v52"/><path d="M84 104h32"/><path d="M84 130h32"/></g>
+        <circle cx="139" cy="139" r="7.5" fill="#fff"/>
+      </svg>
+      <div class="name"><b>A</b> 格字 · 墨</div>
+      <p class="desc">圆角方块里一座几何化的「墨」<br>最稳，缩到 32px 仍可辨</p>
+    </div>
+
+    <div class="card">
+      <svg viewBox="0 0 200 200" width="120" height="120" aria-label="方案 B">
+        <defs>
+          <linearGradient id="bG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f7a74"/><stop offset="1" stop-color="#3fa8a0"/></linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="74" fill="none" stroke="url(#bG)" stroke-width="7"/>
+        <g fill="none" stroke="url(#bG)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="url(#bG)" stroke="none"/>
+          <path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/>
+        </g>
+        <circle cx="62" cy="150" r="6.5" fill="url(#bG)"/>
+      </svg>
+      <div class="name"><b>B</b> 圆章 · 水滴</div>
+      <p class="desc">环里一枚墨滴 + 简笔「墨」<br>更像印，适合做头像</p>
+    </div>
+
+    <div class="card">
+      <svg viewBox="0 0 200 200" width="120" height="120" aria-label="方案 C">
+        <defs>
+          <linearGradient id="cG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f7a74"/><stop offset="1" stop-color="#3fa8a0"/></linearGradient>
+        </defs>
+        <rect x="30" y="30" width="140" height="140" rx="8" fill="none" stroke="url(#cG)" stroke-width="6"/>
+        <path d="M74 66h52v34H74z" fill="none" stroke="url(#cG)" stroke-width="6" stroke-linejoin="round"/>
+        <path d="M88 84h24" stroke="url(#cG)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M100 100v40" stroke="url(#cG)" stroke-width="6" stroke-linecap="round"/>
+        <path d="M74 118h52" stroke="url(#cG)" stroke-width="6" stroke-linecap="round"/>
+        <path d="M74 140h52" stroke="url(#cG)" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="146" cy="146" r="0" fill="url(#cG)"/>
+        <circle cx="132" cy="146" r="6" fill="url(#cG)"/>
+      </svg>
+      <div class="name"><b>C</b> 方印 · 田字</div>
+      <p class="desc">印章方框 + 田字格骨架<br>最“纸与墨”，线条最细</p>
+    </div>
+  </div>
+
+  <h2>最终选用：B 圆章 · 水滴 —— 用在页面里</h2>
+  <div class="band">
+    <div class="lockup">
+      <svg viewBox="0 0 200 200" width="30" height="30" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="var(--logo-a)" stroke-width="7"/><path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="var(--logo-a)"/><g fill="none" stroke="var(--logo-a)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g><circle cx="62" cy="150" r="6.5" fill="var(--logo-a)"/></svg>
+      <span class="word">墨 <span>Ink</span></span>
+    </div>
+    <div class="lockup">
+      <svg viewBox="0 0 200 200" width="24" height="24" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="var(--logo-a)" stroke-width="7"/><path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="var(--logo-a)"/><g fill="none" stroke="var(--logo-a)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g><circle cx="62" cy="150" r="6.5" fill="var(--logo-a)"/></svg>
+      <span class="word" style="font-size:17px">墨 <span>Ink</span></span>
+      <span class="tip" style="margin-left:6px">导航实际尺寸 24px</span>
+    </div>
+    <div class="row">
+      <svg viewBox="0 0 200 200" width="16" height="16" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="var(--logo-a)" stroke-width="10"/><path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="var(--logo-a)"/><g fill="none" stroke="var(--logo-a)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g><circle cx="62" cy="150" r="6.5" fill="var(--logo-a)"/></svg>
+      <span class="tip">favicon 16px</span>
+    </div>
+  </div>
+
+  <h2>深色底</h2>
+  <div class="band" style="background:#101716;border-color:#24312f">
+    <div class="lockup">
+      <svg viewBox="0 0 200 200" width="34" height="34" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="var(--logo-a)" stroke-width="7"/><path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="var(--logo-a)"/><g fill="none" stroke="var(--logo-a)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g><circle cx="62" cy="150" r="6.5" fill="var(--logo-a)"/></svg>
+      <span class="word" style="color:#e2ecea">墨 <span style="background-image:linear-gradient(100deg,#4fb3ab,#86d4c9);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Ink</span></span>
+    </div>
+  </div>
+
+  <p class="tip" style="margin-top:26px">
+    矢量源：主题内 <code>ink/assets/img/mark.php</code>（内联 SVG，描边填 <code>var(--accent)</code>，跟着配色与暗色模式变）· favicon 由 header.php 按当前配色现画一份 data URI<br>
+    想换配色只改 SVG 里 <code>#1f7a74</code> 与 <code>#3fa8a0</code> 两个色值即可，其余自动跟随。<br>
+    已接到 <code>.site-name</code> 左侧（24px，悬停微微倾斜 8°），<code>&lt;head&gt;</code> 里也加了 <code>rel="icon"</code>。
+  </p>
+</div>
+<script>
+(function () {
+  var t;
+  try { t = localStorage.getItem('ink-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</body>
+</html>
