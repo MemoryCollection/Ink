@@ -13,14 +13,16 @@ $body = ink_post_body($this);
 <div class="wrap">
   <article class="post">
     <header class="post-head">
-      <div class="post-meta">
-        <time datetime="<?php $this->date('c'); ?>"><?php $this->date('Y.m.d'); ?></time>
-        <span class="dot" aria-hidden="true"></span>
-        <span class="post-cat"><?php $this->category(' / ', true); ?></span>
-        <span class="dot" aria-hidden="true"></span>
-        <span class="post-wordcount"><?php echo ink_word_count($this); ?></span>
+      <div class="post-titlerow">
+        <h1 class="post-title"><?php $this->title(); ?></h1>
+        <div class="post-meta">
+          <time datetime="<?php $this->date('c'); ?>"><?php $this->date('Y.m.d'); ?></time>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="post-cat"><?php $this->category(' / ', true); ?></span>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="post-wordcount"><?php echo ink_word_count($this); ?></span>
+        </div>
       </div>
-      <h1 class="post-title"><?php $this->title(); ?></h1>
     </header>
 
     <div class="post-content content">

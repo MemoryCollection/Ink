@@ -4,7 +4,7 @@
  *
  * @package 墨 Ink
  * @author Wu
- * @version 1.3.0
+ * @version 1.3.1
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
@@ -12,7 +12,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /** 主题版本，仅用于前台注释标记 */
-define('INK_VERSION', '1.3.0');
+define('INK_VERSION', '1.3.1');
 
 /* ---------------------------------------------------------
  * 兼容层：Typecho 1.2 用下划线类名，1.3 起命名空间类才是本体

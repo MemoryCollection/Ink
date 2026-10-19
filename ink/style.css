@@ -512,6 +512,10 @@ body {
   padding: 0;
 }
 
+/* 纸张内容与页脚之间留一段固定呼吸（页脚自带的 .wrap 不算） */
+.sheet > .wrap { padding-bottom: var(--idx-bot); }
+.site-foot .wrap { padding-bottom: 0; }
+
 .sr-only {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
@@ -789,10 +793,6 @@ body.is-single .progress { display: block; }
   border-bottom: 1px solid var(--rule);
 }
 
-/* 篇数 / 日期的左缩进：对齐到列表「日期」列的中点，
-   让标题区那一行统计数字和下面第一篇文章的日期看起来是同一根轴 */
-.idx-meta-indent { display: inline-block; width: calc(var(--day-w) / 2); }
-
 .idx-title {
   margin: 0;
   font-family: var(--serif);
@@ -820,9 +820,11 @@ body.is-single .progress { display: block; }
   -webkit-text-fill-color: transparent;
 }
 
+/* 标题区下面那行统计：与标题左对齐，字号比标题小两档，颜色压淡 */
 .idx-meta {
   margin: 10px 0 0;
   font-size: 12.5px;
+  line-height: 1.7;
   letter-spacing: .05em;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
@@ -869,7 +871,7 @@ body.is-single .progress { display: block; }
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin: 56px 0 0;
+  margin: calc(var(--row-y) * 3) 0 0;
   padding: 0;
   list-style: none;
   font-size: 13px;
@@ -898,18 +900,25 @@ body.is-single .progress { display: block; }
 /* =========================================================
    7. 文章页骨架
    ========================================================= */
-/* 文章页开头：导航底线 → 元信息 → 标题，节奏和首页标题区一致。
-   元信息刻意贴近导航（22px），越靠近标题越松（14px），
-   中间再补 26px 的呼吸，读起来是「导航 → 引子 → 标题」而不是三个等距的块 */
+/* 文章页开头：标题与元信息同一行，元信息靠右，和标题基线对齐。
+   窄屏（≤640px）折成上下两行，元信息回到标题下方 */
 .post-head {
-  padding: 22px 0 calc(var(--idx-bot) + 8px);
+  padding: var(--idx-top) 0 calc(var(--idx-bot) + 6px);
   border-bottom: 1px solid var(--rule);
 }
 
-.post-head .post-meta { margin: 0; }
+.post-titlerow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px 32px;
+  flex-wrap: wrap;
+}
 
 .post-head .post-title {
-  margin: 14px 0 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
   font-family: var(--serif);
   font-size: var(--fs-h1);
   font-weight: 600;
@@ -918,18 +927,29 @@ body.is-single .progress { display: block; }
   text-wrap: balance;
 }
 
-/* 正文 */
-.post-content {
-  padding: 30px 0 0;
+/* 同一行里靠右：不换行、不参与标题的收缩，
+   字号与颜色沿用全局 .post-meta，不改动 */
+.post-head .post-meta {
+  flex: none;
+  margin: 0 0 0 auto;
+  white-space: nowrap;
 }
+
+/* 正文：与标题区分隔线的距离固定 28px，
+   首段自身的外边距清零，避免和 padding 叠加成一大块空白 */
+.post-content {
+  padding: 28px 0 0;
+}
+.post-content > :first-child { margin-top: 0; }
+.post-content > :last-child { margin-bottom: 0; }
 
 /* 上下篇 */
 .post-nav {
   display: flex;
   gap: 40px;
-  margin: 72px 0 0;
+  margin: 64px 0 0;
   border-top: 1px solid var(--rule);
-  padding-top: 28px;
+  padding-top: 26px;
 }
 .post-nav > div {
   flex: 1 1 0;
@@ -1290,11 +1310,11 @@ body.is-single .progress { display: block; }
    11. 404
    ========================================================= */
 .err-wrap {
-  min-height: 62vh;
+  min-height: 58vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 90px 0;
+  padding: 0 0 40px;
 }
 .err-code {
   margin: 0;
@@ -1446,15 +1466,15 @@ body.is-single .progress { display: block; }
 
   .idx-title { font-size: 1.38rem; }
 
-  .post-head { padding-top: 18px; }
-  .post-content { padding-top: 26px; }
+  .post-head { padding-top: 16px; }
+  .post-content { padding-top: 24px; }
 
   .content { font-size: calc(var(--fs-body) - .5px); line-height: var(--lh-body); }
   .content pre { padding: 16px 16px; font-size: 12.6px; margin: 1.6em -6px; }
   .content blockquote { margin: 1.8em 0; }
   .copy-btn { opacity: 1; }
 
-  .post-nav { flex-direction: column; gap: 18px; }
+  .post-nav { flex-direction: column; gap: 18px; margin-top: 52px; padding-top: 22px; }
   .post-nav .nav-next { text-align: left; }
 }
 
@@ -1470,6 +1490,16 @@ body.is-single .progress { display: block; }
   .head-inner { gap: 10px; }
   .site-name { font-size: 1.12rem; }
   .site-nav a { font-size: 13px; }
+
+  /* 文章标题行：窄屏折成两行，元信息回到标题下方并左对齐 */
+  .post-titlerow {
+    display: block;
+  }
+  .post-head .post-meta {
+    margin: 10px 0 0;
+    white-space: normal;
+  }
+  .post-head .post-meta::before { display: none; }
 
   .head-icons { gap: 0; margin-right: 2px; }
   .head-icon { width: 26px; height: 26px; }

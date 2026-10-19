@@ -15,7 +15,7 @@ $recent = $this->widget('Widget_Contents_Post_Recent', 'pageSize=10000');
   <header class="idx-head">
     <h1 class="idx-title"><?php echo ink_hero_title($this->options); ?></h1>
     <p class="idx-meta">
-      <span class="idx-meta-indent" aria-hidden="true"></span><?php if ($stats['count'] > 0): ?>
+      <?php if ($stats['count'] > 0): ?>
         <b><?php echo $stats['count']; ?></b> 篇 &nbsp;·&nbsp; 最近更新 <b><?php echo date('Y.m.d', $stats['latest']); ?></b>
       <?php else: ?>
         还没有文章
