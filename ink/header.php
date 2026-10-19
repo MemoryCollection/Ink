@@ -127,7 +127,7 @@ if ($inkAccent !== ''):
   <div class="wrap head-inner">
     <a class="site-name" href="<?php $this->options->siteUrl(); ?>">
       <?php $this->need('assets/img/mark.php'); ?>
-      <span class="site-word"><?php $this->options->title(); ?></span>
+      <span class="site-word"><?php echo ink_site_word(); ?></span>
     </a>
 
     <nav class="site-nav" aria-label="主导航">

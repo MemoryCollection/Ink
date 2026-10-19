@@ -12,7 +12,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /** 主题版本，仅用于前台注释标记 */
-define('INK_VERSION', '1.4.1');
+define('INK_VERSION', '1.4.2');
 
 /* ---------------------------------------------------------
  * 兼容层：Typecho 1.2 用下划线类名，1.3 起命名空间类才是本体
@@ -96,6 +96,9 @@ function ink_setting_fields()
         array('Select', 'navCats', '1', _t('导航平铺分类'),
             _t('把全部分类铺在顶部导航里。分类多时导航可以横向滚动。'),
             array('1' => _t('显示'), '0' => _t('不显示'))),
+        array('Text', 'siteEm', '', _t('标题强调词'),
+            _t('填顶部站点标题里的某几个字，例如 Ink 或 墨，这几个字会换成配色的强调色（渐变）。'
+                . '只影响页面顶部那一行，浏览器标题、分享卡片、RSS 都不受影响。留空则整行同色。')),
 
         /* —— 字体 —— */
         array('Select', 'fontPreset', 'serif', _t('字体风格'),
@@ -159,6 +162,7 @@ function ink_setting_groups()
         array('外观', '配色、强调色、标题对齐', array(
             array('配色', array('palette', 'accentMode', 'accent')),
             array('版式', array('align', 'navCats')),
+            array('站点标题', array('siteEm')),
         )),
         array('字体', '标题与正文分别用什么字', array('fontPreset', 'fontSerif', 'fontBody')),
         array('字号与版面', '读起来舒不舒服全在这几项', array('fontSize', 'lineHeight', 'sheetWidth', 'sheetPad')),
@@ -772,6 +776,32 @@ function ink_custom_accent()
         return '';
     }
     return ink_accent();
+}
+
+/**
+ * 顶部那行站点标题
+ *
+ * 后台「标题强调词」里填的几个字会被包成 <span class="site-em">，用配色的强调色画成渐变。
+ * 之所以不让人在「站点标题」里直接写 <em>：那个值还要进 <title>、og:site_name 和 RSS，
+ * 带标签会把它们弄坏。所以标题照样输出纯文本，只在渲染这一处插一层 span。
+ */
+function ink_site_word()
+{
+    $options = Typecho_Widget::widget('Widget_Options');
+    $title = htmlspecialchars((string) $options->title, ENT_QUOTES, 'UTF-8');
+
+    $word = trim((string) ink_opt('siteEm', ''));
+    if ($word === '') {
+        return $title;
+    }
+
+    /* 标题已经转义过了，强调词也按转义后的形态去找，& " < 这类字符才对得上 */
+    $needle = htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
+    if (strpos($title, $needle) === false) {
+        return $title;
+    }
+
+    return str_replace($needle, '<span class="site-em">' . $needle . '</span>', $title);
 }
 
 /** 字体预设：返回 array(标题栈, 正文栈)，空串表示用 style.css 里的默认 */

@@ -767,6 +767,18 @@ body.is-single .progress { display: block; }
   -webkit-background-clip: text;
   background-clip: text;
 }
+/* 标题里被强调的几个字：和 .idx-title em 同一套渐变，换配色 / 明暗都跟着走 */
+.site-word .site-em {
+  font-style: normal;
+  color: var(--accent);
+  background-image: linear-gradient(100deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .site-word .site-em { background: none; -webkit-text-fill-color: currentColor; }
+}
 
 /* 圆章 logo：只做极轻的呼吸，不抢标题 */
 .site-mark {
