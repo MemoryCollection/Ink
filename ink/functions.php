@@ -12,7 +12,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /** 主题版本，仅用于前台注释标记 */
-define('INK_VERSION', '1.3.2');
+define('INK_VERSION', '1.3.3');
 
 /* ---------------------------------------------------------
  * 兼容层：Typecho 1.2 用下划线类名，1.3 起命名空间类才是本体
@@ -167,10 +167,15 @@ function ink_setting_groups()
     );
 }
 
-/** 后台设置页的样式，只在主题设置页生效 */
+/**
+ * 后台设置页的样式，只在主题设置页生效
+ *
+ * 返回字符串而不是直接 echo：Typecho 的 Form::render() 只输出 $form->html，
+ * 直接 echo 出来的内容会被表单缓冲丢掉。
+ */
 function ink_admin_style()
 {
-    echo <<<'CSS'
+    return <<<'CSS'
 <style id="ink-admin-style">
 .ink-set { --ink-ink: #1d2321; --ink-2: #59645f; --ink-3: #8d9a94; --ink-line: #e3e8e5;
   --ink-teal: #1f7a74; --ink-teal-2: #3fa8a0; --ink-bg: #f6f8f7;
@@ -287,6 +292,35 @@ function ink_admin_style()
   .ink-set .ink-row { grid-template-columns: 1fr; }
   .ink-set .ink-row .description { grid-column: 1; }
 }
+
+/* ---- 原生控件的回收样式 ----
+   真正的 <li class="typecho-option"> 在 PHP 阶段 render() 到 #ink-cfg-forms 里，
+   再由下面那段 JS 按 data-field 搬进分组。搬完 JS 会给它加 .is-busy 收起来；
+   JS 没跑（或抛错）时它就是一块正常的原生表单，不会把字段藏没。 */
+.ink-cfg-forms:not(.is-busy) {
+  margin: 0 0 12px; padding: 14px 18px;
+  border: 1px dashed var(--ink-line); border-radius: 12px; background: #fff;
+}
+.ink-cfg-forms:not(.is-busy)::before {
+  content: "原生表单（脚本未接管）";
+  display: block; margin: 0 0 8px; font-size: 11.5px; letter-spacing: .08em;
+  color: var(--ink-3);
+}
+.ink-cfg-forms.is-busy { display: none; }
+.ink-set .ink-row ul.typecho-option { margin: 0; padding: 0; list-style: none; }
+.ink-set .ink-row > li.typecho-option { margin: 0; }
+.ink-set .ink-row .typecho-option .typecho-label { display: none; }
+.ink-set .ink-row .typecho-option .description { grid-column: 2; }
+.ink-set details.ink-sec .ink-row:last-child { border-bottom: 0; }
+
+/* 提交按钮跟着我们的版心：单独一条，别被塞进某个分组里 */
+.ink-set .ink-submit-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin: 18px 0 0; padding: 0;
+}
+.ink-set .ink-submit-row .typecho-option { margin: 0; padding: 0; list-style: none; }
+.ink-set .ink-submit-row .btn { min-width: 108px; }
+.ink-set .ink-submit-note { font-size: 12px; color: var(--ink-3); }
 </style>
 CSS;
 }
@@ -294,25 +328,27 @@ CSS;
 /**
  * 取字段的输入框 HTML
  *
- * 元素能用就让 Typecho 自己渲染，元素造不出来时退回手写的纯表单控件，
- * 这样任何版本的后台都不会出现一整行空白。
+ * Typecho 的表单元素不是「调用方法输出」，而是把控件放在公开属性 $element->input
+ * （一个 Layout 对象）里，由 Form::render() 统一 render()。所以这里要渲染的是
+ * 属性，不是方法 —— 直接调 $element->input() 会报「input 不是可调用的」。
+ *
+ * 元素造不出来时退回手写的纯表单控件，任何版本的后台都不会出现一整行空白。
  */
 function ink_field_input($element, $field)
 {
-    if ($element !== null && method_exists($element, 'input')) {
+    if ($element !== null && isset($element->input) && is_object($element->input)
+        && method_exists($element->input, 'render')) {
         ob_start();
         try {
-            $element->input();
+            $element->input->render();
+            $raw = trim(ob_get_clean());
+            if ($raw !== '') {
+                return $raw;
+            }
         } catch (Exception $e) {
             ob_end_clean();
-            return ink_fallback_input($field);
         } catch (Throwable $e) {
             ob_end_clean();
-            return ink_fallback_input($field);
-        }
-        $raw = trim(ob_get_clean());
-        if ($raw !== '') {
-            return $raw;
         }
     }
 
@@ -320,29 +356,134 @@ function ink_field_input($element, $field)
 }
 
 /**
- * 把一条字段定义塞进自己的行样式里
+ * 把一条已渲染好的字段塞进自己的行样式里
  *
- * 说明与标题都取自字段定义（就是 addInput 时传进去的那份），
- * 不再向元素要 description —— 有些版本的元素在取值时会连带要选项，
- * 拿不到就抛错，反而把整页设置弄白。
+ * $native 为真表示控件是 Typecho 原生的（页面上那枚 <li class="typecho-option">），
+ * JS 会把它整个搬进这一行的 .ink-input；不再由 PHP 内联一份，避免出现重复的 name= 控件。
+ * 但 .ink-input 这个落点无论哪条路都要留 —— JS 找不到它就搬不进来。
+ *
+ * @param array  $cell   array('input' => 控件 HTML, 'label' => 已转义标题, 'desc' => 说明)
+ * @param string $name   字段名
+ * @param bool   $native 走原生控件回收
  */
-function ink_field_row($field)
+function ink_field_row($cell, $name, $native = false)
 {
-    $input = '';
-    $name = $field[1];
+    $input = (!$native && $cell['input'] !== '')
+        ? $cell['input']
+        : '';
+    $desc = $cell['desc'] !== '' ? '<p class="description">' . $cell['desc'] . '</p>' : '';
 
-    $raw = ink_field_input(ink_make_element($field), $field);
-    if ($raw !== '') {
-        $input = '<div class="ink-input">' . $raw . '</div>';
+    return '<div class="ink-row" data-field="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '">'
+        . '<label>' . $cell['label'] . '</label>'
+        . '<div class="ink-input">' . $input . '</div>'
+        . $desc . '</div>';
+}
+
+/**
+ * 把原生控件搬进分组的小脚本
+ *
+ * Typecho 输出的表单结构与我们的排版不一样，靠 JS 在浏览器里重排一次：
+ * 每个 <li typecho-option> 里 <input|select|textarea name="x"> 的 x 就是字段名，
+ * 按 data-field 找对应行，把控件挪进去。
+ */
+function ink_admin_script()
+{
+    return <<<'JS'
+<script>
+(function () {
+  var root = document.getElementById('ink-set-root');
+  var form = root && root.closest ? root.closest('form') : document.getElementById('theme');
+  if (!root || !form) return;
+
+  var rows = root.querySelectorAll('.ink-row[data-field]');
+  var submitBox = null;
+
+  /* 原生控件都 render() 进了这个容器，从这里取 */
+  var pool = document.getElementById('ink-cfg-forms') || form;
+
+  /*
+   * Typecho 每个字段输出的是：
+   *   <ul class="typecho-option" id="typecho-option-item-NAME-N">
+   *     <li><label class="typecho-label">…</label><input name="NAME" …><p class="description">…</p></li>
+   *   </ul>
+   * 把整个 <ul> 搬走最省事，行里的说明我们自己另写一份更短的，
+   * 所以搬进来之后把原生 .typecho-label 和 .description 收起来（样式里已隐藏）。
+   */
+  var natives = {};
+  var lists = pool.querySelectorAll('ul.typecho-option');
+
+  for (var i = 0; i < lists.length; i++) {
+    var ul = lists[i];
+    var field = ul.querySelector('[name]');
+    /* 没有 name 的是「保存设置」按钮所在的那一条 */
+    if (!field) { if (!submitBox) submitBox = ul; continue; }
+    if (!natives[field.name]) natives[field.name] = ul;
+  }
+
+  /* 把控件塞进对应的行；找不到行的（比如主题以后加了新字段）挪到末尾，不丢 */
+  for (var k = 0; k < rows.length; k++) {
+    var row = rows[k];
+    var name = row.getAttribute('data-field');
+    if (!name || !natives[name]) continue;
+    var holder = row.querySelector('.ink-input');
+    if (holder) {
+      var box = natives[name];
+      /* 行里已经有我们写的标题和说明，原生那份摘掉，别重复一遍 */
+      var strip = box.querySelectorAll('.typecho-label, .description');
+      for (var s = 0; s < strip.length; s++) {
+        if (strip[s].parentNode) strip[s].parentNode.removeChild(strip[s]);
+      }
+      holder.appendChild(box);
+      natives[name] = null;
     }
+  }
 
-    $label = htmlspecialchars($field[3], ENT_QUOTES, 'UTF-8');
-    $desc  = isset($field[4]) ? (string) $field[4] : '';
-    $descHtml = $desc !== '' ? '<p class="description">' . $desc . '</p>' : '';
+  /* 剩下没认领的原生控件，统一收在第一组里，保证不会丢字段 */
+  var orphan = [];
+  for (var key in natives) {
+    if (natives[key]) orphan.push(natives[key]);
+  }
+  if (orphan.length) {
+    var sec = root.querySelector('details.ink-sec');
+    var body = sec ? sec.querySelector('.ink-body') : root.querySelector('.ink-set');
+    if (body) {
+      var box = document.createElement('div');
+      box.className = 'ink-row';
+      box.innerHTML = '<label>其它</label><div class="ink-input"></div>';
+      var inner = box.querySelector('.ink-input');
+      for (var j = 0; j < orphan.length; j++) inner.appendChild(orphan[j]);
+      body.appendChild(box);
+    }
+  }
 
-    echo '<div class="ink-row" data-field="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '">'
-        . '<label>' . $label . '</label>'
-        . $input . $descHtml . '</div>';
+  /* 提交按钮单独一条，跟在设置卡下面 */
+  if (submitBox) {
+    var bar = document.createElement('div');
+    bar.className = 'ink-submit-row';
+    var note = document.createElement('span');
+    note.className = 'ink-submit-note';
+    note.textContent = '保存后前台立即生效。';
+    bar.appendChild(submitBox);
+    bar.appendChild(note);
+    var set = root.querySelector('.ink-set');
+    if (set) set.appendChild(bar);
+  } else {
+    /* 万一原生按钮没找到，别把人卡住：给一个提交本表单的按钮 */
+    var set2 = root.querySelector('.ink-set');
+    if (set2) {
+      var bar2 = document.createElement('div');
+      bar2.className = 'ink-submit-row';
+      bar2.innerHTML = '<button type="submit" class="btn primary">保存设置</button>'
+        + '<span class="ink-submit-note">保存后前台立即生效。</span>';
+      set2.appendChild(bar2);
+    }
+  }
+
+  /* 搬完了才收起原生容器；上面任何一步抛错，它就保持展开，字段依然可改 */
+  if (pool.id === 'ink-cfg-forms') pool.className = 'ink-cfg-forms is-busy';
+})();
+</script>
+JS;
 }
 
 /**
@@ -350,17 +491,23 @@ function ink_field_row($field)
  *
  * 正常环境走不到这里；走到说明当前 Typecho 版本找不到表单元素类，
  * 与其整页空白不如给一个纯文本输入框。
+ *
+ * 注意取的是「已保存的值」而不是默认值：默认值只在第一次启用时写入，
+ * 之后再改默认值不应该覆盖用户的设置。
  */
 function ink_fallback_input($field)
 {
     $name = $field[1];
-    $value = htmlspecialchars((string) ink_opt($name, $field[2]), ENT_QUOTES, 'UTF-8');
+    $options = Typecho_Widget::widget('Widget_Options');
+    $saved = $options ? $options->{$name} : null;
+
+    $current = ($saved === null || $saved === false) ? $field[2] : $saved;
+    $value = htmlspecialchars((string) $current, ENT_QUOTES, 'UTF-8');
 
     if ($field[0] === 'Select' && isset($field[5])) {
         $html = '<select name="' . $name . '">';
-        $now = (string) ink_opt($name, $field[2]);
         foreach ($field[5] as $k => $v) {
-            $sel = ((string) $k === $now) ? ' selected' : '';
+            $sel = ((string) $k === (string) $current) ? ' selected' : '';
             $html .= '<option value="' . htmlspecialchars((string) $k, ENT_QUOTES, 'UTF-8') . '"' . $sel . '>'
                 . htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8') . '</option>';
         }
@@ -375,16 +522,19 @@ function ink_fallback_input($field)
 }
 
 /**
- * 直接把整页设置画成自己的样式
+ * 把整页设置画成自己的样式
  *
- * 返回值不影响 Typecho 自己那套表单（$form 里已经 addInput 过，保存逻辑照旧），
- * 这里只是把同一批字段排得更好看、能折叠。
+ * 入口是 admin/options-theme.php 里的 `Config::alloc()->config()->render()`。
+ * 渲染时只会输出 $form->html；addInput 进来的子元素被忽略。
+ * 所以这里不能 echo，必须把 HTML 写回 $form->html，细节见函数末尾的注释。
  */
 function themeConfigHtml($form, $options = null)
 {
     $fields = array();
+    $items = array();
     foreach (ink_setting_fields() as $field) {
         $fields[$field[1]] = $field;
+        $items[] = $field[1];
     }
 
     $align = ink_opt('align', 'left');
@@ -392,12 +542,70 @@ function themeConfigHtml($form, $options = null)
     $palList = ink_palettes();
     $palNow = isset($palList[$paletteNow]) ? $palList[$paletteNow] : reset($palList);
 
-    ink_admin_style();
+    /* 先把每个字段的控件与说明都跑一遍，按 addInput 的顺序攒成数组 */
+    $cells = array();
+    foreach ($items as $name) {
+        $field = $fields[$name];
+        $element = ink_make_element($field);
+        $cells[$name] = array(
+            'element' => $element,
+            'input'   => ink_field_input($element, $field),
+            'label'   => htmlspecialchars($field[3], ENT_QUOTES, 'UTF-8'),
+            'desc'    => isset($field[4]) ? (string) $field[4] : '',
+        );
+    }
 
-    echo '<div class="ink-set">';
+    /* 分组排版：$native 为真时控件由 Typecho 原生输出、JS 搬进行里，
+       为假时（元素造不出来）才由 PHP 内联一份兜底控件 */
+    $native = is_object($form) && method_exists($form, 'html');
+    $body = '';
+    $open = true;
 
-    /* 顶部说明 */
-    echo '<div class="ink-hero">'
+    foreach (ink_setting_groups() as $group) {
+        list($title, $sub, $keys) = $group;
+
+        $rows = '';
+
+        if ($keys === 'icon') {
+            $rows .= '<div class="ink-tip">图标名取自 <b>草莓图标库</b>，例如 <code>github</code>、'
+                . '<code>rss</code>、<code>paper-plane</code>、<code>search-l</code>。'
+                . '链接留空这一项就不显示；只填链接、图标名留空时会按网址自动猜。</div>';
+
+            for ($i = 1; $i <= 5; $i++) {
+                $rows .= '<div class="ink-sub-line"><span class="ink-sub">图标 ' . $i . '</span>'
+                    . '<span class="ink-sub-s">' . (ink_opt('iconUrl' . $i, '') !== '' ? '已启用' : '未启用')
+                    . '</span></div>';
+                foreach (array('icon' . $i, 'iconUrl' . $i, 'iconLabel' . $i, 'iconBlank' . $i) as $name) {
+                    if (isset($cells[$name])) {
+                        $rows .= ink_field_row($cells[$name], $name, $native);
+                    }
+                }
+            }
+        } else {
+            foreach ($keys as $key) {
+                if (is_array($key)) {
+                    $rows .= '<div class="ink-sub-line"><span class="ink-sub">' . $key[0] . '</span></div>';
+                    foreach ($key[1] as $name) {
+                        if (isset($cells[$name])) {
+                            $rows .= ink_field_row($cells[$name], $name, $native);
+                        }
+                    }
+                } elseif (isset($cells[$key])) {
+                    $rows .= ink_field_row($cells[$key], $key, $native);
+                }
+            }
+        }
+
+        $body .= '<details class="ink-sec"' . ($open ? ' open' : '') . '>'
+            . '<summary><span class="ink-sec-t">' . $title . '</span>'
+            . '<span class="ink-sec-d">' . $sub . '</span></summary>'
+            . '<div class="ink-body">' . $rows . '</div></details>';
+        $open = false;
+    }
+
+    /* 顶部：当前外观摘要 */
+    $lhNow = trim((string) ink_opt('lineHeight', ''));
+    $hero = '<div class="ink-hero">'
         . '<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="#1f7a74" stroke-width="8"/>'
         . '<path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="#1f7a74"/>'
         . '<g fill="none" stroke="#1f7a74" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">'
@@ -408,14 +616,12 @@ function themeConfigHtml($form, $options = null)
         . '<span class="ink-ver">v' . INK_VERSION . '</span>'
         . '</div>';
 
-    /* 当前外观：色卡 + 字体现状，改之前先知道自己站在哪 */
-    $lhNow = trim((string) ink_opt('lineHeight', ''));
-    echo '<div class="ink-now">'
+    $now = '<div class="ink-now">'
         . '<div class="ink-now-row"><span class="ink-now-k">配色</span>'
         . '<i class="ink-now-dot" style="background:linear-gradient(135deg,' . $palNow[1] . ',' . $palNow[2] . ')"></i>'
         . '<b>' . htmlspecialchars($palNow[0], ENT_QUOTES, 'UTF-8') . '</b>'
         . '<span class="ink-now-x">'
-        . ($align === 'left' ? '左对齐' : ($align === 'right' ? '标题靠右' : '标题靠右 + 短线'))
+        . ($align === 'left' ? '标题左对齐' : ($align === 'right' ? '标题靠右' : '标题靠右 + 短线'))
         . '</span></div>'
         . '<div class="ink-now-row"><span class="ink-now-k">正文</span>'
         . '<span class="ink-now-x">' . (ink_px_opt('fontSize', 13, 24) ?: 17) . 'px / 行高 '
@@ -425,58 +631,64 @@ function themeConfigHtml($form, $options = null)
         . '</div>'
         . '</div>';
 
-    $open = true;
-
-    foreach (ink_setting_groups() as $group) {
-        list($title, $sub, $keys) = $group;
-
-        echo '<details class="ink-sec"' . ($open ? ' open' : '') . '>'
-            . '<summary><span class="ink-sec-t">' . $title . '</span>'
-            . '<span class="ink-sec-d">' . $sub . '</span></summary>'
-            . '<div class="ink-body">';
-
-        $open = false;
-
-        if ($keys === 'icon') {
-            echo '<div class="ink-tip">图标名取自 <b>草莓图标库</b>，例如 <code>github</code>、'
-                . '<code>rss</code>、<code>paper-plane</code>、<code>search-l</code>。'
-                . '链接留空这一项就不显示；只填链接、图标名留空时会按网址自动猜。</div>';
-
-            for ($i = 1; $i <= 5; $i++) {
-                echo '<div class="ink-sub-line"><span class="ink-sub">图标 ' . $i . '</span>'
-                    . '<span class="ink-sub-s">' . (ink_opt('iconUrl' . $i, '') !== '' ? '已启用' : '未启用') . '</span></div>';
-
-                foreach (array('icon' . $i, 'iconUrl' . $i, 'iconLabel' . $i, 'iconBlank' . $i) as $name) {
-                    if (isset($fields[$name])) {
-                        ink_field_row($fields[$name]);
-                    }
-                }
-            }
-        } else {
-            foreach ($keys as $key) {
-                if (is_array($key)) {
-                    echo '<div class="ink-sub-line"><span class="ink-sub">' . $key[0] . '</span></div>';
-                    foreach ($key[1] as $name) {
-                        if (isset($fields[$name])) {
-                            ink_field_row($fields[$name]);
-                        }
-                    }
-                    continue;
-                }
-                if (isset($fields[$key])) {
-                    ink_field_row($fields[$key]);
-                }
-            }
-        }
-
-        echo '</div></details>';
-    }
-
-    echo '<div class="ink-tip">想改字体文件、行间距这些更细的东西，'
+    $foot = '<div class="ink-tip">想改字体文件、行间距这些更细的东西，'
         . '可以直接改 <b>style.css</b> 顶部的变量层，那里注释写得很清楚。'
         . '前台预览：主题目录下的 <b>preview.html</b>。</div>';
 
-    echo '</div>';
+    /*
+     * 注意 Typecho 的实际渲染方式（1.2 / 1.3 一致）：
+     *
+     *   admin/options-theme.php  →  Config::alloc()->config()->render()
+     *   Layout::html() 一旦被赋过值，render() 就只 echo 这段 html，
+     *   addInput 进来的子元素（每个是一个 <li class="typecho-option">）全部不再输出。
+     *
+     * 所以「画好看的设置页」不能光 echo 一段 HTML（会被丢掉），
+     * 必须把内容写回 $form->html，render() 才会输出。
+     *
+     * 麻烦的地方：真正的 <input name="..."> 只有在元素 render() 时才生成，
+     * PHP 阶段拿不到。所以分两步：
+     *
+     *  1. $form->html(...) 写整页自定义排版，每行留一个 .ink-input 落点；
+     *     末尾留一个隐藏的 <div id="ink-cfg-forms">。
+     *  2. 在写入 $form->html 之后、render() 之前，手动把每个元素 render()
+     *     到缓冲区里，塞进那个隐藏容器 —— 这些才是带 name（和当前值）的真控件，
+     *     JS 再按 data-field 把它们搬进对应行。不搬也不会丢，只是难看。
+     *
+     * 元素本身仍留在 $form->inputs 里，getAllRequest() 保存逻辑完全不变。
+     * JS 被禁用时，隐藏容器会被 CSS 显示出来，退化成原生一列式表单，照样能设置。
+     */
+    if (is_object($form) && method_exists($form, 'html')) {
+        $hidden = '';
+        foreach ($cells as $name => $cell) {
+            $element = $cell['element'];
+            if (!is_object($element) || !method_exists($element, 'render')) {
+                continue;
+            }
+            ob_start();
+            try {
+                $element->render();
+                $hidden .= trim(ob_get_clean());
+            } catch (Exception $e) {
+                ob_end_clean();
+            } catch (Throwable $e) {
+                ob_end_clean();
+            }
+        }
+
+        $html = ink_admin_style()
+            . '<div class="ink-set-wrap" id="ink-set-root"><div class="ink-set">'
+            . $hero . $now . $body . $foot
+            . '</div></div>'
+            . '<div id="ink-cfg-forms" class="ink-cfg-forms">' . $hidden . '</div>'
+            . ink_admin_script();
+
+        $form->html($html);
+        return;
+    }
+
+    /* 兜底：万一调用的不是标准 Form（某些分支版本），至少把内容打印出来 */
+    echo ink_admin_style()
+        . '<div class="ink-set">' . $hero . $now . $body . $foot . '</div>';
 }
 
 /** 按字段定义造一个 Typecho 表单元素（供自定义排版复用） */
@@ -496,7 +708,24 @@ function ink_make_element($field)
         $args = array($name, null, $field[2], $label, $desc);
     }
 
-    return ink_form_element($type, $args);
+    $element = ink_form_element($type, $args);
+
+    /*
+     * 建好元素就顺手灌上当前值。
+     *
+     * 平时 Config::config() 会替我们 value() 一遍，但我们拿元素经常是在
+     * 那个循环之后（比如自定义排版里重新造元素），不补这一下就会显示默认值。
+     */
+    if ($element !== null) {
+        // 老版本里 Widget_Options 可能还没进栈，取不到就当没存过
+        $options = Typecho_Widget::widget('Widget_Options');
+        $saved = $options ? $options->{$name} : null;
+        if ($saved !== null && $saved !== false && $saved !== '') {
+            $element->value($saved);
+        }
+    }
+
+    return $element;
 }
 
 /**

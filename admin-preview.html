@@ -1,14 +1,32 @@
-<!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="utf-8">
-<title>Ink 后台设置页 · 静态预览</title>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>墨 Ink — 后台设置页预览</title>
 <style>
-body { margin: 0; padding: 26px 30px 60px; background: #f0f0f1;
-  font: 13px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; color: #1d2321; }
-.wp { max-width: 900px; margin: 0 auto; }
-.note { margin: 0 0 16px; padding: 10px 14px; border-radius: 8px; background: #fff8e5;
-  border: 1px solid #f0e0b0; font-size: 12px; color: #7a6320; }
-</style>
-<style>
+  body { margin: 0; padding: 28px 20px 60px; background: #f0f0f1;
+         font: 13px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; color: #1d2321; }
+  .stage { max-width: 960px; margin: 0 auto; }
+  .hint { max-width: 960px; margin: 0 auto 18px; padding: 12px 16px; border-radius: 8px;
+          background: #fff; border: 1px solid #e3e8e5; font-size: 12.5px; color: #59645f; }
+  .hint b { color: #1f7a74; }
+  .wp { max-width: 960px; margin: 0 auto; padding: 20px 22px; background: #fff;
+        border: 1px solid #e3e8e5; border-radius: 10px; }
+  h1.wp-t { margin: 0 0 16px; font-size: 20px; font-weight: 400; color: #464b50; }
+  .btn { display: inline-block; padding: 6px 16px; border: 1px solid #d0d0d0; border-radius: 3px;
+         background: #fff; font: inherit; cursor: pointer; }
+  .btn.primary { background: #467b96; border-color: #3b6a82; color: #fff; }
+  input[type=text], textarea, select { width: 100%; max-width: 100%; padding: 5px 8px;
+    border: 1px solid #d0d0d0; border-radius: 3px; font: inherit; background: #fff; color: #333; }
+  textarea { min-height: 64px; resize: vertical; }
+  input[type=checkbox] { width: auto; }
+</style></head><body>
+<div class="hint">这是 <b>外观 → 设置外观</b> 的页面预览，由 <code>functions.php</code> 里
+真实的 Typecho 表单类渲染 + 搬运脚本跑出来的结果，不是手绘稿。
+原始控件来自 <code>themeConfig()</code> 的 <code>addInput</code>，排版来自 <code>themeConfigHtml()</code>。</div>
+<div class="wp"><h1 class="wp-t">设置外观</h1>
+<form id="theme" action="#" method="post">
+<div class="typecho-option-submit"><ul class="typecho-option"><li><button type="submit" class="btn primary">保存设置</button></li></ul></div>
+
+<style id="ink-admin-style">
 .ink-set { --ink-ink: #1d2321; --ink-2: #59645f; --ink-3: #8d9a94; --ink-line: #e3e8e5;
   --ink-teal: #1f7a74; --ink-teal-2: #3fa8a0; --ink-bg: #f6f8f7;
   font-size: 13px; color: var(--ink-ink); }
@@ -125,18 +143,396 @@ body { margin: 0; padding: 26px 30px 60px; background: #f0f0f1;
   .ink-set .ink-row .description { grid-column: 1; }
 }
 
-</style></head>
-<body><div class="wp">
-<p class="note">后台设置页静态预览：按 <b>functions.php</b> 里的分组、字段与样式复刻而来，只用来核对排版，不参与主题运行。改动以真实后台为准。</p>
-<div class="ink-set">
-<div class="ink-hero"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="#1f7a74" stroke-width="8"/><path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="#1f7a74"/><g fill="none" stroke="#1f7a74" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g><circle cx="62" cy="150" r="6.5" fill="#1f7a74"/></svg><div><h2>墨 Ink 主题设置</h2><p>改完点页面底部的「保存设置」。前台刷新即可看到，样式表带文件时间戳，不用担心缓存。</p></div><span class="ink-ver">v1.3.2</span></div>
-<div class="ink-now"><div class="ink-now-row"><span class="ink-now-k">配色</span><i class="ink-now-dot" style="background:linear-gradient(135deg,#1f7a74,#3fa8a0)"></i><b>青瓷</b><span class="ink-now-x">左对齐</span></div><div class="ink-now-row"><span class="ink-now-k">正文</span><span class="ink-now-x">17px / 行高 1.9 / 纸宽 840px</span></div></div>
-<details class="ink-sec" open><summary><span class="ink-sec-t">首页</span><span class="ink-sec-d">首屏第一眼看到的东西</span></summary><div class="ink-body"><div class="ink-row" data-field="heroTitle"><label>首页大标题</label><div class="ink-input"><input type="text" name="heroTitle" value="读墨记"></div><p class="description">显示在首页目录上方。留空则用站点描述，描述也空则用站点标题。想让某几个字变成渐变强调色，用 &lt;em&gt; 包起来。</p></div><div class="ink-row" data-field="heroIntro"><label>站点描述</label><div class="ink-input"><textarea name="heroIntro" rows="3"></textarea></div><p class="description">写进页面 description 标签，就是搜索结果里那两行摘要。留空则用后台「站点信息」里的描述。</p></div></div></details>
-<details class="ink-sec"><summary><span class="ink-sec-t">外观</span><span class="ink-sec-d">配色、强调色、标题对齐</span></summary><div class="ink-body"><div class="ink-sub-line"><span class="ink-sub">配色</span></div><div class="ink-row" data-field="palette"><label>默认配色</label><div class="ink-input"><select name="palette"><option value="auto" selected>跟随访客（推荐）</option><option value="celadon">青瓷</option><option value="cinnabar">朱砂</option><option value="pine">松烟</option><option value="indigo">靛蓝</option><option value="plum">绛紫</option><option value="amber">赭石</option></select></div><p class="description">访客第一次打开时用哪套。选「跟随访客」时，会记住访客上次选的（存在 cookie 里），没有记录就用青瓷。</p></div><div class="ink-row" data-field="accentMode"><label>强调色来源</label><div class="ink-input"><select name="accentMode"><option value="palette" selected>跟随配色方案</option><option value="custom">自定义色值</option></select></div><p class="description">「跟随配色」最稳；「自定义」可以填一个色值覆盖标题渐变、进度线、链接等所有强调色，适合想用品牌色的时候。palette跟随配色方案custom自定义色值</p></div><div class="ink-row" data-field="accent"><label>自定义强调色</label><div class="ink-input"><input type="text" name="accent" value=""></div><p class="description">十六进制，例如 #1f7a74。只在上面选了「自定义」时生效，留空等于不覆盖。</p></div><div class="ink-sub-line"><span class="ink-sub">版式</span></div><div class="ink-row" data-field="align"><label>首页标题对齐</label><div class="ink-input"><select name="align"><option value="left" selected>左对齐（默认）</option><option value="right">靠右</option><option value="right-block">靠右 + 分隔线收短</option></select></div><p class="description">标题区靠右会让页面多一次折返的阅读路径，左边留白更安静。手机上一律左对齐。left左对齐（默认）right靠右right-block靠右 + 分隔线收短</p></div><div class="ink-row" data-field="navCats"><label>导航平铺分类</label><div class="ink-input"><select name="navCats"><option value="1" selected>显示</option><option value="0">不显示</option></select></div><p class="description">把全部分类铺在顶部导航里。分类多时导航可以横向滚动。1显示0不显示</p></div></div></details>
-<details class="ink-sec"><summary><span class="ink-sec-t">字体</span><span class="ink-sec-d">标题与正文分别用什么字</span></summary><div class="ink-body"><div class="ink-row" data-field="fontPreset"><label>字体风格</label><div class="ink-input"><select name="fontPreset"><option value="serif" selected>标题衬线 + 正文黑体（默认）</option><option value="sans">全黑体</option><option value="book">全衬线（书页感）</option><option value="mono">标题等宽（极客感）</option></select></div><p class="description">标题衬线、正文黑体是这套主题的默认气质。可以整体换成「全黑体」或「正文也用衬线」。serif标题衬线 + 正文黑体（默认）sans全黑体book全衬线（书页感）mono标题等宽（极客感）</p></div><div class="ink-row" data-field="fontSerif"><label>自定义标题字体</label><div class="ink-input"><input type="text" name="fontSerif" value=""></div><p class="description">填完整的 font-family 值，例如 "LXGW WenKai", "KaiTi", serif。留空用预设。</p></div><div class="ink-row" data-field="fontBody"><label>自定义正文字体</label><div class="ink-input"><input type="text" name="fontBody" value=""></div><p class="description">同上，作用于正文。留空用预设。</p></div></div></details>
-<details class="ink-sec"><summary><span class="ink-sec-t">字号与版面</span><span class="ink-sec-d">读起来舒不舒服全在这几项</span></summary><div class="ink-body"><div class="ink-row" data-field="fontSize"><label>正文字号</label><div class="ink-input"><input type="text" name="fontSize" value=""></div><p class="description">只填数字，单位 px，默认 17。14 寸屏 1080p 下 16–17 比较舒服。</p></div><div class="ink-row" data-field="lineHeight"><label>正文行高</label><div class="ink-input"><input type="text" name="lineHeight" value=""></div><p class="description">倍数，默认 1.9。中文长文建议 1.8–2.0。</p></div><div class="ink-row" data-field="sheetWidth"><label>纸张宽度</label><div class="ink-input"><input type="text" name="sheetWidth" value=""></div><p class="description">只填数字，单位 px，默认 840。含左右内边距。</p></div><div class="ink-row" data-field="sheetPad"><label>纸张内边距</label><div class="ink-input"><input type="text" name="sheetPad" value=""></div><p class="description">只填数字，单位 px，默认 56。窄屏会自动缩小。</p></div></div></details>
-<details class="ink-sec"><summary><span class="ink-sec-t">页脚</span><span class="ink-sec-d">版权与备案</span></summary><div class="ink-body"><div class="ink-row" data-field="footerText"><label>页脚文字</label><div class="ink-input"><input type="text" name="footerText" value=""></div><p class="description">显示在左下角，支持 HTML。留空则显示 © 年份 + 站点标题。</p></div><div class="ink-row" data-field="icp"><label>备案号</label><div class="ink-input"><input type="text" name="icp" value=""></div><p class="description">留空则不显示。例如：京ICP备00000000号，会自动链到工信部备案系统。</p></div></div></details>
-<details class="ink-sec"><summary><span class="ink-sec-t">导航图标</span><span class="ink-sec-d">最多 5 个，链接留空即不显示</span></summary><div class="ink-body"><div class="ink-tip">图标名取自 <b>草莓图标库</b>，例如 <code>github</code>、<code>rss</code>、<code>paper-plane</code>、<code>search-l</code>。链接留空这一项就不显示；只填链接、图标名留空时会按网址自动猜。</div><div class="ink-sub-line"><span class="ink-sub">图标 1</span><span class="ink-sub-s">已启用</span></div><div class="ink-row" data-field="icon1"><label>图标 1</label><div class="ink-input"><input type="text" name="icon1" value="github"></div></div><div class="ink-row" data-field="iconUrl1"><label>图标 1 链接</label><div class="ink-input"><input type="text" name="iconUrl1" value="https://github.com/MemoryCollection"></div></div><div class="ink-row" data-field="iconLabel1"><label>图标 1 文字</label><div class="ink-input"><input type="text" name="iconLabel1" value=""></div></div><div class="ink-row" data-field="iconBlank1"><label>图标 1 新窗口</label><div class="ink-input"><select name="iconBlank1"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 2</span><span class="ink-sub-s">已启用</span></div><div class="ink-row" data-field="icon2"><label>图标 2</label><div class="ink-input"><input type="text" name="icon2" value=""></div></div><div class="ink-row" data-field="iconUrl2"><label>图标 2 链接</label><div class="ink-input"><input type="text" name="iconUrl2" value="mailto:hi@example.com"></div></div><div class="ink-row" data-field="iconLabel2"><label>图标 2 文字</label><div class="ink-input"><input type="text" name="iconLabel2" value=""></div></div><div class="ink-row" data-field="iconBlank2"><label>图标 2 新窗口</label><div class="ink-input"><select name="iconBlank2"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 3</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon3"><label>图标 3</label><div class="ink-input"><input type="text" name="icon3" value=""></div></div><div class="ink-row" data-field="iconUrl3"><label>图标 3 链接</label><div class="ink-input"><input type="text" name="iconUrl3" value=""></div></div><div class="ink-row" data-field="iconLabel3"><label>图标 3 文字</label><div class="ink-input"><input type="text" name="iconLabel3" value=""></div></div><div class="ink-row" data-field="iconBlank3"><label>图标 3 新窗口</label><div class="ink-input"><select name="iconBlank3"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 4</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon4"><label>图标 4</label><div class="ink-input"><input type="text" name="icon4" value=""></div></div><div class="ink-row" data-field="iconUrl4"><label>图标 4 链接</label><div class="ink-input"><input type="text" name="iconUrl4" value=""></div></div><div class="ink-row" data-field="iconLabel4"><label>图标 4 文字</label><div class="ink-input"><input type="text" name="iconLabel4" value=""></div></div><div class="ink-row" data-field="iconBlank4"><label>图标 4 新窗口</label><div class="ink-input"><select name="iconBlank4"><option value="1">是</option><option value="0" selected>否</option></select></div></div><div class="ink-sub-line"><span class="ink-sub">图标 5</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon5"><label>图标 5</label><div class="ink-input"><input type="text" name="icon5" value=""></div></div><div class="ink-row" data-field="iconUrl5"><label>图标 5 链接</label><div class="ink-input"><input type="text" name="iconUrl5" value=""></div></div><div class="ink-row" data-field="iconLabel5"><label>图标 5 文字</label><div class="ink-input"><input type="text" name="iconLabel5" value=""></div></div><div class="ink-row" data-field="iconBlank5"><label>图标 5 新窗口</label><div class="ink-input"><select name="iconBlank5"><option value="1">是</option><option value="0" selected>否</option></select></div></div></div></details>
-<div class="ink-tip">想改字体文件、行间距这些更细的东西，可以直接改 <b>style.css</b> 顶部的变量层，那里注释写得很清楚。前台预览：主题目录下的 <b>preview.html</b>。</div>
-</div>
+/* ---- 原生控件的回收样式 ----
+   真正的 <li class="typecho-option"> 在 PHP 阶段 render() 到 #ink-cfg-forms 里，
+   再由下面那段 JS 按 data-field 搬进分组。搬完 JS 会给它加 .is-busy 收起来；
+   JS 没跑（或抛错）时它就是一块正常的原生表单，不会把字段藏没。 */
+.ink-cfg-forms:not(.is-busy) {
+  margin: 0 0 12px; padding: 14px 18px;
+  border: 1px dashed var(--ink-line); border-radius: 12px; background: #fff;
+}
+.ink-cfg-forms:not(.is-busy)::before {
+  content: "原生表单（脚本未接管）";
+  display: block; margin: 0 0 8px; font-size: 11.5px; letter-spacing: .08em;
+  color: var(--ink-3);
+}
+.ink-cfg-forms.is-busy { display: none; }
+.ink-set .ink-row ul.typecho-option { margin: 0; padding: 0; list-style: none; }
+.ink-set .ink-row > li.typecho-option { margin: 0; }
+.ink-set .ink-row .typecho-option .typecho-label { display: none; }
+.ink-set .ink-row .typecho-option .description { grid-column: 2; }
+.ink-set details.ink-sec .ink-row:last-child { border-bottom: 0; }
+
+/* 提交按钮跟着我们的版心：单独一条，别被塞进某个分组里 */
+.ink-set .ink-submit-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin: 18px 0 0; padding: 0;
+}
+.ink-set .ink-submit-row .typecho-option { margin: 0; padding: 0; list-style: none; }
+.ink-set .ink-submit-row .btn { min-width: 108px; }
+.ink-set .ink-submit-note { font-size: 12px; color: var(--ink-3); }
+</style><div class="ink-set-wrap" id="ink-set-root"><div class="ink-set"><div class="ink-hero"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="#1f7a74" stroke-width="8"></circle><path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="#1f7a74"></path><g fill="none" stroke="#1f7a74" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"><path d="M100 68h36"></path><path d="M118 68v66"></path><path d="M100 98h36"></path><path d="M100 132h36"></path></g><circle cx="62" cy="150" r="6.5" fill="#1f7a74"></circle></svg><div><h2>墨 Ink 主题设置</h2><p>改完点页面底部的「保存设置」。前台刷新即可看到，样式表带文件时间戳，不用担心缓存。</p></div><span class="ink-ver">v1.3.2</span></div><div class="ink-now"><div class="ink-now-row"><span class="ink-now-k">配色</span><i class="ink-now-dot" style="background:linear-gradient(135deg,#b23a2e,#c9703a)"></i><b>朱砂</b><span class="ink-now-x">标题靠右</span></div><div class="ink-now-row"><span class="ink-now-k">正文</span><span class="ink-now-x">18px / 行高 1.9 / 纸宽 840px / 页边 56px</span></div></div><details class="ink-sec" open=""><summary><span class="ink-sec-t">首页</span><span class="ink-sec-d">首屏第一眼看到的东西</span></summary><div class="ink-body"><div class="ink-row" data-field="heroTitle"><label>首页大标题</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-heroTitle-36">
+<li>
+
+<input id="heroTitle-0-37" name="heroTitle" type="text" class="text" value="读墨记">
+
+</li>
+</ul></div><p class="description">显示在首页目录上方。留空则用站点描述，描述也空则用站点标题。想让某几个字变成渐变强调色，用 &lt;em&gt; 包起来。</p></div><div class="ink-row" data-field="heroIntro"><label>站点描述</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-heroIntro-37">
+<li>
+
+<textarea id="heroIntro-0-38" name="heroIntro"></textarea>
+
+</li>
+</ul></div><p class="description">写进页面 description 标签，就是搜索结果里那两行摘要。留空则用后台「站点信息」里的描述。</p></div></div></details><details class="ink-sec"><summary><span class="ink-sec-t">外观</span><span class="ink-sec-d">配色、强调色、标题对齐</span></summary><div class="ink-body"><div class="ink-sub-line"><span class="ink-sub">配色</span></div><div class="ink-row" data-field="palette"><label>默认配色</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-palette-38">
+<li>
+
+<select name="palette" id="palette-0-39">
+<option value="auto">
+跟随访客（推荐）</option>
+<option value="celadon">
+青瓷</option>
+<option value="cinnabar" selected="true">
+朱砂</option>
+<option value="pine">
+松烟</option>
+<option value="indigo">
+靛蓝</option>
+<option value="plum">
+绛紫</option>
+<option value="amber">
+赭石</option>
+</select>
+
+</li>
+</ul></div><p class="description">访客第一次打开时用哪套。选「跟随访客」时，会记住访客上次选的（存在 cookie 里），没有记录就用青瓷。</p></div><div class="ink-row" data-field="accentMode"><label>强调色来源</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-accentMode-39">
+<li>
+
+<select name="accentMode" id="accentMode-0-40">
+<option value="palette" selected="true">
+跟随配色方案</option>
+<option value="custom">
+自定义色值</option>
+</select>
+
+</li>
+</ul></div><p class="description">「跟随配色」最稳；「自定义」可以填一个色值覆盖标题渐变、进度线、链接等所有强调色，适合想用品牌色的时候。</p></div><div class="ink-row" data-field="accent"><label>自定义强调色</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-accent-40">
+<li>
+
+<input id="accent-0-41" name="accent" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">十六进制，例如 #1f7a74。只在上面选了「自定义」时生效，留空等于不覆盖。</p></div><div class="ink-sub-line"><span class="ink-sub">版式</span></div><div class="ink-row" data-field="align"><label>首页标题对齐</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-align-41">
+<li>
+
+<select name="align" id="align-0-42">
+<option value="left">
+左对齐（默认）</option>
+<option value="right" selected="true">
+靠右</option>
+<option value="right-block">
+靠右 + 分隔线收短</option>
+</select>
+
+</li>
+</ul></div><p class="description">标题区靠右会让页面多一次折返的阅读路径，左边留白更安静。手机上一律左对齐。</p></div><div class="ink-row" data-field="navCats"><label>导航平铺分类</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-navCats-42">
+<li>
+
+<select name="navCats" id="navCats-0-43">
+<option value="1" selected="true">
+显示</option>
+<option value="0">
+不显示</option>
+</select>
+
+</li>
+</ul></div><p class="description">把全部分类铺在顶部导航里。分类多时导航可以横向滚动。</p></div></div></details><details class="ink-sec"><summary><span class="ink-sec-t">字体</span><span class="ink-sec-d">标题与正文分别用什么字</span></summary><div class="ink-body"><div class="ink-row" data-field="fontPreset"><label>字体风格</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-fontPreset-43">
+<li>
+
+<select name="fontPreset" id="fontPreset-0-44">
+<option value="serif" selected="true">
+标题衬线 + 正文黑体（默认）</option>
+<option value="sans">
+全黑体</option>
+<option value="book">
+全衬线（书页感）</option>
+<option value="mono">
+标题等宽（极客感）</option>
+</select>
+
+</li>
+</ul></div><p class="description">标题衬线、正文黑体是这套主题的默认气质。可以整体换成「全黑体」或「正文也用衬线」。</p></div><div class="ink-row" data-field="fontSerif"><label>自定义标题字体</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-fontSerif-44">
+<li>
+
+<input id="fontSerif-0-45" name="fontSerif" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">填完整的 font-family 值，例如 "LXGW WenKai", "KaiTi", serif。留空用预设。</p></div><div class="ink-row" data-field="fontBody"><label>自定义正文字体</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-fontBody-45">
+<li>
+
+<input id="fontBody-0-46" name="fontBody" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">同上，作用于正文。留空用预设。</p></div></div></details><details class="ink-sec"><summary><span class="ink-sec-t">字号与版面</span><span class="ink-sec-d">读起来舒不舒服全在这几项</span></summary><div class="ink-body"><div class="ink-row" data-field="fontSize"><label>正文字号</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-fontSize-46">
+<li>
+
+<input id="fontSize-0-47" name="fontSize" type="text" class="text" value="18">
+
+</li>
+</ul></div><p class="description">只填数字，单位 px，默认 17。14 寸屏 1080p 下 16–17 比较舒服。</p></div><div class="ink-row" data-field="lineHeight"><label>正文行高</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-lineHeight-47">
+<li>
+
+<input id="lineHeight-0-48" name="lineHeight" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">倍数，默认 1.9。中文长文建议 1.8–2.0。</p></div><div class="ink-row" data-field="sheetWidth"><label>纸张宽度</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-sheetWidth-48">
+<li>
+
+<input id="sheetWidth-0-49" name="sheetWidth" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">只填数字，单位 px，默认 840。含左右内边距。</p></div><div class="ink-row" data-field="sheetPad"><label>纸张内边距</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-sheetPad-49">
+<li>
+
+<input id="sheetPad-0-50" name="sheetPad" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">只填数字，单位 px，默认 56。窄屏会自动缩小。</p></div></div></details><details class="ink-sec"><summary><span class="ink-sec-t">页脚</span><span class="ink-sec-d">版权与备案</span></summary><div class="ink-body"><div class="ink-row" data-field="footerText"><label>页脚文字</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-footerText-50">
+<li>
+
+<input id="footerText-0-51" name="footerText" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">显示在左下角，支持 HTML。留空则显示 © 年份 + 站点标题。</p></div><div class="ink-row" data-field="icp"><label>备案号</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-icp-51">
+<li>
+
+<input id="icp-0-52" name="icp" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">留空则不显示。例如：京ICP备00000000号，会自动链到工信部备案系统。</p></div></div></details><details class="ink-sec"><summary><span class="ink-sec-t">导航图标</span><span class="ink-sec-d">最多 5 个，链接留空即不显示</span></summary><div class="ink-body"><div class="ink-tip">图标名取自 <b>草莓图标库</b>，例如 <code>github</code>、<code>rss</code>、<code>paper-plane</code>、<code>search-l</code>。链接留空这一项就不显示；只填链接、图标名留空时会按网址自动猜。</div><div class="ink-sub-line"><span class="ink-sub">图标 1</span><span class="ink-sub-s">已启用</span></div><div class="ink-row" data-field="icon1"><label>图标 1</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-icon1-52">
+<li>
+
+<input id="icon1-0-53" name="icon1" type="text" class="text" value="github">
+
+</li>
+</ul></div><p class="description">填草莓图标库的名字，例如 github、rss、paper-plane、search-l，不用带 czs- 前缀。完整 380 枚见主题目录下的 icons.css。</p></div><div class="ink-row" data-field="iconUrl1"><label>图标 1 链接</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconUrl1-53">
+<li>
+
+<input id="iconUrl1-0-54" name="iconUrl1" type="text" class="text" value="https://github.com/MemoryCollection">
+
+</li>
+</ul></div><p class="description">必填，留空则这一项不渲染。只填链接、图标名留空时会按网址自动猜一个图标。</p></div><div class="ink-row" data-field="iconLabel1"><label>图标 1 文字</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconLabel1-54">
+<li>
+
+<input id="iconLabel1-0-55" name="iconLabel1" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">鼠标悬停与读屏用的说明，例如 GitHub。留空时用图标名。</p></div><div class="ink-row" data-field="iconBlank1"><label>图标 1 新窗口</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconBlank1-55">
+<li>
+
+<select name="iconBlank1" id="iconBlank1-0-56">
+<option value="1" selected="true">
+是</option>
+<option value="0">
+否</option>
+</select>
+</li>
+</ul></div></div><div class="ink-sub-line"><span class="ink-sub">图标 2</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon2"><label>图标 2</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-icon2-56">
+<li>
+
+<input id="icon2-0-57" name="icon2" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconUrl2"><label>图标 2 链接</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconUrl2-57">
+<li>
+
+<input id="iconUrl2-0-58" name="iconUrl2" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconLabel2"><label>图标 2 文字</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconLabel2-58">
+<li>
+
+<input id="iconLabel2-0-59" name="iconLabel2" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">鼠标悬停与读屏用的说明，例如 GitHub。留空时用图标名。</p></div><div class="ink-row" data-field="iconBlank2"><label>图标 2 新窗口</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconBlank2-59">
+<li>
+
+<select name="iconBlank2" id="iconBlank2-0-60">
+<option value="1">
+是</option>
+<option value="0" selected="true">
+否</option>
+</select>
+</li>
+</ul></div></div><div class="ink-sub-line"><span class="ink-sub">图标 3</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon3"><label>图标 3</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-icon3-60">
+<li>
+
+<input id="icon3-0-61" name="icon3" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconUrl3"><label>图标 3 链接</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconUrl3-61">
+<li>
+
+<input id="iconUrl3-0-62" name="iconUrl3" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconLabel3"><label>图标 3 文字</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconLabel3-62">
+<li>
+
+<input id="iconLabel3-0-63" name="iconLabel3" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">鼠标悬停与读屏用的说明，例如 GitHub。留空时用图标名。</p></div><div class="ink-row" data-field="iconBlank3"><label>图标 3 新窗口</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconBlank3-63">
+<li>
+
+<select name="iconBlank3" id="iconBlank3-0-64">
+<option value="1">
+是</option>
+<option value="0" selected="true">
+否</option>
+</select>
+</li>
+</ul></div></div><div class="ink-sub-line"><span class="ink-sub">图标 4</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon4"><label>图标 4</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-icon4-64">
+<li>
+
+<input id="icon4-0-65" name="icon4" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconUrl4"><label>图标 4 链接</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconUrl4-65">
+<li>
+
+<input id="iconUrl4-0-66" name="iconUrl4" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconLabel4"><label>图标 4 文字</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconLabel4-66">
+<li>
+
+<input id="iconLabel4-0-67" name="iconLabel4" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">鼠标悬停与读屏用的说明，例如 GitHub。留空时用图标名。</p></div><div class="ink-row" data-field="iconBlank4"><label>图标 4 新窗口</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconBlank4-67">
+<li>
+
+<select name="iconBlank4" id="iconBlank4-0-68">
+<option value="1">
+是</option>
+<option value="0" selected="true">
+否</option>
+</select>
+</li>
+</ul></div></div><div class="ink-sub-line"><span class="ink-sub">图标 5</span><span class="ink-sub-s">未启用</span></div><div class="ink-row" data-field="icon5"><label>图标 5</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-icon5-68">
+<li>
+
+<input id="icon5-0-69" name="icon5" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconUrl5"><label>图标 5 链接</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconUrl5-69">
+<li>
+
+<input id="iconUrl5-0-70" name="iconUrl5" type="text" class="text" value="">
+</li>
+</ul></div></div><div class="ink-row" data-field="iconLabel5"><label>图标 5 文字</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconLabel5-70">
+<li>
+
+<input id="iconLabel5-0-71" name="iconLabel5" type="text" class="text" value="">
+
+</li>
+</ul></div><p class="description">鼠标悬停与读屏用的说明，例如 GitHub。留空时用图标名。</p></div><div class="ink-row" data-field="iconBlank5"><label>图标 5 新窗口</label><div class="ink-input"><ul class="typecho-option" id="typecho-option-item-iconBlank5-71">
+<li>
+
+<select name="iconBlank5" id="iconBlank5-0-72">
+<option value="1">
+是</option>
+<option value="0" selected="true">
+否</option>
+</select>
+</li>
+</ul></div></div></div></details><div class="ink-tip">想改字体文件、行间距这些更细的东西，可以直接改 <b>style.css</b> 顶部的变量层，那里注释写得很清楚。前台预览：主题目录下的 <b>preview.html</b>。</div><div class="ink-submit-row"><button type="submit" class="btn primary">保存设置</button><span class="ink-submit-note">保存后前台立即生效。</span></div></div></div><div id="ink-cfg-forms" class="ink-cfg-forms is-busy"></div><script>
+(function () {
+  var root = document.getElementById('ink-set-root');
+  var form = root && root.closest ? root.closest('form') : document.getElementById('theme');
+  if (!root || !form) return;
+
+  var rows = root.querySelectorAll('.ink-row[data-field]');
+  var submitBox = null;
+
+  /* 原生控件都 render() 进了这个容器，从这里取 */
+  var pool = document.getElementById('ink-cfg-forms') || form;
+
+  /*
+   * Typecho 每个字段输出的是：
+   *   <ul class="typecho-option" id="typecho-option-item-NAME-N">
+   *     <li><label class="typecho-label">…</label><input name="NAME" …><p class="description">…</p></li>
+   *   </ul>
+   * 把整个 <ul> 搬走最省事，行里的说明我们自己另写一份更短的，
+   * 所以搬进来之后把原生 .typecho-label 和 .description 收起来（样式里已隐藏）。
+   */
+  var natives = {};
+  var lists = pool.querySelectorAll('ul.typecho-option');
+
+  for (var i = 0; i < lists.length; i++) {
+    var ul = lists[i];
+    var field = ul.querySelector('[name]');
+    /* 没有 name 的是「保存设置」按钮所在的那一条 */
+    if (!field) { if (!submitBox) submitBox = ul; continue; }
+    if (!natives[field.name]) natives[field.name] = ul;
+  }
+
+  /* 把控件塞进对应的行；找不到行的（比如主题以后加了新字段）挪到末尾，不丢 */
+  for (var k = 0; k < rows.length; k++) {
+    var row = rows[k];
+    var name = row.getAttribute('data-field');
+    if (!name || !natives[name]) continue;
+    var holder = row.querySelector('.ink-input');
+    if (holder) {
+      var box = natives[name];
+      /* 行里已经有我们写的标题和说明，原生那份摘掉，别重复一遍 */
+      var strip = box.querySelectorAll('.typecho-label, .description');
+      for (var s = 0; s < strip.length; s++) {
+        if (strip[s].parentNode) strip[s].parentNode.removeChild(strip[s]);
+      }
+      holder.appendChild(box);
+      natives[name] = null;
+    }
+  }
+
+  /* 剩下没认领的原生控件，统一收在第一组里，保证不会丢字段 */
+  var orphan = [];
+  for (var key in natives) {
+    if (natives[key]) orphan.push(natives[key]);
+  }
+  if (orphan.length) {
+    var sec = root.querySelector('details.ink-sec');
+    var body = sec ? sec.querySelector('.ink-body') : root.querySelector('.ink-set');
+    if (body) {
+      var box = document.createElement('div');
+      box.className = 'ink-row';
+      box.innerHTML = '<label>其它</label><div class="ink-input"></div>';
+      var inner = box.querySelector('.ink-input');
+      for (var j = 0; j < orphan.length; j++) inner.appendChild(orphan[j]);
+      body.appendChild(box);
+    }
+  }
+
+  /* 提交按钮单独一条，跟在设置卡下面 */
+  if (submitBox) {
+    var bar = document.createElement('div');
+    bar.className = 'ink-submit-row';
+    var note = document.createElement('span');
+    note.className = 'ink-submit-note';
+    note.textContent = '保存后前台立即生效。';
+    bar.appendChild(submitBox);
+    bar.appendChild(note);
+    var set = root.querySelector('.ink-set');
+    if (set) set.appendChild(bar);
+  } else {
+    /* 万一原生按钮没找到，别把人卡住：给一个提交本表单的按钮 */
+    var set2 = root.querySelector('.ink-set');
+    if (set2) {
+      var bar2 = document.createElement('div');
+      bar2.className = 'ink-submit-row';
+      bar2.innerHTML = '<button type="submit" class="btn primary">保存设置</button>'
+        + '<span class="ink-submit-note">保存后前台立即生效。</span>';
+      set2.appendChild(bar2);
+    }
+  }
+
+  /* 搬完了才收起原生容器；上面任何一步抛错，它就保持展开，字段依然可改 */
+  if (pool.id === 'ink-cfg-forms') pool.className = 'ink-cfg-forms is-busy';
+})();
+</script></form>
+
 </div></body></html>
