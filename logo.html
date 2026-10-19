@@ -11,9 +11,9 @@
     --ink-2: #4a5a57;
     --ink-3: #83938f;
     --rule:  #d9e4e2;
-    --accent: #1f7a74;
-    --accent-2: #3fa8a0;
-    --logo-a: #1f7a74;
+    --accent: #9c3a5e;
+    --accent-2: #cb526e;
+    --logo-a: #9c3a5e;
     --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, serif;
     --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
     --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, Menlo, monospace;
@@ -68,14 +68,14 @@
 <body>
 <div class="page">
   <h1>墨 Ink · Logo 方案</h1>
-  <p class="sub">三版同源：字形「墨」的几何化 + 一滴落墨。配色沿用主题的青瓷渐变。#1f7a74 → #3fa8a0<br><b>已选用 B 圆章 · 水滴</b>，已接入导航左上角与 favicon。</p>
+  <p class="sub">三版同源：字形「墨」的几何化 + 一滴落墨。配色沿用主题的玫瑰紫渐变。#9c3a5e → #cb526e<br><b>已选用 B 圆章 · 水滴</b>，已接入导航左上角与 favicon。</p>
 
   <h2>三版对照</h2>
   <div class="grid">
     <div class="card">
       <svg viewBox="0 0 200 200" width="120" height="120" aria-label="方案 A">
         <defs>
-          <linearGradient id="aG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f7a74"/><stop offset="1" stop-color="#3fa8a0"/></linearGradient>
+          <linearGradient id="aG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9c3a5e"/><stop offset="1" stop-color="#cb526e"/></linearGradient>
           <clipPath id="aC"><rect x="26" y="26" width="148" height="148" rx="34"/></clipPath>
         </defs>
         <rect x="26" y="26" width="148" height="148" rx="34" fill="url(#aG)"/>
@@ -90,7 +90,7 @@
     <div class="card">
       <svg viewBox="0 0 200 200" width="120" height="120" aria-label="方案 B">
         <defs>
-          <linearGradient id="bG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f7a74"/><stop offset="1" stop-color="#3fa8a0"/></linearGradient>
+          <linearGradient id="bG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9c3a5e"/><stop offset="1" stop-color="#cb526e"/></linearGradient>
         </defs>
         <circle cx="100" cy="100" r="74" fill="none" stroke="url(#bG)" stroke-width="7"/>
         <g fill="none" stroke="url(#bG)" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round">
@@ -106,7 +106,7 @@
     <div class="card">
       <svg viewBox="0 0 200 200" width="120" height="120" aria-label="方案 C">
         <defs>
-          <linearGradient id="cG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f7a74"/><stop offset="1" stop-color="#3fa8a0"/></linearGradient>
+          <linearGradient id="cG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9c3a5e"/><stop offset="1" stop-color="#cb526e"/></linearGradient>
         </defs>
         <rect x="30" y="30" width="140" height="140" rx="8" fill="none" stroke="url(#cG)" stroke-width="6"/>
         <path d="M74 66h52v34H74z" fill="none" stroke="url(#cG)" stroke-width="6" stroke-linejoin="round"/>
@@ -149,7 +149,7 @@
 
   <p class="tip" style="margin-top:26px">
     矢量源：主题内 <code>ink/assets/img/mark.php</code>（内联 SVG，描边填 <code>var(--accent)</code>，跟着配色与暗色模式变）· favicon 由 header.php 按当前配色现画一份 data URI<br>
-    想换配色只改 SVG 里 <code>#1f7a74</code> 与 <code>#3fa8a0</code> 两个色值即可，其余自动跟随。<br>
+    想换配色只改 SVG 里 <code>#9c3a5e</code> 与 <code>#cb526e</code> 两个色值即可，其余自动跟随。<br>
     已接到 <code>.site-name</code> 左侧（24px，悬停微微倾斜 8°），<code>&lt;head&gt;</code> 里也加了 <code>rel="icon"</code>。
   </p>
 </div>

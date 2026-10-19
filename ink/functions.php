@@ -12,7 +12,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /** 主题版本，仅用于前台注释标记 */
-define('INK_VERSION', '1.3.3');
+define('INK_VERSION', '1.4.0');
 
 /* ---------------------------------------------------------
  * 兼容层：Typecho 1.2 用下划线类名，1.3 起命名空间类才是本体
@@ -68,7 +68,7 @@ function ink_asset($path)
  */
 function ink_setting_fields()
 {
-    $palettes = array('auto' => _t('跟随访客（推荐）'));
+    $palettes = array('auto' => _t('跟随访客（用访客上次选的）'));
     foreach (ink_palettes() as $key => $info) {
         $palettes[$key] = $info[0];
     }
@@ -82,14 +82,14 @@ function ink_setting_fields()
             _t('写进页面 description 标签，就是搜索结果里那两行摘要。留空则用后台「站点信息」里的描述。')),
 
         /* —— 外观 —— */
-        array('Select', 'palette', 'auto', _t('默认配色'),
-            _t('访客第一次打开时用哪套。选「跟随访客」时，会记住访客上次选的（存在 cookie 里），没有记录就用青瓷。'),
+        array('Select', 'palette', 'rose', _t('默认配色'),
+            _t('访客第一次打开时用哪套。选「跟随访客」时，会记住访客上次选的（存在 cookie 里），没有记录就用玫瑰紫。'),
             $palettes),
         array('Select', 'accentMode', 'palette', _t('强调色来源'),
             _t('「跟随配色」最稳；「自定义」可以填一个色值覆盖标题渐变、进度线、链接等所有强调色，适合想用品牌色的时候。'),
             array('palette' => _t('跟随配色方案'), 'custom' => _t('自定义色值'))),
         array('Text', 'accent', '', _t('自定义强调色'),
-            _t('十六进制，例如 #1f7a74。只在上面选了「自定义」时生效，留空等于不覆盖。')),
+            _t('十六进制，例如 #9c3a5e。只在上面选了「自定义」时生效，留空等于不覆盖。')),
         array('Select', 'align', 'left', _t('首页标题对齐'),
             _t('标题区靠右会让页面多一次折返的阅读路径，左边留白更安静。手机上一律左对齐。'),
             array('left' => _t('左对齐（默认）'), 'right' => _t('靠右'), 'right-block' => _t('靠右 + 分隔线收短'))),
@@ -178,7 +178,7 @@ function ink_admin_style()
     return <<<'CSS'
 <style id="ink-admin-style">
 .ink-set { --ink-ink: #1d2321; --ink-2: #59645f; --ink-3: #8d9a94; --ink-line: #e3e8e5;
-  --ink-teal: #1f7a74; --ink-teal-2: #3fa8a0; --ink-bg: #f6f8f7;
+  --ink-teal: #9c3a5e; --ink-teal-2: #cb526e; --ink-bg: #faf6f8;
   font-size: 13px; color: var(--ink-ink); }
 .ink-set * { box-sizing: border-box; }
 
@@ -186,7 +186,7 @@ function ink_admin_style()
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
   padding: 18px 20px; margin: 0 0 16px;
   border: 1px solid var(--ink-line); border-radius: 12px;
-  background: linear-gradient(135deg, #f3f9f8, #fbfdfc 60%, #f3f9f8);
+  background: linear-gradient(135deg, #fbf5f8, #fdfbfc 60%, #fbf5f8);
 }
 .ink-set .ink-hero svg { width: 34px; height: 34px; flex: none; }
 .ink-set .ink-hero h2 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 17px; font-weight: 600; }
@@ -236,7 +236,7 @@ function ink_admin_style()
 .ink-set .ink-row .ink-input input[type=text]:focus,
 .ink-set .ink-row .ink-input textarea:focus,
 .ink-set .ink-row .ink-input select:focus {
-  border-color: var(--ink-teal); box-shadow: 0 0 0 3px rgba(31,122,116,.12); outline: none;
+  border-color: var(--ink-teal); box-shadow: 0 0 0 3px rgba(156,58,94,.12); outline: none;
 }
 .ink-set .ink-row .ink-input textarea { min-height: 62px; resize: vertical; line-height: 1.7; }
 .ink-set .ink-row .description {
@@ -274,7 +274,7 @@ function ink_admin_style()
 .ink-set .ink-sub-line .ink-sub { margin: 0; }
 .ink-set .ink-sub-line .ink-sub-s {
   padding: 1px 7px; border-radius: 99px; font-size: 11px;
-  color: var(--ink-teal); background: rgba(31,122,116,.09);
+  color: var(--ink-teal); background: rgba(156,58,94,.09);
 }
 
 .ink-set .ink-tip {
@@ -606,11 +606,11 @@ function themeConfigHtml($form, $options = null)
     /* 顶部：当前外观摘要 */
     $lhNow = trim((string) ink_opt('lineHeight', ''));
     $hero = '<div class="ink-hero">'
-        . '<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="#1f7a74" stroke-width="8"/>'
-        . '<path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="#1f7a74"/>'
-        . '<g fill="none" stroke="#1f7a74" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">'
+        . '<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="74" fill="none" stroke="#9c3a5e" stroke-width="8"/>'
+        . '<path d="M62 34c-9 14-15 24-15 32a15 15 0 0 0 30 0c0-8-6-18-15-32z" fill="#9c3a5e"/>'
+        . '<g fill="none" stroke="#9c3a5e" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">'
         . '<path d="M100 68h36"/><path d="M118 68v66"/><path d="M100 98h36"/><path d="M100 132h36"/></g>'
-        . '<circle cx="62" cy="150" r="6.5" fill="#1f7a74"/></svg>'
+        . '<circle cx="62" cy="150" r="6.5" fill="#9c3a5e"/></svg>'
         . '<div><h2>墨 Ink 主题设置</h2><p>改完点页面底部的「保存设置」。前台刷新即可看到，'
         . '样式表带文件时间戳，不用担心缓存。</p></div>'
         . '<span class="ink-ver">v' . INK_VERSION . '</span>'
@@ -878,26 +878,27 @@ function ink_css_vars()
 function ink_palettes()
 {
     return array(
-        'celadon'  => array(_t('青瓷'), '#1f7a74', '#3fa8a0'),
-        'cinnabar' => array(_t('朱砂'), '#b23a2e', '#c9703a'),
-        'pine'     => array(_t('松烟'), '#2f6b4f', '#58a05f'),
-        'indigo'   => array(_t('靛蓝'), '#2f5b9c', '#3f9bb5'),
-        'plum'     => array(_t('绛紫'), '#8b3a62', '#c2596f'),
-        'amber'    => array(_t('赭石'), '#9d6a1e', '#c9922f'),
+        'rose'     => array(_t('玫瑰紫'), '#9c3a5e', '#cb526e'),
+        'coral'    => array(_t('珊瑚橙'), '#cf5b30', '#e39b63'),
+        'peacock'  => array(_t('孔雀青'), '#21757d', '#27bebc'),
+        'graphite' => array(_t('石墨蓝'), '#4b5c6c', '#5e86a1'),
+        'abyss'    => array(_t('深海蓝'), '#23487b', '#297fbc'),
+        'indigo'   => array(_t('靛蓝紫'), '#49418b', '#7f56bd'),
+        'violet'   => array(_t('罗兰紫'), '#7d4c9a', '#b46bc2'),
     );
 }
 
 /** 默认配色：空白页（无 cookie）时使用 */
 function ink_default_palette()
 {
-    return 'celadon';
+    return 'rose';
 }
 
 /** 后台设定的配色：auto 表示跟随访客 cookie */
 function ink_palette()
 {
     $all = ink_palettes();
-    $name = ink_opt('palette', 'auto');
+    $name = ink_opt('palette', 'rose');
 
     if ($name === 'auto' || !isset($all[$name])) {
         return 'auto';

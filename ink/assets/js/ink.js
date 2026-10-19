@@ -11,12 +11,21 @@
   var pick0 = doc.getElementById('palettePick');
 
   /* ---------------------------------------------------------
-   * 配色切换（青瓷 / 朱砂 / 松烟 / 靛蓝 / 绛紫 / 赭石）
-   * 选择写入 cookie，下次首屏由 PHP 直接输出，不会闪色
+   * 配色切换（玫瑰紫 / 珊瑚橙 / 孔雀青 / 石墨蓝 / 深海蓝 / 靛蓝紫 / 罗兰紫）
+   * 选择写入 cookie，下次首屏由 PHP 直接输出，不会闪色。
+   *
+   * 配色清单不写死在这里：直接读后台渲染出来的按钮，
+   * 以后加一套配色只要改 ink_palettes()，这段 JS 不用动。
    * ------------------------------------------------------- */
-  var palettes = ['celadon', 'cinnabar', 'pine', 'indigo', 'plum', 'amber'];
   var paletteBtns = doc.querySelectorAll('[data-palette-set]');
-  var paletteDefault = (pick0 && pick0.getAttribute('data-default')) || 'celadon';
+  var palettes = [];
+  Array.prototype.forEach.call(paletteBtns, function (b) {
+    var n = b.getAttribute('data-palette-set');
+    if (n && palettes.indexOf(n) < 0) {
+      palettes.push(n);
+    }
+  });
+  var paletteDefault = (pick0 && pick0.getAttribute('data-default')) || 'rose';
 
   function cookieDays(days) {
     var d = new Date();

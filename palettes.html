@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-palette="rose">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>墨 Ink — 七套配色</title>
+<style>
+/*
+ * 极简阅读型博客主题。暖白书页底色，衬线标题，一条细线做结构。
+ *
+ * 换字体 → 改 --serif / --sans / --mono 三行
+ * 换字号 → 只改 --fs-body / --lh-body 两行，其余字号和间距都是它们的倍数
+ * 换配色 → 改 <html> 上的 data-palette，或在后台主题设置里选
+ *
+ * 注意：后台「设置外观」注入的变量在 style.css 之后（见 header.php），
+ * 所以后台填的值会覆盖这里的默认值；两处写同一个变量时，后出现的赢。
+ *
+ * @package 墨 Ink
+ * @author Wu
+ * @version 1.3.3
+ * @link https://github.com/MemoryCollection
+ */
+
+/* =========================================================
+   1. 设计变量
+   ========================================================= */
+:root {
+  /* 纸面（默认：玫瑰紫） */
+  --paper:         #fbf9fa;
+  --paper-raise:   #f4ecef;
+  --paper-blur:    rgba(251, 249, 250, .88);
+  --paper-tint:    rgba(215, 173, 188, .34);
+  --paper-glow:    rgba(253, 252, 252, .95);
+  --pat:           rgba(156, 58, 94, .075);
+
+  /* 桌面与纸张边缘 */
+  --desk:          #e8d9de;
+  --desk-2:        #e1ccd3;
+  --sheet-line:    #e6d6dc;
+  --sheet-shadow:  rgba(92, 31, 53, .3);
+
+  /* 墨色（三级层次） */
+  --ink:           #231a1d;
+  --ink-2:         #654953;
+  --ink-3:         #9f7f8b;
+
+  /* 细线 */
+  --rule:          #e8d9de;
+  --rule-soft:     #f1e9ec;
+
+  /* 强调色：主色 + 渐变终点色 */
+  --accent:        #9c3a5e;
+  --accent-2:      #cb526e;
+  --accent-soft:   rgba(156, 58, 94, .08);
+
+  /* 代码 */
+  --code-bg:       #f5eff1;
+  --code-fg:       #35272c;
+  --code-line:     #eee3e7;
+
+  /* 语法着色 */
+  --tok-com:       #96888d;
+  --tok-key:       #9c3a5e;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #363032;
+  --tok-op:        #7c6e73;
+  --tok-tag:       #9c3a5e;
+  --tok-attr:      #9a6a2a;
+
+  /* ------- 字体：换字体只改这三行 ------- */
+  --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", Georgia, "Times New Roman", serif;
+  --sans:  -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --mono:  ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, Menlo, monospace;
+
+  /* ------- 字号：换大小只改这一行 ------- */
+  --fs-body:    17px;                        /* 正文：其余字号都由它派生 */
+  --lh-body:    1.9;                         /* 正文行高 */
+
+  /*
+   * 下面这些都不是写死的像素，而是跟 --fs-body 联动的比例：
+   * 后台把正文调到 20px，首页标题、列表标题、文章标题会一起放大，
+   * 比例关系不变 —— 首页和文章页永远是同一套字号体系。
+   */
+  --fs-title:   calc(var(--fs-body) * 1.459);   /* 首页 / 分类页大标题 ≈ 1.55rem@17px */
+  /* 文章标题：原 clamp(1.6rem, 2.4vw, 2rem) 改成相对正文的倍数，
+     窄屏用 min() 收一档，宽屏用 max() 托底 —— 单层 calc，老 WebView 也认 */
+  --fs-h1:      max(calc(var(--fs-body) * 1.506), min(calc(var(--fs-body) * 1.882), 2.4vw));
+  --fs-list:    calc(var(--fs-body) * .941);    /* 列表里的文章标题 ≈ 16px@17px */
+  --fs-meta:    calc(var(--fs-body) * .735);    /* 日期、字数这类小字 ≈ 12.5px@17px */
+  --fs-label:   calc(var(--fs-body) * .677);    /* 更小的标签字 ≈ 11.5px@17px */
+
+  /*
+   * 正文的「节奏」全部由 --fs-body / --lh-body 派生，
+   * 后台把字号从 17px 调到 20px，段距、标题、代码块一起放大，不会只有字变大。
+   */
+  --fs-k:       calc(var(--fs-body) / 17px);       /* 相对 17px 的比例 */
+  --flow:       calc(var(--fs-body) * var(--lh-body));  /* 一个「行距」 */
+  --para-gap:   calc(var(--flow) * .9);            /* 段与段之间，不到一行 */
+  --block-gap:  calc(var(--flow) * 1.15);          /* 段落与其他块之间 */
+
+  /* 版面：桌面上的一张纸 */
+  --sheet-w:    840px;
+  --sheet-pad:  56px;
+  --gap:        32px;   /* 纸张到窗口边缘的距离 */
+
+  /* 间距 */
+  --head-h:     64px;   /* 导航自身高度 */
+  --head-top:   22px;   /* 导航距纸张上边 */
+  --pat-pos:    14px;   /* 纸张顶部花纹的落点 */
+  --head-gap:   28px;   /* 导航距标题区 */
+  --idx-top:    14px;   /* 标题区距导航 */
+  --idx-bot:    20px;   /* 标题区距列表 */
+  --day-w:      96px;   /* 列表左侧日期列宽（与篇数最大位数对齐） */
+  --row-y:      14px;   /* 列表每行上下的间距 */
+
+  /* 动效 */
+  --ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+[data-theme="dark"] {
+  --desk:          #0d0809;
+  --desk-2:        #160d11;
+  --sheet-line:    #331e26;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+
+  --paper:         #1c1115;
+  --paper-raise:   #29191f;
+  --paper-blur:    rgba(28, 17, 21, .88);
+  --paper-tint:    rgba(178, 77, 114, .16);
+  --paper-glow:    rgba(56, 30, 40, .55);
+  --pat:           rgba(203, 82, 110, .13);
+
+  --ink:           #eae1e4;
+  --ink-2:         #b69aa5;
+  --ink-3:         #85606e;
+  --rule:          #3a222b;
+  --rule-soft:     #2d1a21;
+  --accent:        #d6668f;
+  --accent-2:      #e28da1;
+  --accent-soft:   rgba(214, 102, 143, .11);
+  --code-bg:       #130b0e;
+  --code-fg:       #e1d6da;
+  --code-line:     #2d1a21;
+
+  --tok-com:       #746369;
+  --tok-key:       #d6668f;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #d3cfd1;
+  --tok-op:        #9f9397;
+  --tok-tag:       #d6668f;
+  --tok-attr:      #d8b06b;
+}
+
+/* ---------------------------------------------------------
+   配色方案 —— 只覆盖颜色变量，靠 <html data-palette="…"> 切换。
+   不写 data-palette 就是「玫瑰紫」（默认，已写在 :root 里）。
+   ------------------------------------------------------- */
+/* 玫瑰紫：玫红 → 粉紫（默认，写在 :root 里，无需 data-palette） */
+[data-palette="rose"] {
+  --paper:         #fbf9fa;
+  --paper-raise:   #f4ecef;
+  --paper-blur:    rgba(251, 249, 250, .88);
+  --paper-tint:    rgba(215, 173, 188, .34);
+  --paper-glow:    rgba(253, 252, 252, .95);
+  --pat:           rgba(156, 58, 94, .075);
+  --desk:          #e8d9de;
+  --desk-2:        #e1ccd3;
+  --sheet-line:    #e6d6dc;
+  --sheet-shadow:  rgba(92, 31, 53, .3);
+  --ink:           #231a1d;
+  --ink-2:         #654953;
+  --ink-3:         #9f7f8b;
+  --rule:          #e8d9de;
+  --rule-soft:     #f1e9ec;
+  --accent:        #9c3a5e;
+  --accent-2:      #cb526e;
+  --accent-soft:   rgba(156, 58, 94, .08);
+  --code-bg:       #f5eff1;
+  --code-fg:       #35272c;
+  --code-line:     #eee3e7;
+
+  --tok-com:       #96888d;
+  --tok-key:       #9c3a5e;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #363032;
+  --tok-op:        #7c6e73;
+  --tok-tag:       #9c3a5e;
+  --tok-attr:      #9a6a2a;
+}
+[data-theme="dark"][data-palette="rose"] {
+  --paper:         #1c1115;
+  --paper-raise:   #29191f;
+  --paper-blur:    rgba(28, 17, 21, .88);
+  --paper-tint:    rgba(178, 77, 114, .16);
+  --paper-glow:    rgba(56, 30, 40, .55);
+  --pat:           rgba(203, 82, 110, .13);
+  --desk:          #0d0809;
+  --desk-2:        #160d11;
+  --sheet-line:    #331e26;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+  --ink:           #eae1e4;
+  --ink-2:         #b69aa5;
+  --ink-3:         #85606e;
+  --rule:          #3a222b;
+  --rule-soft:     #2d1a21;
+  --accent:        #d6668f;
+  --accent-2:      #e28da1;
+  --accent-soft:   rgba(214, 102, 143, .11);
+  --code-bg:       #130b0e;
+  --code-fg:       #e1d6da;
+  --code-line:     #2d1a21;
+
+  --tok-com:       #746369;
+  --tok-key:       #d6668f;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #d3cfd1;
+  --tok-op:        #9f9397;
+  --tok-tag:       #d6668f;
+  --tok-attr:      #d8b06b;
+}
+/* 珊瑚橙：珊瑚红 → 杏橙 */
+[data-palette="coral"] {
+  --paper:         #fbf9f9;
+  --paper-raise:   #f4eeeb;
+  --paper-blur:    rgba(251, 249, 249, .88);
+  --paper-tint:    rgba(216, 184, 172, .34);
+  --paper-glow:    rgba(253, 252, 252, .95);
+  --pat:           rgba(207, 91, 48, .075);
+  --desk:          #e8ddd8;
+  --desk-2:        #e2d1cb;
+  --sheet-line:    #e6dad5;
+  --sheet-shadow:  rgba(93, 46, 29, .3);
+  --ink:           #231d1a;
+  --ink-2:         #63514b;
+  --ink-3:         #9c8981;
+  --rule:          #e8ddd8;
+  --rule-soft:     #f1ebe9;
+  --accent:        #cf5b30;
+  --accent-2:      #e39b63;
+  --accent-soft:   rgba(207, 91, 48, .08);
+  --code-bg:       #f6f1ef;
+  --code-fg:       #342b27;
+  --code-line:     #eee5e2;
+
+  --tok-com:       #968c88;
+  --tok-key:       #cf5b30;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #363230;
+  --tok-op:        #7c726e;
+  --tok-tag:       #cf5b30;
+  --tok-attr:      #9a6a2a;
+}
+[data-theme="dark"][data-palette="coral"] {
+  --paper:         #1d1411;
+  --paper-raise:   #2a1d19;
+  --paper-blur:    rgba(29, 20, 17, .88);
+  --paper-tint:    rgba(181, 103, 74, .16);
+  --paper-glow:    rgba(57, 37, 29, .55);
+  --pat:           rgba(227, 155, 99, .13);
+  --desk:          #0d0907;
+  --desk-2:        #17100d;
+  --sheet-line:    #34231d;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+  --ink:           #e9e4e2;
+  --ink-2:         #b4a39c;
+  --ink-3:         #836b63;
+  --rule:          #3b2821;
+  --rule-soft:     #2e1f1a;
+  --accent:        #eb987a;
+  --accent-2:      #f3c7a5;
+  --accent-soft:   rgba(235, 152, 122, .11);
+  --code-bg:       #140d0b;
+  --code-fg:       #e0d9d6;
+  --code-line:     #2e1f1a;
+
+  --tok-com:       #746763;
+  --tok-key:       #eb987a;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #d3d0cf;
+  --tok-op:        #9f9693;
+  --tok-tag:       #eb987a;
+  --tok-attr:      #d8b06b;
+}
+/* 孔雀青：孔雀蓝 → 青绿 */
+[data-palette="peacock"] {
+  --paper:         #f9fbfb;
+  --paper-raise:   #ecf3f3;
+  --paper-blur:    rgba(249, 251, 251, .88);
+  --paper-tint:    rgba(175, 209, 212, .34);
+  --paper-glow:    rgba(252, 253, 253, .95);
+  --pat:           rgba(33, 117, 125, .075);
+  --desk:          #dae6e7;
+  --desk-2:        #cddedf;
+  --sheet-line:    #d7e3e4;
+  --sheet-shadow:  rgba(33, 85, 89, .3);
+  --ink:           #192324;
+  --ink-2:         #476466;
+  --ink-3:         #7d9ea1;
+  --rule:          #dae6e7;
+  --rule-soft:     #eaf0f0;
+  --accent:        #21757d;
+  --accent-2:      #27bebc;
+  --accent-soft:   rgba(33, 117, 125, .08);
+  --code-bg:       #f0f4f5;
+  --code-fg:       #263536;
+  --code-line:     #e3eced;
+
+  --tok-com:       #889496;
+  --tok-key:       #21757d;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #303636;
+  --tok-op:        #6e7b7c;
+  --tok-tag:       #21757d;
+  --tok-attr:      #9a6a2a;
+}
+[data-theme="dark"][data-palette="peacock"] {
+  --paper:         #121b1c;
+  --paper-raise:   #1b2728;
+  --paper-blur:    rgba(18, 27, 28, .88);
+  --paper-tint:    rgba(82, 166, 173, .16);
+  --paper-glow:    rgba(32, 53, 55, .55);
+  --pat:           rgba(39, 190, 188, .13);
+  --desk:          #080c0c;
+  --desk-2:        #0e1516;
+  --sheet-line:    #203032;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+  --ink:           #e1e9ea;
+  --ink-2:         #99b5b8;
+  --ink-3:         #5e8487;
+  --rule:          #243638;
+  --rule-soft:     #1c2a2c;
+  --accent:        #2bcbda;
+  --accent-2:      #54e3e1;
+  --accent-soft:   rgba(43, 203, 218, .11);
+  --code-bg:       #0c1213;
+  --code-fg:       #d5e1e2;
+  --code-line:     #1c2a2c;
+
+  --tok-com:       #637274;
+  --tok-key:       #2bcbda;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #cfd3d3;
+  --tok-op:        #939e9f;
+  --tok-tag:       #2bcbda;
+  --tok-attr:      #d8b06b;
+}
+/* 石墨蓝：石墨灰 → 雾蓝 */
+[data-palette="graphite"] {
+  --paper:         #f9fafa;
+  --paper-raise:   #edf0f2;
+  --paper-blur:    rgba(249, 250, 250, .88);
+  --paper-tint:    rgba(179, 194, 208, .34);
+  --paper-glow:    rgba(252, 252, 253, .95);
+  --pat:           rgba(75, 92, 108, .075);
+  --desk:          #dce0e5;
+  --desk-2:        #d0d6dd;
+  --sheet-line:    #d9dee2;
+  --sheet-shadow:  rgba(37, 61, 86, .3);
+  --ink:           #1b1f22;
+  --ink-2:         #4c5761;
+  --ink-3:         #848f9a;
+  --rule:          #dce0e5;
+  --rule-soft:     #ebedef;
+  --accent:        #4b5c6c;
+  --accent-2:      #5e86a1;
+  --accent-soft:   rgba(75, 92, 108, .08);
+  --code-bg:       #f0f2f4;
+  --code-fg:       #282e33;
+  --code-line:     #e5e8eb;
+
+  --tok-com:       #888f96;
+  --tok-key:       #4b5c6c;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #303336;
+  --tok-op:        #6e757c;
+  --tok-tag:       #4b5c6c;
+  --tok-attr:      #9a6a2a;
+}
+[data-theme="dark"][data-palette="graphite"] {
+  --paper:         #14171a;
+  --paper-raise:   #1d2126;
+  --paper-blur:    rgba(20, 23, 26, .88);
+  --paper-tint:    rgba(89, 127, 166, .16);
+  --paper-glow:    rgba(35, 43, 52, .55);
+  --pat:           rgba(94, 134, 161, .13);
+  --desk:          #090a0c;
+  --desk-2:        #0f1215;
+  --sheet-line:    #22292f;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+  --ink:           #e2e6e9;
+  --ink-2:         #9ea8b3;
+  --ink-3:         #657381;
+  --rule:          #272e35;
+  --rule-soft:     #1e2429;
+  --accent:        #6d8fb0;
+  --accent-2:      #8daec4;
+  --accent-soft:   rgba(109, 143, 176, .11);
+  --code-bg:       #0d0f12;
+  --code-fg:       #d7dbe0;
+  --code-line:     #1e2429;
+
+  --tok-com:       #636b74;
+  --tok-key:       #6d8fb0;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #cfd1d3;
+  --tok-op:        #93999f;
+  --tok-tag:       #6d8fb0;
+  --tok-attr:      #d8b06b;
+}
+/* 深海蓝：深海 → 潮蓝 */
+[data-palette="abyss"] {
+  --paper:         #f9fafb;
+  --paper-raise:   #edeff3;
+  --paper-blur:    rgba(249, 250, 251, .88);
+  --paper-tint:    rgba(177, 191, 211, .34);
+  --paper-glow:    rgba(252, 252, 253, .95);
+  --pat:           rgba(35, 72, 123, .075);
+  --desk:          #dbdfe6;
+  --desk-2:        #ced5de;
+  --sheet-line:    #d8dde4;
+  --sheet-shadow:  rgba(34, 57, 88, .3);
+  --ink:           #191e24;
+  --ink-2:         #475466;
+  --ink-3:         #7d8ca1;
+  --rule:          #dbdfe6;
+  --rule-soft:     #eaedf0;
+  --accent:        #23487b;
+  --accent-2:      #297fbc;
+  --accent-soft:   rgba(35, 72, 123, .08);
+  --code-bg:       #f0f2f5;
+  --code-fg:       #262d36;
+  --code-line:     #e4e7ec;
+
+  --tok-com:       #888e96;
+  --tok-key:       #23487b;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #303236;
+  --tok-op:        #6e747c;
+  --tok-tag:       #23487b;
+  --tok-attr:      #9a6a2a;
+}
+[data-theme="dark"][data-palette="abyss"] {
+  --paper:         #13161b;
+  --paper-raise:   #1b2027;
+  --paper-blur:    rgba(19, 22, 27, .88);
+  --paper-tint:    rgba(84, 120, 171, .16);
+  --paper-glow:    rgba(33, 42, 54, .55);
+  --pat:           rgba(41, 127, 188, .13);
+  --desk:          #080a0c;
+  --desk-2:        #0e1115;
+  --sheet-line:    #212731;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+  --ink:           #e1e5ea;
+  --ink-2:         #99a6b8;
+  --ink-3:         #5e6f87;
+  --rule:          #252c37;
+  --rule-soft:     #1d232b;
+  --accent:        #2d74d7;
+  --accent-2:      #56a7e1;
+  --accent-soft:   rgba(45, 116, 215, .11);
+  --code-bg:       #0c0f12;
+  --code-fg:       #d5dae2;
+  --code-line:     #1d232b;
+
+  --tok-com:       #636a74;
+  --tok-key:       #2d74d7;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #cfd1d3;
+  --tok-op:        #93989f;
+  --tok-tag:       #2d74d7;
+  --tok-attr:      #d8b06b;
+}
+/* 靛蓝紫：靛青 → 蓝紫 */
+[data-palette="indigo"] {
+  --paper:         #f9f9fb;
+  --paper-raise:   #ededf3;
+  --paper-blur:    rgba(249, 249, 251, .88);
+  --paper-tint:    rgba(180, 177, 211, .34);
+  --paper-glow:    rgba(252, 252, 253, .95);
+  --pat:           rgba(73, 65, 139, .075);
+  --desk:          #dcdbe6;
+  --desk-2:        #d0cede;
+  --sheet-line:    #d9d8e4;
+  --sheet-shadow:  rgba(40, 34, 88, .3);
+  --ink:           #1b1a23;
+  --ink-2:         #4c4965;
+  --ink-3:         #827f9f;
+  --rule:          #dcdbe6;
+  --rule-soft:     #ebeaf0;
+  --accent:        #49418b;
+  --accent-2:      #7f56bd;
+  --accent-soft:   rgba(73, 65, 139, .08);
+  --code-bg:       #f0f0f5;
+  --code-fg:       #282735;
+  --code-line:     #e5e4ec;
+
+  --tok-com:       #898896;
+  --tok-key:       #49418b;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #313036;
+  --tok-op:        #706e7c;
+  --tok-tag:       #49418b;
+  --tok-attr:      #9a6a2a;
+}
+[data-theme="dark"][data-palette="indigo"] {
+  --paper:         #14131b;
+  --paper-raise:   #1c1b27;
+  --paper-blur:    rgba(20, 19, 27, .88);
+  --paper-tint:    rgba(93, 84, 171, .16);
+  --paper-glow:    rgba(35, 33, 54, .55);
+  --pat:           rgba(127, 86, 189, .13);
+  --desk:          #09080c;
+  --desk-2:        #0f0e15;
+  --sheet-line:    #222131;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+  --ink:           #e2e1ea;
+  --ink-2:         #9d9ab6;
+  --ink-3:         #646085;
+  --rule:          #272537;
+  --rule-soft:     #1e1d2b;
+  --accent:        #7268ca;
+  --accent-2:      #ab8cd9;
+  --accent-soft:   rgba(114, 104, 202, .11);
+  --code-bg:       #0d0c12;
+  --code-fg:       #d7d6e1;
+  --code-line:     #1e1d2b;
+
+  --tok-com:       #646374;
+  --tok-key:       #7268ca;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #d0cfd3;
+  --tok-op:        #94939f;
+  --tok-tag:       #7268ca;
+  --tok-attr:      #d8b06b;
+}
+/* 罗兰紫：罗兰 → 藕荷 */
+[data-palette="violet"] {
+  --paper:         #faf9fb;
+  --paper-raise:   #f1ecf3;
+  --paper-blur:    rgba(250, 249, 251, .88);
+  --paper-tint:    rgba(199, 174, 213, .34);
+  --paper-glow:    rgba(253, 252, 253, .95);
+  --pat:           rgba(125, 76, 154, .075);
+  --desk:          #e2dae7;
+  --desk-2:        #d9cce0;
+  --sheet-line:    #e0d7e5;
+  --sheet-shadow:  rgba(69, 32, 91, .3);
+  --ink:           #201a23;
+  --ink-2:         #5a4b63;
+  --ink-3:         #92819c;
+  --rule:          #e2dae7;
+  --rule-soft:     #eeeaf1;
+  --accent:        #7d4c9a;
+  --accent-2:      #b46bc2;
+  --accent-soft:   rgba(125, 76, 154, .08);
+  --code-bg:       #f3eff5;
+  --code-fg:       #302734;
+  --code-line:     #e9e3ed;
+
+  --tok-com:       #918896;
+  --tok-key:       #7d4c9a;
+  --tok-str:       #4f7a3f;
+  --tok-num:       #9a6a2a;
+  --tok-fn:        #2f6a8c;
+  --tok-var:       #343036;
+  --tok-op:        #776e7c;
+  --tok-tag:       #7d4c9a;
+  --tok-attr:      #9a6a2a;
+}
+[data-theme="dark"][data-palette="violet"] {
+  --paper:         #18121c;
+  --paper-raise:   #231a28;
+  --paper-blur:    rgba(24, 18, 28, .88);
+  --paper-tint:    rgba(140, 79, 176, .16);
+  --paper-glow:    rgba(47, 31, 55, .55);
+  --pat:           rgba(180, 107, 194, .13);
+  --desk:          #0b080d;
+  --desk-2:        #130e16;
+  --sheet-line:    #2b1f33;
+  --sheet-shadow:  rgba(0, 0, 0, .62);
+  --ink:           #e6e2e9;
+  --ink-2:         #ac9cb4;
+  --ink-3:         #776383;
+  --rule:          #312339;
+  --rule-soft:     #261b2c;
+  --accent:        #b17dcf;
+  --accent-2:      #d4a1de;
+  --accent-soft:   rgba(177, 125, 207, .11);
+  --code-bg:       #100c13;
+  --code-fg:       #ddd6e0;
+  --code-line:     #261b2c;
+
+  --tok-com:       #6d6374;
+  --tok-key:       #b17dcf;
+  --tok-str:       #9ec489;
+  --tok-num:       #d8b06b;
+  --tok-fn:        #8cb8d6;
+  --tok-var:       #d2cfd3;
+  --tok-op:        #9b939f;
+  --tok-tag:       #b17dcf;
+  --tok-attr:      #d8b06b;
+}
+
+/* =========================================================
+   2. 基础重置
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--head-h) + 24px);
+}
+
+body {
+  margin: 0;
+  padding: var(--gap);
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--sans);
+  /* 兜底基准：跟随后台正文字号，避免和 --fs-body 各写一个值将来不同步 */
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  transition: background-color .3s var(--ease), color .3s var(--ease);
+}
+
+img, svg, video { max-width: 100%; height: auto; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+::selection { background: var(--accent); color: #fff; }
+
+/* 纸面：整站唯一的内容块，四周留出桌面 */
+/* ---- 纸面渐变：底色不再是一块死色，右上到左下有一层极淡的色光 ---- */
+body {
+  background-color: var(--desk);
+  background-image:
+    radial-gradient(120% 80% at 100% 0%, var(--paper-glow), transparent 62%),
+    radial-gradient(100% 70% at 0% 100%, var(--paper-glow), transparent 58%);
+  background-attachment: fixed;
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  max-width: var(--sheet-w);
+  min-height: calc(100vh - var(--gap) * 2);
+  margin: 0 auto;
+  padding: 0 var(--sheet-pad);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background-color: var(--paper);
+  background-image:
+    /* 顶部右上角一团极淡的强调色雾气 */
+    radial-gradient(72% 34% at 88% calc(-1 * var(--pat-pos)), var(--pat), transparent 72%),
+    /* 对角方向的一层暖调 */
+    linear-gradient(168deg,
+      var(--paper-tint) 0%,
+      rgba(255, 255, 255, 0) 34%,
+      rgba(255, 255, 255, 0) 72%,
+      var(--paper-tint) 100%);
+  border: 1px solid var(--sheet-line);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .03), 0 18px 48px -28px var(--sheet-shadow);
+  transition: background-color .4s var(--ease), border-color .4s var(--ease);
+}
+
+.wrap {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 纸张内容与页脚之间留一段固定呼吸（页脚自带的 .wrap 不算） */
+.sheet > .wrap { padding-bottom: var(--idx-bot); }
+.site-foot .wrap { padding-bottom: 0; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* =========================================================
+   3. 阅读进度线
+   ========================================================= */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 120;
+  pointer-events: none;
+  display: none;
+}
+.progress > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent));
+  transition: width .1s linear;
+}
+body.is-single .progress { display: block; }
+
+/* =========================================================
+   4. 顶部导航
+   ========================================================= */
+.site-head {
+  position: relative;
+  z-index: 100;
+  margin-top: var(--head-top);
+  margin-bottom: var(--head-gap);
+  background: transparent;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* 导航固定在纸张上，不吸顶、不跟随滚动隐藏 */
+.head-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: var(--head-h);
+}
+
+.site-name {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--serif);
+  font-size: 1.26rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-decoration: none;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.site-word { transition: color .25s var(--ease), background-image .25s var(--ease); }
+.site-name:hover .site-word {
+  color: transparent;
+  background-image: linear-gradient(100deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* 圆章 logo：只做极轻的呼吸，不抢标题 */
+.site-mark {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -1px;
+  overflow: visible;
+  transition: transform .5s var(--ease);
+}
+.site-name:hover .site-mark { transform: rotate(-8deg); }
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.site-nav::-webkit-scrollbar { display: none; }
+
+.site-nav a {
+  position: relative;
+  flex: none;
+  font-size: 14px;
+  letter-spacing: .04em;
+  color: var(--ink-2);
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color .25s var(--ease);
+  white-space: nowrap;
+}
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .32s var(--ease);
+}
+.site-nav a:hover { color: var(--ink); }
+.site-nav a:hover::after,
+.site-nav a.is-current::after { transform: scaleX(1); }
+.site-nav a.is-current { color: var(--ink); }
+
+.head-tools {
+  margin-left: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  color: var(--ink-2);
+  transition: color .25s var(--ease), background-color .25s var(--ease);
+}
+.icon-btn:hover { color: var(--ink); background: var(--paper-raise); }
+.icon-btn svg { width: 17px; height: 17px; display: block; }
+
+/* ---- 后台自定义图标（草莓图标字体，最多 5 个） ---- */
+.head-icons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 4px;
+}
+.head-icon {
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color .25s var(--ease), background-color .25s var(--ease), transform .25s var(--ease);
+}
+.head-icon i {
+  display: block;
+  font-size: 16px;
+  line-height: 1;
+}
+.head-icon:hover {
+  color: var(--accent);
+  background: var(--paper-raise);
+  transform: translateY(-1px);
+}
+
+/* ---- 配色选择器 ---- */
+.swatches { position: relative; flex: none; }
+
+.swatch-pick {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  transition: background-color .25s var(--ease);
+}
+.swatch-pick:hover { background: var(--paper-raise); }
+.swatch-pick .sp-a,
+.swatch-pick .sp-b {
+  position: absolute;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  transition: transform .3s var(--ease);
+}
+.swatch-pick .sp-a {
+  transform: translate(-3.5px, -3.5px);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 0 1.5px var(--paper);
+}
+.swatch-pick .sp-b {
+  transform: translate(3.5px, 3.5px);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--ink-3);
+}
+.swatch-pick:hover .sp-a { transform: translate(-4.5px, -4.5px); }
+.swatch-pick:hover .sp-b { transform: translate(4.5px, 4.5px); }
+
+.swatch-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -6px;
+  z-index: 130;
+  width: 158px;
+  padding: 6px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .04), 0 18px 40px -18px var(--sheet-shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(.97);
+  transform-origin: top right;
+  transition: opacity .2s var(--ease), transform .24s var(--ease), visibility .2s;
+}
+.swatch-panel.is-open { opacity: 1; visibility: visible; transform: none; }
+
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+  text-align: left;
+  transition: background-color .2s var(--ease), color .2s var(--ease);
+}
+.swatch:hover { background: var(--paper-raise); color: var(--ink); }
+.swatch.is-on { color: var(--ink); }
+.swatch.is-on .swatch-name { font-weight: 600; }
+.swatch-dot {
+  flex: none;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+  transition: box-shadow .25s var(--ease);
+}
+.swatch.is-on .swatch-dot { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px currentColor; }
+
+/* 面板下半：明暗模式（和配色共用一个按钮，分两道） */
+.swatch-sep {
+  height: 1px;
+  margin: 6px 9px;
+  background: var(--rule);
+}
+.mode-row {
+  display: flex;
+  gap: 6px;
+  padding: 0 3px 3px;
+}
+.mode-btn {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 0 7px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  color: var(--ink-3);
+  transition: color .2s var(--ease), background-color .2s var(--ease);
+}
+.mode-btn svg { width: 15px; height: 15px; display: block; }
+.mode-btn:hover { color: var(--ink); background: var(--paper-raise); }
+.mode-btn.is-on {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* =========================================================
+   5. 页块标题（首页 / 分类页共用）
+   ========================================================= */
+.idx-head {
+  padding: var(--idx-top) 0 var(--idx-bot);
+  border-bottom: 1px solid var(--rule);
+}
+
+.idx-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--fs-title);
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -.006em;
+  color: var(--ink);
+}
+.idx-title em {
+  font-style: normal;
+  color: var(--accent);
+  background-image: linear-gradient(100deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.section-tag {
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--accent);
+  background-image: linear-gradient(100deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 标题区下面那行统计：与标题左对齐，字号比标题小两档，颜色压淡 */
+.idx-meta {
+  margin: 10px 0 0;
+  font-size: var(--fs-meta);
+  line-height: 1.7;
+  letter-spacing: .05em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.idx-meta b { font-weight: 600; color: var(--ink-2); }
+
+/* ---- 可选：标题区整体靠右（后台「首页标题对齐」） ---- */
+/* 只动 .idx-head：版心不动，文字推到右边，分隔线仍是满宽 */
+[data-align="right"] .idx-head,
+[data-align="right-block"] .idx-head { text-align: right; }
+
+[data-align="right"] .idx-head .section-tag,
+[data-align="right-block"] .idx-head .section-tag { margin-right: 0; margin-left: 10px; }
+
+/* 再连分隔线一起收短，空出左边一大片 */
+[data-align="right-block"] .idx-head {
+  border-bottom: 0;
+  padding-bottom: calc(var(--idx-bot) - 6px);
+}
+[data-align="right-block"] .idx-head::after {
+  content: "";
+  display: block;
+  width: 22%;
+  height: 1px;
+  margin: 14px 0 0 auto;
+  background: var(--rule);
+}
+
+/* 列表（.archive-list / .archive-item）不受影响，任何档位都保持左对齐 */
+
+/* 手机上一律回到左对齐：窄屏右对齐只显得飘 */
+@media (max-width: 640px) {
+  [data-align="right"] .idx-head,
+  [data-align="right-block"] .idx-head { text-align: left; }
+  [data-align="right"] .idx-head .section-tag,
+  [data-align="right-block"] .idx-head .section-tag { margin-left: 0; margin-right: 8px; }
+  [data-align="right-block"] .idx-head { border-bottom: 1px solid var(--rule); padding-bottom: var(--idx-bot); }
+  [data-align="right-block"] .idx-head::after { display: none; }
+}
+
+/* =========================================================
+   6. 元信息
+   ========================================================= */
+/* 文章开头的一行小字：日期 / 分类 / 字数，用一根短竖线起头，
+   当作标题上方的「引线」，不再是一串孤零零的灰字 */
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 9px;
+  font-size: var(--fs-label);
+  letter-spacing: .09em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.post-meta::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 1px;
+  margin-right: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  opacity: .8;
+}
+.post-meta time { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .04em; }
+.post-meta .dot { display: none; }
+.post-meta a {
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color .25s var(--ease);
+}
+.post-meta a:hover { color: var(--accent); }
+
+/* 分页 */
+.page-navigator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: calc(var(--row-y) * 3) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.page-navigator li { list-style: none; }
+.page-navigator a,
+.page-navigator span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 2px;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color .25s var(--ease), background-color .25s var(--ease);
+}
+.page-navigator a:hover { color: var(--ink); background: var(--paper-raise); }
+.page-navigator .current {
+  color: var(--paper);
+  background: var(--ink);
+}
+
+/* =========================================================
+   7. 文章页骨架
+   ========================================================= */
+/* 文章页开头：标题与元信息同一行，元信息靠右，和标题基线对齐。
+   窄屏（≤640px）折成上下两行，元信息回到标题下方 */
+.post-head {
+  padding: var(--idx-top) 0 calc(var(--idx-bot) + 6px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.post-titlerow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px 32px;
+  flex-wrap: wrap;
+}
+
+.post-head .post-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.42;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+
+/* 同一行里靠右：不换行、不参与标题的收缩，
+   字号与颜色沿用全局 .post-meta，不改动 */
+.post-head .post-meta {
+  flex: none;
+  margin: 0 0 0 auto;
+  white-space: nowrap;
+}
+
+/* 正文：与标题区分隔线的距离固定 28px，
+   首段自身的外边距清零，避免和 padding 叠加成一大块空白 */
+.post-content {
+  padding: 28px 0 0;
+}
+.post-content > :first-child { margin-top: 0; }
+.post-content > :last-child { margin-bottom: 0; }
+
+/* 上下篇 */
+.post-nav {
+  display: flex;
+  gap: 40px;
+  margin: 64px 0 0;
+  border-top: 1px solid var(--rule);
+  padding-top: 26px;
+}
+.post-nav > div {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.post-nav .dir {
+  font-size: var(--fs-label);
+  letter-spacing: .12em;
+  color: var(--ink-3);
+}
+.post-nav .label {
+  font-family: var(--serif);
+  font-size: calc(var(--fs-body) * .882);
+  line-height: 1.6;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.post-nav .label a {
+  color: var(--ink);
+  text-decoration: none;
+  transition: color .22s var(--ease);
+}
+.post-nav .label a:hover { color: var(--accent); }
+.post-nav .label.muted { color: var(--ink-3); }
+.post-nav .nav-next { text-align: right; }
+
+/* =========================================================
+   8. 正文排版
+   ========================================================= */
+.content {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  letter-spacing: .006em;
+  color: var(--ink);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  /* 中西文混排时数字、标点更齐，与首页日期列的 tabular 一致 */
+  font-variant-numeric: tabular-nums;
+  text-spacing-trim: space-all;
+}
+
+.content > *:first-child { margin-top: 0; }
+.content > *:last-child { margin-bottom: 0; }
+
+.content p {
+  margin: 0 0 var(--para-gap);
+}
+
+/* 标题 */
+.content h1, .content h2, .content h3,
+.content h4, .content h5, .content h6 {
+  font-family: var(--serif);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -.006em;
+  color: var(--ink);
+  scroll-margin-top: calc(var(--head-h) + 28px);
+  text-wrap: balance;
+}
+
+/*
+ * 标题与正文同用一套比例，字号跟随 --fs-body 放大；
+ * 上下留白按「行距」算，行高调到 2.2 时标题也不会贴住上一段。
+ */
+.content h1 { font-size: calc(var(--fs-body) * 1.72); margin: calc(var(--flow) * 1.1) 0 var(--para-gap); }
+.content h2 { font-size: calc(var(--fs-body) * 1.42); margin: calc(var(--flow) * 1.15) 0 var(--para-gap); }
+.content h3 { font-size: calc(var(--fs-body) * 1.2);  margin: calc(var(--flow) * 1.05) 0 calc(var(--para-gap) * .88); }
+.content h4 { font-size: calc(var(--fs-body) * 1.06); margin: calc(var(--flow) * .95) 0 calc(var(--para-gap) * .78); }
+.content h5, .content h6 { font-size: var(--fs-body); margin: calc(var(--flow) * .85) 0 calc(var(--para-gap) * .65); color: var(--ink-2); }
+
+/* 文本类 */
+.content a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--ink-3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color .22s var(--ease), text-decoration-color .22s var(--ease);
+}
+.content a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+
+.content strong, .content b { font-weight: 600; }
+.content em, .content i { font-style: italic; }
+.content del { color: var(--ink-3); }
+.content mark { background: rgba(178, 58, 46, .14); color: inherit; padding: .05em .2em; }
+
+.content ul, .content ol {
+  margin: 0 0 var(--para-gap);
+  padding-left: 1.5em;
+}
+.content li { margin: 0 0 .5em; }
+.content li::marker { color: var(--accent); }
+.content li > ul, .content li > ol { margin: .5em 0 0; }
+
+.content hr {
+  width: 44%;
+  margin: calc(var(--flow) * 1.7) auto;
+  border: 0;
+  height: 1px;
+  background: var(--rule);
+}
+
+.content blockquote {
+  margin: var(--block-gap) 0;
+  padding: .1em 0 .1em 1.4em;
+  border-left: 2px solid var(--accent);
+  font-family: var(--serif);
+  font-size: calc(var(--fs-body) * 1.02);
+  /* 引用跟着正文行高走：正文行高调到 2.2，引用也松下来，不再固定 1.9 */
+  line-height: var(--lh-body);
+  color: var(--ink-2);
+}
+.content blockquote p:last-child { margin-bottom: 0; }
+
+/* 图片 */
+.content img {
+  display: block;
+  max-width: 100%;
+  margin: var(--block-gap) auto;
+  border-radius: 2px;
+  cursor: zoom-in;
+}
+.content p > img:only-child { margin: var(--block-gap) auto; }
+
+.content figure {
+  margin: calc(var(--block-gap) * 1.05) 0;
+}
+.content figure img { margin: 0; }
+.content figcaption {
+  margin-top: 12px;
+  font-size: calc(var(--fs-body) * .735);
+  line-height: 1.7;
+  text-align: center;
+  color: var(--ink-3);
+  letter-spacing: .02em;
+}
+
+/* 表格 */
+.content table {
+  width: 100%;
+  margin: var(--block-gap) 0;
+  border-collapse: collapse;
+  font-size: calc(var(--fs-body) * .855);
+  line-height: 1.65;
+}
+.content th, .content td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.content th {
+  font-weight: 600;
+  color: var(--ink-2);
+  font-size: calc(var(--fs-body) * .765);
+  letter-spacing: .05em;
+  border-bottom-color: var(--rule);
+}
+.content tbody tr:hover { background: var(--accent-soft); }
+
+/* 行内代码 */
+.content code {
+  font-family: var(--mono);
+  font-size: .875em;
+  padding: .12em .38em;
+  border-radius: 2px;
+  background: var(--paper-raise);
+  border: 1px solid var(--rule-soft);
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+
+/* 代码块 */
+/* 代码块：顶部一条「标签栏」（语言名 + 复制），正文另起一层，
+   两侧留出 gutter，行号用 CSS 计数器铺在左侧，不占代码的选择区 */
+.content pre {
+  position: relative;
+  margin: var(--block-gap) 0;
+  padding: 14px 20px 18px;
+  background: var(--code-bg);
+  border: 1px solid var(--code-line);
+  border-radius: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 代码比正文小一档，用同一个基准缩放：正文字号一动，代码跟着动 */
+  font-size: calc(var(--fs-body) * .777);
+  line-height: 1.75;
+  tab-size: 2;
+  scrollbar-width: thin;
+  scrollbar-color: var(--code-line) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.content pre.has-lang { padding-top: 40px; }
+
+/* 顶部标签栏：用一条细线和正文分开，颜色取自代码底色 */
+.content pre.has-lang::before {
+  content: "";
+  position: absolute;
+  top: 30px;
+  left: 0; right: 0;
+  height: 1px;
+  background: var(--code-line);
+  opacity: .7;
+}
+
+.content pre::-webkit-scrollbar { height: 8px; }
+.content pre::-webkit-scrollbar-track { background: transparent; }
+.content pre::-webkit-scrollbar-thumb {
+  background: var(--code-line);
+  border-radius: 99px;
+}
+.content pre::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
+
+.content pre code {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--code-fg);
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* 行号：给每行铺一个计数，颜色压得很淡，复制时不会带出来 */
+.content pre.has-lines code {
+  counter-reset: ink-line;
+}
+.content pre.has-lines code .ln {
+  display: block;
+  counter-increment: ink-line;
+  padding-left: 2.9em;
+  position: relative;
+  text-indent: 0;
+}
+.content pre.has-lines code .ln::before {
+  content: counter(ink-line);
+  position: absolute;
+  left: 0;
+  width: 2.1em;
+  text-align: right;
+  color: var(--ink-3);
+  opacity: .45;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  pointer-events: none;
+}
+
+.content pre .lang-tag {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: calc(var(--fs-body) * .618);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+.content pre .lang-tag::before {
+  content: "";
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  opacity: .9;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  height: 30px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--sans);
+  font-size: calc(var(--fs-body) * .677);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+  background: none;
+  border: 0;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity .2s var(--ease), color .2s var(--ease), background-color .2s var(--ease);
+}
+.copy-btn svg { width: 13px; height: 13px; display: block; }
+.content pre:hover .copy-btn,
+.copy-btn:focus-visible { opacity: 1; }
+.copy-btn:hover { color: var(--ink); background: var(--paper-raise); }
+.copy-btn.is-done { color: var(--accent); }
+
+/* 无语言标签的代码块：复制按钮浮在右上角，不占正文高度 */
+.content pre:not(.has-lang) .copy-btn { top: 6px; }
+
+/* 语法着色 */
+.tok-com { color: var(--tok-com); font-style: italic; }
+.tok-key { color: var(--tok-key); }
+.tok-str { color: var(--tok-str); }
+.tok-num { color: var(--tok-num); }
+.tok-fn  { color: var(--tok-fn); }
+.tok-var { color: var(--tok-var); }
+.tok-op  { color: var(--tok-op); }
+.tok-tag { color: var(--tok-tag); }
+.tok-attr { color: var(--tok-attr); }
+
+/* =========================================================
+   10. 目录索引（首页主结构）
+   ========================================================= */
+.archive-list { margin: 0; padding: 0; list-style: none; }
+
+/* 行距统一：上下各 var(--row-y)，加上标题区的 --idx-bot，
+   第一篇文章的文字距分隔线和行距（上下两份 padding）视觉重量相当 */
+.archive-item {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: var(--row-y) 0;
+  border-bottom: 1px solid var(--rule-soft);
+  text-decoration: none;
+}
+.archive-list li:last-child .archive-item { border-bottom: 0; }
+
+/* 日期列：日期与标题同基线，宽度固定，后加分隔线，与标题拉开呼吸 */
+.archive-item .day {
+  flex: none;
+  box-sizing: content-box;
+  width: calc(var(--day-w) - 18px);
+  padding-right: 18px;
+  border-right: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: var(--fs-label);
+  line-height: 1.6;
+  letter-spacing: .02em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.archive-item .ttl {
+  font-family: var(--serif);
+  font-size: var(--fs-list);
+  line-height: 1.6;
+  color: var(--ink);
+  transition: color .22s var(--ease);
+}
+.archive-item:hover .ttl { color: var(--accent); }
+
+/* 空状态 */
+.empty {
+  padding: 76px 0;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: calc(var(--fs-body) * .853);
+}
+
+/* =========================================================
+   11. 404
+   ========================================================= */
+.err-wrap {
+  min-height: 58vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0 40px;
+}
+.err-code {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(3.6rem, 12vw, 7rem);
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.err-code span { color: var(--accent); }
+.err-text {
+  margin: 20px 0 0;
+  max-width: 26em;
+  font-size: 15.5px;
+  line-height: 1.9;
+  color: var(--ink-2);
+}
+.err-back {
+  margin-top: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  letter-spacing: .04em;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 4px;
+  align-self: flex-start;
+  transition: color .22s var(--ease), border-color .22s var(--ease);
+}
+.err-back:hover { color: var(--accent); border-color: var(--accent); }
+
+/* =========================================================
+   12. 灯箱
+   ========================================================= */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vh 4vw;
+  background: rgba(18, 17, 15, .93);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .26s var(--ease), visibility .26s;
+}
+.lightbox.is-open { opacity: 1; visibility: visible; }
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 88vh;
+  margin: 0;
+  border-radius: 2px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .45);
+  transform: scale(.985);
+  transition: transform .3s var(--ease);
+}
+.lightbox.is-open img { transform: scale(1); }
+
+.lightbox .lb-close {
+  position: absolute;
+  top: 18px; right: 22px;
+  width: 42px; height: 42px;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, .72);
+  border-radius: 50%;
+  transition: color .2s var(--ease), background-color .2s var(--ease);
+}
+.lightbox .lb-close:hover { color: #fff; background: rgba(255, 255, 255, .1); }
+.lightbox .lb-close svg { width: 20px; height: 20px; }
+
+.lightbox .lb-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 11.5px;
+  letter-spacing: .1em;
+  color: rgba(255, 255, 255, .38);
+}
+
+/* =========================================================
+   13. 页脚
+   ========================================================= */
+.site-foot {
+  margin-top: auto;
+  padding: 34px 0 40px;
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-meta);
+  line-height: 1.9;
+  color: var(--ink-3);
+  letter-spacing: .03em;
+}
+.foot-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 28px;
+}
+.foot-inner a {
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color .22s var(--ease);
+}
+.foot-inner a:hover { color: var(--accent); }
+.foot-tip { font-family: var(--serif); }
+
+/* 返回顶部 */
+.to-top {
+  position: fixed;
+  right: max(26px, calc((100vw - var(--sheet-w)) / 2 + 22px));
+  bottom: 26px;
+  z-index: 90;
+  width: 40px; height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s, color .2s, border-color .2s;
+}
+.to-top.is-show { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { color: var(--accent); border-color: var(--accent); }
+.to-top svg { width: 15px; height: 15px; }
+
+/* =========================================================
+   14. 响应式
+   ========================================================= */
+@media (max-width: 900px) {
+  :root {
+    --gap: 20px; --sheet-pad: 34px; --head-h: 58px;
+    --head-top: 16px; --head-gap: 22px; --idx-top: 12px; --idx-bot: 16px;
+    --day-w: 84px; --row-y: 12px;
+  }
+
+  .head-inner { gap: 16px; }
+  .site-nav { gap: 15px; }
+  .site-nav a { font-size: 13.5px; }
+
+  /* 窄屏标题收一点，但依然跟着 --fs-body 走，不是另起一套 rem */
+  .idx-title { font-size: calc(var(--fs-body) * 1.3); }
+
+  .post-head { padding-top: 16px; }
+  .post-content { padding-top: 24px; }
+
+  /* 手机上正文字号几乎不缩（只让 -0.5px 变成相对值），
+     代码块、块的间距全部沿用 900px 以上的派生值，不再另写像素 */
+  .content { font-size: calc(var(--fs-body) - .5px); line-height: var(--lh-body); }
+  .content pre { padding: 16px 16px; font-size: calc(var(--fs-body) * .727); margin: var(--block-gap) -6px; }
+  .copy-btn { opacity: 1; }
+
+  .post-nav { flex-direction: column; gap: 18px; margin-top: 52px; padding-top: 22px; }
+  .post-nav .nav-next { text-align: left; }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gap: 12px; --sheet-pad: 24px; --head-h: 56px;
+    --head-top: 12px; --head-gap: 18px; --idx-top: 10px; --idx-bot: 14px;
+    --day-w: 74px; --row-y: 11px;
+    --pat-pos: 10px;
+  }
+
+  .idx-title { font-size: calc(var(--fs-body) * 1.186); }
+  .head-inner { gap: 10px; }
+  .site-name { font-size: 1.12rem; }
+  .site-nav a { font-size: 13px; }
+
+  /* 文章标题行：窄屏折成两行，元信息回到标题下方并左对齐 */
+  .post-titlerow {
+    display: block;
+  }
+  .post-head .post-meta {
+    margin: 10px 0 0;
+    white-space: normal;
+  }
+  .post-head .post-meta::before { display: none; }
+
+  .head-icons { gap: 0; margin-right: 2px; }
+  .head-icon { width: 26px; height: 26px; }
+  .head-icon i { font-size: 15px; }
+
+  .archive-item { gap: 12px; }
+  .archive-item .day { width: calc(var(--day-w) - 12px); padding-right: 12px; font-size: calc(var(--fs-label) * .957); }
+  .archive-item .ttl { font-size: calc(var(--fs-list) * .957); }
+
+  .content h2 { font-size: calc(var(--fs-body) * 1.32); }
+  .content table { font-size: calc(var(--fs-body) * .88); }
+  .content th, .content td { padding: 8px 10px; }
+
+  .site-foot { padding: 28px 0 34px; }
+}
+
+/* 手机：纸张直接贴边，不再留桌面 */
+@media (max-width: 520px) {
+  :root { --gap: 0px; --sheet-pad: 20px; --pat-pos: 8px; }
+
+  .sheet {
+    border-left: 0;
+    border-right: 0;
+    min-height: 100vh;
+    background-image: none;
+  }
+
+  body { background-image: none; }
+
+  .idx-title { font-size: calc(var(--fs-body) * 1.11); }
+  .archive-item .ttl { font-size: calc(var(--fs-list) * .926); }
+}
+
+/* 动效降级 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 打印 */
+@media print {
+  .site-head, .site-foot, .to-top, .progress, .post-nav, .copy-btn { display: none !important; }
+  body { background: #fff; color: #000; padding: 0; }
+  .sheet { max-width: none; padding: 0; border: 0; min-height: 0; display: block; }
+  .content { font-size: 11.5pt; line-height: 1.7; }
+  .content a { text-decoration: none; color: #000; }
+}
+
+</style>
+<style>
+
+body { padding: 26px 22px 50px; background: #f2f2f4; font-family: -apple-system, "Microsoft YaHei", sans-serif; }
+.top { max-width: 1560px; margin: 0 auto 20px; font-size: 13px; line-height: 1.75; color: #59645f; }
+.top b { color: #9c3a5e; }
+.top .k { display: inline-block; padding: 1px 7px; margin: 0 2px; border-radius: 4px;
+  background: #fff; border: 1px solid #e0e3e6; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; max-width: 1560px; margin: 0 auto; }
+.cell { border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.tag { padding: 9px 14px; font-size: 12px; letter-spacing: .06em;
+  color: var(--ink-3); background: var(--desk); border-bottom: 1px solid var(--sheet-line); }
+.sheetbox { background: var(--paper); padding: 16px 18px 18px; }
+.sh-head { border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
+.sh-head h3 { margin: 0; font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+  font-size: 21px; font-weight: 600; color: var(--ink); letter-spacing: -.01em; }
+.sh-meta { display: block; margin-top: 4px; font-size: 11.5px; color: var(--ink-3); letter-spacing: .04em; }
+.sh-list { margin: 0; padding: 6px 0 0; list-style: none; }
+.sh-list li { display: flex; gap: 10px; padding: 5px 0; align-items: baseline; }
+.sh-list .d { flex: none; width: 68px; font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px; color: var(--ink-3); }
+.sh-list .t { font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+  font-size: 13.5px; color: var(--ink); }
+.sh-body { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
+.sh-body p { margin: 0 0 10px; font-size: 12.5px; line-height: 1.8; color: var(--ink); }
+.sh-body b { color: var(--ink); font-weight: 600; }
+.sh-body i { color: var(--ink-2); font-style: normal; }
+.sh-body u { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-2); }
+.sw { display: flex; gap: 5px; }
+.sw span { width: 20px; height: 20px; border-radius: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.07); }
+
+</style>
+</head>
+<body>
+<div class="top">
+  <b>七套配色，明暗各一。</b>
+  点前台导航右侧的双色圆点就能切，选择存 cookie，下次进来还是这套。
+  默认是 <b>玫瑰紫</b>；<span class="k">data-palette</span> 的值依次是
+  rose / coral / peacock / graphite / abyss / indigo / violet。
+  每张卡片最下面四个色块是：主色、渐变终点色、次墨色、纸色。
+</div>
+<div class="grid">
+<div class="cell" data-theme="light" data-palette="rose">
+  <div class="tag">玫瑰紫 · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#9c3a5e"></span>
+        <span style="background:#cb526e"></span>
+        <span style="background:#654953"></span>
+        <span style="background:#fbf9fa"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="light" data-palette="coral">
+  <div class="tag">珊瑚橙 · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#cf5b30"></span>
+        <span style="background:#e39b63"></span>
+        <span style="background:#63514b"></span>
+        <span style="background:#fbf9f9"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="light" data-palette="peacock">
+  <div class="tag">孔雀青 · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#21757d"></span>
+        <span style="background:#27bebc"></span>
+        <span style="background:#476466"></span>
+        <span style="background:#f9fbfb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="light" data-palette="graphite">
+  <div class="tag">石墨蓝 · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#4b5c6c"></span>
+        <span style="background:#5e86a1"></span>
+        <span style="background:#4c5761"></span>
+        <span style="background:#f9fafa"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="light" data-palette="abyss">
+  <div class="tag">深海蓝 · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#23487b"></span>
+        <span style="background:#297fbc"></span>
+        <span style="background:#475466"></span>
+        <span style="background:#f9fafb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="light" data-palette="indigo">
+  <div class="tag">靛蓝紫 · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#49418b"></span>
+        <span style="background:#7f56bd"></span>
+        <span style="background:#4c4965"></span>
+        <span style="background:#f9f9fb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="light" data-palette="violet">
+  <div class="tag">罗兰紫 · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#7d4c9a"></span>
+        <span style="background:#b46bc2"></span>
+        <span style="background:#5a4b63"></span>
+        <span style="background:#faf9fb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="dark" data-palette="rose">
+  <div class="tag">玫瑰紫 · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#9c3a5e"></span>
+        <span style="background:#cb526e"></span>
+        <span style="background:#654953"></span>
+        <span style="background:#fbf9fa"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="dark" data-palette="coral">
+  <div class="tag">珊瑚橙 · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#cf5b30"></span>
+        <span style="background:#e39b63"></span>
+        <span style="background:#63514b"></span>
+        <span style="background:#fbf9f9"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="dark" data-palette="peacock">
+  <div class="tag">孔雀青 · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#21757d"></span>
+        <span style="background:#27bebc"></span>
+        <span style="background:#476466"></span>
+        <span style="background:#f9fbfb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="dark" data-palette="graphite">
+  <div class="tag">石墨蓝 · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#4b5c6c"></span>
+        <span style="background:#5e86a1"></span>
+        <span style="background:#4c5761"></span>
+        <span style="background:#f9fafa"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="dark" data-palette="abyss">
+  <div class="tag">深海蓝 · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#23487b"></span>
+        <span style="background:#297fbc"></span>
+        <span style="background:#475466"></span>
+        <span style="background:#f9fafb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="dark" data-palette="indigo">
+  <div class="tag">靛蓝紫 · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#49418b"></span>
+        <span style="background:#7f56bd"></span>
+        <span style="background:#4c4965"></span>
+        <span style="background:#f9f9fb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cell" data-theme="dark" data-palette="violet">
+  <div class="tag">罗兰紫 · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#7d4c9a"></span>
+        <span style="background:#b46bc2"></span>
+        <span style="background:#5a4b63"></span>
+        <span style="background:#faf9fb"></span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>
