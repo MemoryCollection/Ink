@@ -6,14 +6,14 @@
 <title>墨 Ink — 主题预览</title>
 <script>
 (function () {
-  var t;
-  try {
-    t = localStorage.getItem('ink-theme');
-    if (t !== 'light' && t !== 'dark') {
-      t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-  } catch (e) { t = 'light'; }
-  document.documentElement.setAttribute('data-theme', t);
+  var d = document.documentElement;
+  var m;
+  try { m = localStorage.getItem('ink-theme'); } catch (e) {}
+  if (m !== 'light' && m !== 'dark' && m !== 'auto') { m = 'auto'; }
+  var dark = m === 'dark' || (m === 'auto' && window.matchMedia
+    && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  d.setAttribute('data-mode', m);
+  d.setAttribute('data-theme', dark ? 'dark' : 'light');
 })();
 </script>
 <link rel="stylesheet" href="ink/style.css">
@@ -74,20 +74,21 @@
         <a class="head-icon" href="#" title="邮件" aria-label="邮件"><i class="czs-paper-plane" aria-hidden="true"></i></a>
       </div>
       <div class="swatches">
-        <button class="swatch-pick" id="palettePick" type="button" aria-expanded="false" aria-label="配色与明暗" title="配色与明暗" data-default="rose">
+        <button class="swatch-pick" id="palettePick" type="button" aria-expanded="false" aria-label="配色与明暗" title="配色与明暗" data-default="graphite">
           <span class="sp-a"></span><span class="sp-b"></span>
         </button>
         <div class="swatch-panel" id="palettePanel">
-          <button class="swatch" type="button" data-palette-set="rose" aria-pressed="true"><span class="swatch-dot" style="background:linear-gradient(135deg,#9c3a5e,#cb526e)"></span><span class="swatch-name">玫瑰紫</span></button>
+          <button class="swatch" type="button" data-palette-set="graphite" aria-pressed="true"><span class="swatch-dot" style="background:linear-gradient(135deg,#4b5c6c,#5e86a1)"></span><span class="swatch-name">石墨蓝</span></button>
+          <button class="swatch" type="button" data-palette-set="rose"><span class="swatch-dot" style="background:linear-gradient(135deg,#9c3a5e,#cb526e)"></span><span class="swatch-name">玫瑰紫</span></button>
           <button class="swatch" type="button" data-palette-set="coral"><span class="swatch-dot" style="background:linear-gradient(135deg,#cf5b30,#e39b63)"></span><span class="swatch-name">珊瑚橙</span></button>
           <button class="swatch" type="button" data-palette-set="peacock"><span class="swatch-dot" style="background:linear-gradient(135deg,#21757d,#27bebc)"></span><span class="swatch-name">孔雀青</span></button>
-          <button class="swatch" type="button" data-palette-set="graphite"><span class="swatch-dot" style="background:linear-gradient(135deg,#4b5c6c,#5e86a1)"></span><span class="swatch-name">石墨蓝</span></button>
           <button class="swatch" type="button" data-palette-set="abyss"><span class="swatch-dot" style="background:linear-gradient(135deg,#23487b,#297fbc)"></span><span class="swatch-name">深海蓝</span></button>
           <button class="swatch" type="button" data-palette-set="indigo"><span class="swatch-dot" style="background:linear-gradient(135deg,#49418b,#7f56bd)"></span><span class="swatch-name">靛蓝紫</span></button>
           <button class="swatch" type="button" data-palette-set="violet"><span class="swatch-dot" style="background:linear-gradient(135deg,#7d4c9a,#b46bc2)"></span><span class="swatch-name">罗兰紫</span></button>
           <div class="swatch-sep" aria-hidden="true"></div>
           <div class="mode-row">
-            <button class="mode-btn" type="button" data-mode-set="light" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><span>浅色</span></button>
+            <button class="mode-btn is-on" type="button" data-mode-set="auto" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.2"/><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4Z" fill="currentColor" stroke="none"/></svg><span>自动</span></button>
+            <button class="mode-btn" type="button" data-mode-set="light" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><span>浅色</span></button>
             <button class="mode-btn" type="button" data-mode-set="dark" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1Z"/></svg><span>深色</span></button>
           </div>
         </div>

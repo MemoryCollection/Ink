@@ -17,7 +17,7 @@
  *
  * @package 墨 Ink
  * @author Wu
- * @version 1.3.3
+ * @version 1.4.0
  * @link https://github.com/MemoryCollection
  */
 
@@ -25,48 +25,51 @@
    1. 设计变量
    ========================================================= */
 :root {
-  /* 纸面（默认：玫瑰紫） */
-  --paper:         #fbf9fa;
-  --paper-raise:   #f4ecef;
-  --paper-blur:    rgba(251, 249, 250, .88);
-  --paper-tint:    rgba(215, 173, 188, .34);
-  --paper-glow:    rgba(253, 252, 252, .95);
-  --pat:           rgba(156, 58, 94, .075);
+  /* 让浏览器原生控件（滚动条、表单、下拉）跟着明暗走 */
+  color-scheme: light;
+
+  /* 纸面（默认：石墨蓝） */
+  --paper:         #f9fafa;
+  --paper-raise:   #edf0f2;
+  --paper-blur:    rgba(249, 250, 250, .88);
+  --paper-tint:    rgba(179, 194, 208, .34);
+  --paper-glow:    rgba(252, 252, 253, .95);
+  --pat:           rgba(75, 92, 108, .075);
 
   /* 桌面与纸张边缘 */
-  --desk:          #e8d9de;
-  --desk-2:        #e1ccd3;
-  --sheet-line:    #e6d6dc;
-  --sheet-shadow:  rgba(92, 31, 53, .3);
+  --desk:          #dce0e5;
+  --desk-2:        #d0d6dd;
+  --sheet-line:    #d9dee2;
+  --sheet-shadow:  rgba(37, 61, 86, .3);
 
   /* 墨色（三级层次） */
-  --ink:           #231a1d;
-  --ink-2:         #654953;
-  --ink-3:         #9f7f8b;
+  --ink:           #1b1f22;
+  --ink-2:         #4c5761;
+  --ink-3:         #848f9a;
 
   /* 细线 */
-  --rule:          #e8d9de;
-  --rule-soft:     #f1e9ec;
+  --rule:          #dce0e5;
+  --rule-soft:     #ebedef;
 
   /* 强调色：主色 + 渐变终点色 */
-  --accent:        #9c3a5e;
-  --accent-2:      #cb526e;
-  --accent-soft:   rgba(156, 58, 94, .08);
+  --accent:        #4b5c6c;
+  --accent-2:      #5e86a1;
+  --accent-soft:   rgba(75, 92, 108, .08);
 
   /* 代码 */
-  --code-bg:       #f5eff1;
-  --code-fg:       #35272c;
-  --code-line:     #eee3e7;
+  --code-bg:       #f0f2f4;
+  --code-fg:       #282e33;
+  --code-line:     #e5e8eb;
 
   /* 语法着色 */
-  --tok-com:       #96888d;
-  --tok-key:       #9c3a5e;
+  --tok-com:       #888f96;
+  --tok-key:       #4b5c6c;
   --tok-str:       #4f7a3f;
   --tok-num:       #9a6a2a;
   --tok-fn:        #2f6a8c;
-  --tok-var:       #363032;
-  --tok-op:        #7c6e73;
-  --tok-tag:       #9c3a5e;
+  --tok-var:       #303336;
+  --tok-op:        #6e757c;
+  --tok-tag:       #4b5c6c;
   --tok-attr:      #9a6a2a;
 
   /* ------- 字体：换字体只改这三行 ------- */
@@ -120,46 +123,48 @@
 }
 
 [data-theme="dark"] {
-  --desk:          #0d0809;
-  --desk-2:        #160d11;
-  --sheet-line:    #331e26;
+  color-scheme: dark;
+
+  --desk:          #090a0c;
+  --desk-2:        #0f1215;
+  --sheet-line:    #22292f;
   --sheet-shadow:  rgba(0, 0, 0, .62);
 
-  --paper:         #1c1115;
-  --paper-raise:   #29191f;
-  --paper-blur:    rgba(28, 17, 21, .88);
-  --paper-tint:    rgba(178, 77, 114, .16);
-  --paper-glow:    rgba(56, 30, 40, .55);
-  --pat:           rgba(203, 82, 110, .13);
+  --paper:         #14171a;
+  --paper-raise:   #1d2126;
+  --paper-blur:    rgba(20, 23, 26, .88);
+  --paper-tint:    rgba(89, 127, 166, .16);
+  --paper-glow:    rgba(35, 43, 52, .55);
+  --pat:           rgba(94, 134, 161, .13);
 
-  --ink:           #eae1e4;
-  --ink-2:         #b69aa5;
-  --ink-3:         #85606e;
-  --rule:          #3a222b;
-  --rule-soft:     #2d1a21;
-  --accent:        #d6668f;
-  --accent-2:      #e28da1;
-  --accent-soft:   rgba(214, 102, 143, .11);
-  --code-bg:       #130b0e;
-  --code-fg:       #e1d6da;
-  --code-line:     #2d1a21;
+  --ink:           #e2e6e9;
+  --ink-2:         #9ea8b3;
+  --ink-3:         #657381;
+  --rule:          #272e35;
+  --rule-soft:     #1e2429;
+  --accent:        #6d8fb0;
+  --accent-2:      #8daec4;
+  --accent-soft:   rgba(109, 143, 176, .11);
+  --code-bg:       #0d0f12;
+  --code-fg:       #d7dbe0;
+  --code-line:     #1e2429;
 
-  --tok-com:       #746369;
-  --tok-key:       #d6668f;
+  --tok-com:       #636b74;
+  --tok-key:       #6d8fb0;
   --tok-str:       #9ec489;
   --tok-num:       #d8b06b;
   --tok-fn:        #8cb8d6;
-  --tok-var:       #d3cfd1;
-  --tok-op:        #9f9397;
-  --tok-tag:       #d6668f;
+  --tok-var:       #cfd1d3;
+  --tok-op:        #93999f;
+  --tok-tag:       #6d8fb0;
   --tok-attr:      #d8b06b;
 }
 
 /* ---------------------------------------------------------
    配色方案 —— 只覆盖颜色变量，靠 <html data-palette="…"> 切换。
-   不写 data-palette 就是「玫瑰紫」（默认，已写在 :root 里）。
+   不写 data-palette 就是「石墨蓝」（默认，已写在 :root 里）。
    ------------------------------------------------------- */
-/* 玫瑰紫：玫红 → 粉紫（默认，写在 :root 里，无需 data-palette） */
+/* 玫瑰紫：玫红 → 粉紫 */
 [data-palette="rose"] {
   --paper:         #fbf9fa;
   --paper-raise:   #f4ecef;
@@ -360,7 +365,7 @@
   --tok-tag:       #2bcbda;
   --tok-attr:      #d8b06b;
 }
-/* 石墨蓝：石墨灰 → 雾蓝 */
+/* 石墨蓝：石墨灰 → 雾蓝（默认，已写在 :root 里；显式指定时也命中） */
 [data-palette="graphite"] {
   --paper:         #f9fafa;
   --paper-raise:   #edf0f2;
@@ -902,7 +907,7 @@ body.is-single .progress { display: block; }
   top: calc(100% + 10px);
   right: -6px;
   z-index: 130;
-  width: 158px;
+  width: 178px;
   padding: 6px;
   background: var(--paper);
   border: 1px solid var(--rule);
@@ -948,7 +953,7 @@ body.is-single .progress { display: block; }
 }
 .mode-row {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   padding: 0 3px 3px;
 }
 .mode-btn {
@@ -960,7 +965,7 @@ body.is-single .progress { display: block; }
   padding: 8px 0 7px;
   border-radius: 8px;
   font-size: 11.5px;
-  letter-spacing: .04em;
+  letter-spacing: 0;
   color: var(--ink-3);
   transition: color .2s var(--ease), background-color .2s var(--ease);
 }
@@ -1820,11 +1825,33 @@ body { padding: 26px 22px 50px; background: #f2f2f4; font-family: -apple-system,
 <div class="top">
   <b>七套配色，明暗各一。</b>
   点前台导航右侧的双色圆点就能切，选择存 cookie，下次进来还是这套。
-  默认是 <b>玫瑰紫</b>；<span class="k">data-palette</span> 的值依次是
+  默认是 <b>石墨蓝</b>；<span class="k">data-palette</span> 的值依次是
   rose / coral / peacock / graphite / abyss / indigo / violet。
   每张卡片最下面四个色块是：主色、渐变终点色、次墨色、纸色。
 </div>
 <div class="grid">
+<div class="cell" data-theme="light" data-palette="graphite">
+  <div class="tag">石墨蓝（默认） · 浅色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#4b5c6c"></span>
+        <span style="background:#5e86a1"></span>
+        <span style="background:#4c5761"></span>
+        <span style="background:#f9fafa"></span>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="cell" data-theme="light" data-palette="rose">
   <div class="tag">玫瑰紫 · 浅色</div>
   <div class="sheetbox">
@@ -1887,28 +1914,6 @@ body { padding: 26px 22px 50px; background: #f2f2f4; font-family: -apple-system,
         <span style="background:#27bebc"></span>
         <span style="background:#476466"></span>
         <span style="background:#f9fbfb"></span>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="cell" data-theme="light" data-palette="graphite">
-  <div class="tag">石墨蓝 · 浅色</div>
-  <div class="sheetbox">
-    <div class="sh-head">
-      <h3>读墨记</h3>
-      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
-    </div>
-    <ul class="sh-list">
-      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
-      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
-    </ul>
-    <div class="sh-body">
-      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
-      <div class="sw">
-        <span style="background:#4b5c6c"></span>
-        <span style="background:#5e86a1"></span>
-        <span style="background:#4c5761"></span>
-        <span style="background:#f9fafa"></span>
       </div>
     </div>
   </div>
@@ -1979,6 +1984,28 @@ body { padding: 26px 22px 50px; background: #f2f2f4; font-family: -apple-system,
     </div>
   </div>
 </div>
+<div class="cell" data-theme="dark" data-palette="graphite">
+  <div class="tag">石墨蓝（默认） · 深色</div>
+  <div class="sheetbox">
+    <div class="sh-head">
+      <h3>读墨记</h3>
+      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
+    </div>
+    <ul class="sh-list">
+      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
+      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
+    </ul>
+    <div class="sh-body">
+      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
+      <div class="sw">
+        <span style="background:#4b5c6c"></span>
+        <span style="background:#5e86a1"></span>
+        <span style="background:#4c5761"></span>
+        <span style="background:#f9fafa"></span>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="cell" data-theme="dark" data-palette="rose">
   <div class="tag">玫瑰紫 · 深色</div>
   <div class="sheetbox">
@@ -2041,28 +2068,6 @@ body { padding: 26px 22px 50px; background: #f2f2f4; font-family: -apple-system,
         <span style="background:#27bebc"></span>
         <span style="background:#476466"></span>
         <span style="background:#f9fbfb"></span>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="cell" data-theme="dark" data-palette="graphite">
-  <div class="tag">石墨蓝 · 深色</div>
-  <div class="sheetbox">
-    <div class="sh-head">
-      <h3>读墨记</h3>
-      <span class="sh-meta">共 31 篇 · 2026.10.19</span>
-    </div>
-    <ul class="sh-list">
-      <li><span class="d">2026.10.12</span><span class="t">悬浮窗的 Z 序，在六台机器上跑了一遍</span></li>
-      <li><span class="d">2026.10.08</span><span class="t">用 Typecho 而不是 WordPress 的第七个理由</span></li>
-    </ul>
-    <div class="sh-body">
-      <p>正文排在这里，字色是 <b>墨</b>，次要信息压到 <i>淡墨</i>，一条 <u>强调线</u> 收尾。</p>
-      <div class="sw">
-        <span style="background:#4b5c6c"></span>
-        <span style="background:#5e86a1"></span>
-        <span style="background:#4c5761"></span>
-        <span style="background:#f9fafa"></span>
       </div>
     </div>
   </div>

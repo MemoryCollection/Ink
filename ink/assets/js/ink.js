@@ -11,7 +11,8 @@
   var pick0 = doc.getElementById('palettePick');
 
   /* ---------------------------------------------------------
-   * 配色切换（玫瑰紫 / 珊瑚橙 / 孔雀青 / 石墨蓝 / 深海蓝 / 靛蓝紫 / 罗兰紫）
+   * 配色切换（石墨蓝为默认，另有玫瑰紫 / 珊瑚橙 / 孔雀青 /
+   *           深海蓝 / 靛蓝紫 / 罗兰紫）
    * 选择写入 cookie，下次首屏由 PHP 直接输出，不会闪色。
    *
    * 配色清单不写死在这里：直接读后台渲染出来的按钮，
@@ -25,7 +26,7 @@
       palettes.push(n);
     }
   });
-  var paletteDefault = (pick0 && pick0.getAttribute('data-default')) || 'rose';
+  var paletteDefault = (pick0 && pick0.getAttribute('data-default')) || 'graphite';
 
   function cookieDays(days) {
     var d = new Date();
@@ -109,18 +110,30 @@
   }
 
   /* ---------------------------------------------------------
-   * 明暗切换（与配色共用一个按钮，面板下半选择）
+   * 明暗切换（自动 / 浅色 / 深色，与配色共用一个按钮）
+   *
+   * 「自动」= 跟随浏览器 / 系统的 prefers-color-scheme，
+   * 存的是用户的选择，实际生效的明暗写在 data-theme 上，
+   * 所以 CSS 只要一套 [data-theme="dark"]，不用为自动再写一遍。
    * ------------------------------------------------------- */
   var modeBtns = doc.querySelectorAll('[data-mode-set]');
+  var darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
-  function applyMode(mode) {
-    if (mode !== 'light' && mode !== 'dark') {
-      mode = 'light';
+  /* 用户的选择 → 这一刻实际该用哪套 */
+  function resolveMode(mode) {
+    if (mode === 'dark') {
+      return 'dark';
     }
-    root.setAttribute('data-theme', mode);
-    try {
-      localStorage.setItem('ink-theme', mode);
-    } catch (e) {}
+    if (mode === 'auto' && darkQuery && darkQuery.matches) {
+      return 'dark';
+    }
+    return 'light';
+  }
+
+  /* 只改外观，不写存储（首屏点亮按钮也走这里） */
+  function paintMode(mode) {
+    root.setAttribute('data-mode', mode);
+    root.setAttribute('data-theme', resolveMode(mode));
     Array.prototype.forEach.call(modeBtns, function (b) {
       var on = b.getAttribute('data-mode-set') === mode;
       b.classList.toggle('is-on', on);
@@ -129,14 +142,41 @@
     syncThemeColor();
   }
 
+  /* 用户点了按钮：记住选择 */
+  function applyMode(mode) {
+    if (mode !== 'light' && mode !== 'dark') {
+      mode = 'auto';
+    }
+    try {
+      localStorage.setItem('ink-theme', mode);
+    } catch (e) {}
+    paintMode(mode);
+  }
+
   Array.prototype.forEach.call(modeBtns, function (b) {
     b.addEventListener('click', function () {
       applyMode(b.getAttribute('data-mode-set'));
     });
   });
 
-  /* 首屏把面板里的模式按钮点亮（data-theme 已由内联脚本定好） */
-  applyMode(root.getAttribute('data-theme') || 'light');
+  /* 系统在深浅之间切换时，只有「自动」需要跟着动；
+     手动选了浅色/深色的人不该被系统设置覆盖 */
+  function onSchemeChange() {
+    if (root.getAttribute('data-mode') === 'auto') {
+      paintMode('auto');
+    }
+  }
+  if (darkQuery) {
+    if (darkQuery.addEventListener) {
+      darkQuery.addEventListener('change', onSchemeChange);
+    } else if (darkQuery.addListener) {
+      darkQuery.addListener(onSchemeChange);   /* 老 Safari */
+    }
+  }
+
+  /* 首屏：data-mode 已由 <head> 里的内联脚本定好，这里只点亮按钮，
+     不写 localStorage —— 否则第一次访问就被钉成 light，自动模式永远进不去 */
+  paintMode(root.getAttribute('data-mode') || 'auto');
 
   /* ---------------------------------------------------------
    * 滚动行为：进度线 / 返回顶部

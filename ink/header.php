@@ -24,7 +24,7 @@ $inkFavicon = 'data:image/svg+xml,' . rawurlencode(
 <meta charset="<?php $this->options->charset(); ?>">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f7faf9" id="themeColor">
+<meta name="theme-color" content="#f9fafa" id="themeColor">
 <title><?php
 if ($this->is('single')) {
     $this->title();
@@ -56,16 +56,30 @@ if ($this->is('single')) {
 <meta property="og:title" content="<?php $this->options->title(); ?>">
 <?php endif; ?>
 <script>
+/*
+ * 首屏定明暗，早于样式表，避免闪一下再变。
+ *
+ * 存两样东西：
+ *   data-mode  = 用户选的（auto / light / dark），面板高亮看它
+ *   data-theme = 实际生效的（light / dark），CSS 只认这个
+ *
+ * 所以选「自动」时 CSS 不用写第二套 prefers-color-scheme 规则，
+ * 换系统主题由 ink.js 监听到变化后改 data-theme 即可。
+ * 没有记录（第一次来）就是 auto —— 跟随访客的浏览器 / 系统。
+ */
 (function () {
   var d = document.documentElement;
-  var t;
+  var m;
   try {
-    t = localStorage.getItem('ink-theme');
+    m = localStorage.getItem('ink-theme');
   } catch (e) {}
-  if (t !== 'light' && t !== 'dark') {
-    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  if (m !== 'light' && m !== 'dark' && m !== 'auto') {
+    m = 'auto';
   }
-  d.setAttribute('data-theme', t);
+  var dark = m === 'dark' || (m === 'auto' && window.matchMedia
+    && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  d.setAttribute('data-mode', m);
+  d.setAttribute('data-theme', dark ? 'dark' : 'light');
 })();
 </script>
 <link rel="stylesheet" href="<?php echo ink_asset('style.css'); ?>">
@@ -149,6 +163,10 @@ if ($inkAccent !== ''):
 
           <div class="swatch-sep" aria-hidden="true"></div>
           <div class="mode-row" role="group" aria-label="<?php _e('明暗模式'); ?>">
+            <button class="mode-btn" type="button" data-mode-set="auto">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4Z" fill="currentColor" stroke="none"/></svg>
+              <span><?php _e('自动'); ?></span>
+            </button>
             <button class="mode-btn" type="button" data-mode-set="light">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
               <span><?php _e('浅色'); ?></span>

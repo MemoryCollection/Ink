@@ -40,7 +40,7 @@
 
 <script src="<?php echo ink_asset('assets/js/ink-highlight.js'); ?>"></script>
 <script src="<?php echo ink_asset('assets/js/ink.js'); ?>"></script>
-<!-- 墨 Ink 1.4.0 -->
+<!-- 墨 Ink 1.4.1 -->
 <?php $this->footer(); ?>
 </body>
 </html>
