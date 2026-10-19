@@ -2,12 +2,15 @@
  * 极简阅读型博客主题。暖白书页底色，衬线标题，一条细线做结构。
  *
  * 换字体 → 改 --serif / --sans / --mono 三行
- * 换字号 → 改 --fs-body / --lh-body / --fs-title / --fs-h1 / --fs-list
+ * 换字号 → 只改 --fs-body / --lh-body 两行，其余字号和间距都是它们的倍数
  * 换配色 → 改 <html> 上的 data-palette，或在后台主题设置里选
+ *
+ * 注意：后台「设置外观」注入的变量在 style.css 之后（见 header.php），
+ * 所以后台填的值会覆盖这里的默认值；两处写同一个变量时，后出现的赢。
  *
  * @package 墨 Ink
  * @author Wu
- * @version 1.2.0
+ * @version 1.3.3
  * @link https://github.com/MemoryCollection
  */
 
@@ -64,12 +67,31 @@
   --sans:  -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
   --mono:  ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, Menlo, monospace;
 
-  /* ------- 字号：换大小只改这几行 ------- */
-  --fs-body:    17px;                        /* 正文 */
+  /* ------- 字号：换大小只改这一行 ------- */
+  --fs-body:    17px;                        /* 正文：其余字号都由它派生 */
   --lh-body:    1.9;                         /* 正文行高 */
-  --fs-title:   1.55rem;                     /* 首页 / 分类页标题 */
-  --fs-h1:      clamp(1.6rem, 2.4vw, 2rem);  /* 文章标题 */
-  --fs-list:    16px;                        /* 列表里的文章标题 */
+
+  /*
+   * 下面这些都不是写死的像素，而是跟 --fs-body 联动的比例：
+   * 后台把正文调到 20px，首页标题、列表标题、文章标题会一起放大，
+   * 比例关系不变 —— 首页和文章页永远是同一套字号体系。
+   */
+  --fs-title:   calc(var(--fs-body) * 1.459);   /* 首页 / 分类页大标题 ≈ 1.55rem@17px */
+  /* 文章标题：原 clamp(1.6rem, 2.4vw, 2rem) 改成相对正文的倍数，
+     窄屏用 min() 收一档，宽屏用 max() 托底 —— 单层 calc，老 WebView 也认 */
+  --fs-h1:      max(calc(var(--fs-body) * 1.506), min(calc(var(--fs-body) * 1.882), 2.4vw));
+  --fs-list:    calc(var(--fs-body) * .941);    /* 列表里的文章标题 ≈ 16px@17px */
+  --fs-meta:    calc(var(--fs-body) * .735);    /* 日期、字数这类小字 ≈ 12.5px@17px */
+  --fs-label:   calc(var(--fs-body) * .677);    /* 更小的标签字 ≈ 11.5px@17px */
+
+  /*
+   * 正文的「节奏」全部由 --fs-body / --lh-body 派生，
+   * 后台把字号从 17px 调到 20px，段距、标题、代码块一起放大，不会只有字变大。
+   */
+  --fs-k:       calc(var(--fs-body) / 17px);       /* 相对 17px 的比例 */
+  --flow:       calc(var(--fs-body) * var(--lh-body));  /* 一个「行距」 */
+  --para-gap:   calc(var(--flow) * .9);            /* 段与段之间，不到一行 */
+  --block-gap:  calc(var(--flow) * 1.15);          /* 段落与其他块之间 */
 
   /* 版面：桌面上的一张纸 */
   --sheet-w:    840px;
@@ -461,8 +483,9 @@ body {
   background: var(--desk);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 17px;
-  line-height: 1.9;
+  /* 兜底基准：跟随后台正文字号，避免和 --fs-body 各写一个值将来不同步 */
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   transition: background-color .3s var(--ease), color .3s var(--ease);
 }
 
@@ -823,7 +846,7 @@ body.is-single .progress { display: block; }
 /* 标题区下面那行统计：与标题左对齐，字号比标题小两档，颜色压淡 */
 .idx-meta {
   margin: 10px 0 0;
-  font-size: 12.5px;
+  font-size: var(--fs-meta);
   line-height: 1.7;
   letter-spacing: .05em;
   color: var(--ink-3);
@@ -876,7 +899,7 @@ body.is-single .progress { display: block; }
   align-items: center;
   gap: 6px 10px;
   margin-top: 9px;
-  font-size: 11.5px;
+  font-size: var(--fs-label);
   letter-spacing: .09em;
   color: var(--ink-3);
   font-variant-numeric: tabular-nums;
@@ -890,7 +913,7 @@ body.is-single .progress { display: block; }
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   opacity: .8;
 }
-.post-meta time { font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; }
+.post-meta time { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .04em; }
 .post-meta .dot { display: none; }
 .post-meta a {
   color: var(--ink-3);
@@ -993,13 +1016,13 @@ body.is-single .progress { display: block; }
   gap: 7px;
 }
 .post-nav .dir {
-  font-size: 11.5px;
+  font-size: var(--fs-label);
   letter-spacing: .12em;
   color: var(--ink-3);
 }
 .post-nav .label {
   font-family: var(--serif);
-  font-size: 15px;
+  font-size: calc(var(--fs-body) * .882);
   line-height: 1.6;
   color: var(--ink);
   overflow: hidden;
@@ -1027,13 +1050,16 @@ body.is-single .progress { display: block; }
   color: var(--ink);
   overflow-wrap: break-word;
   word-break: break-word;
+  /* 中西文混排时数字、标点更齐，与首页日期列的 tabular 一致 */
+  font-variant-numeric: tabular-nums;
+  text-spacing-trim: space-all;
 }
 
 .content > *:first-child { margin-top: 0; }
 .content > *:last-child { margin-bottom: 0; }
 
 .content p {
-  margin: 0 0 1.55em;
+  margin: 0 0 var(--para-gap);
 }
 
 /* 标题 */
@@ -1045,13 +1071,18 @@ body.is-single .progress { display: block; }
   letter-spacing: -.006em;
   color: var(--ink);
   scroll-margin-top: calc(var(--head-h) + 28px);
+  text-wrap: balance;
 }
 
-.content h1 { font-size: 1.72em; margin: 2.1em 0 .8em; }
-.content h2 { font-size: 1.42em; margin: 2.2em 0 .78em; }
-.content h3 { font-size: 1.2em;  margin: 2em 0 .68em; }
-.content h4 { font-size: 1.06em; margin: 1.8em 0 .6em; }
-.content h5, .content h6 { font-size: 1em; margin: 1.6em 0 .5em; color: var(--ink-2); }
+/*
+ * 标题与正文同用一套比例，字号跟随 --fs-body 放大；
+ * 上下留白按「行距」算，行高调到 2.2 时标题也不会贴住上一段。
+ */
+.content h1 { font-size: calc(var(--fs-body) * 1.72); margin: calc(var(--flow) * 1.1) 0 var(--para-gap); }
+.content h2 { font-size: calc(var(--fs-body) * 1.42); margin: calc(var(--flow) * 1.15) 0 var(--para-gap); }
+.content h3 { font-size: calc(var(--fs-body) * 1.2);  margin: calc(var(--flow) * 1.05) 0 calc(var(--para-gap) * .88); }
+.content h4 { font-size: calc(var(--fs-body) * 1.06); margin: calc(var(--flow) * .95) 0 calc(var(--para-gap) * .78); }
+.content h5, .content h6 { font-size: var(--fs-body); margin: calc(var(--flow) * .85) 0 calc(var(--para-gap) * .65); color: var(--ink-2); }
 
 /* 文本类 */
 .content a {
@@ -1070,7 +1101,7 @@ body.is-single .progress { display: block; }
 .content mark { background: rgba(178, 58, 46, .14); color: inherit; padding: .05em .2em; }
 
 .content ul, .content ol {
-  margin: 0 0 1.55em;
+  margin: 0 0 var(--para-gap);
   padding-left: 1.5em;
 }
 .content li { margin: 0 0 .5em; }
@@ -1079,19 +1110,20 @@ body.is-single .progress { display: block; }
 
 .content hr {
   width: 44%;
-  margin: 3.2em auto;
+  margin: calc(var(--flow) * 1.7) auto;
   border: 0;
   height: 1px;
   background: var(--rule);
 }
 
 .content blockquote {
-  margin: 2.1em 0;
+  margin: var(--block-gap) 0;
   padding: .1em 0 .1em 1.4em;
   border-left: 2px solid var(--accent);
   font-family: var(--serif);
-  font-size: 1.02em;
-  line-height: 1.9;
+  font-size: calc(var(--fs-body) * 1.02);
+  /* 引用跟着正文行高走：正文行高调到 2.2，引用也松下来，不再固定 1.9 */
+  line-height: var(--lh-body);
   color: var(--ink-2);
 }
 .content blockquote p:last-child { margin-bottom: 0; }
@@ -1100,19 +1132,19 @@ body.is-single .progress { display: block; }
 .content img {
   display: block;
   max-width: 100%;
-  margin: 2.1em auto;
+  margin: var(--block-gap) auto;
   border-radius: 2px;
   cursor: zoom-in;
 }
-.content p > img:only-child { margin: 2.1em auto; }
+.content p > img:only-child { margin: var(--block-gap) auto; }
 
 .content figure {
-  margin: 2.2em 0;
+  margin: calc(var(--block-gap) * 1.05) 0;
 }
 .content figure img { margin: 0; }
 .content figcaption {
   margin-top: 12px;
-  font-size: 12.5px;
+  font-size: calc(var(--fs-body) * .735);
   line-height: 1.7;
   text-align: center;
   color: var(--ink-3);
@@ -1122,9 +1154,9 @@ body.is-single .progress { display: block; }
 /* 表格 */
 .content table {
   width: 100%;
-  margin: 2em 0;
+  margin: var(--block-gap) 0;
   border-collapse: collapse;
-  font-size: 14.5px;
+  font-size: calc(var(--fs-body) * .855);
   line-height: 1.65;
 }
 .content th, .content td {
@@ -1135,7 +1167,7 @@ body.is-single .progress { display: block; }
 .content th {
   font-weight: 600;
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: calc(var(--fs-body) * .765);
   letter-spacing: .05em;
   border-bottom-color: var(--rule);
 }
@@ -1158,14 +1190,15 @@ body.is-single .progress { display: block; }
    两侧留出 gutter，行号用 CSS 计数器铺在左侧，不占代码的选择区 */
 .content pre {
   position: relative;
-  margin: 2em 0;
+  margin: var(--block-gap) 0;
   padding: 14px 20px 18px;
   background: var(--code-bg);
   border: 1px solid var(--code-line);
   border-radius: 8px;
   overflow-x: auto;
   overflow-y: hidden;
-  font-size: 13.2px;
+  /* 代码比正文小一档，用同一个基准缩放：正文字号一动，代码跟着动 */
+  font-size: calc(var(--fs-body) * .777);
   line-height: 1.75;
   tab-size: 2;
   scrollbar-width: thin;
@@ -1239,7 +1272,7 @@ body.is-single .progress { display: block; }
   align-items: center;
   gap: 6px;
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: calc(var(--fs-body) * .618);
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -1263,7 +1296,7 @@ body.is-single .progress { display: block; }
   align-items: center;
   gap: 5px;
   font-family: var(--sans);
-  font-size: 11.5px;
+  font-size: calc(var(--fs-body) * .677);
   letter-spacing: .04em;
   color: var(--ink-3);
   background: none;
@@ -1317,7 +1350,7 @@ body.is-single .progress { display: block; }
   padding-right: 18px;
   border-right: 1px solid var(--rule-soft);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-label);
   line-height: 1.6;
   letter-spacing: .02em;
   color: var(--ink-3);
@@ -1337,7 +1370,7 @@ body.is-single .progress { display: block; }
   padding: 76px 0;
   text-align: center;
   color: var(--ink-3);
-  font-size: 14.5px;
+  font-size: calc(var(--fs-body) * .853);
 }
 
 /* =========================================================
@@ -1442,7 +1475,7 @@ body.is-single .progress { display: block; }
   margin-top: auto;
   padding: 34px 0 40px;
   border-top: 1px solid var(--rule);
-  font-size: 12.5px;
+  font-size: var(--fs-meta);
   line-height: 1.9;
   color: var(--ink-3);
   letter-spacing: .03em;
@@ -1498,14 +1531,16 @@ body.is-single .progress { display: block; }
   .site-nav { gap: 15px; }
   .site-nav a { font-size: 13.5px; }
 
-  .idx-title { font-size: 1.38rem; }
+  /* 窄屏标题收一点，但依然跟着 --fs-body 走，不是另起一套 rem */
+  .idx-title { font-size: calc(var(--fs-body) * 1.3); }
 
   .post-head { padding-top: 16px; }
   .post-content { padding-top: 24px; }
 
+  /* 手机上正文字号几乎不缩（只让 -0.5px 变成相对值），
+     代码块、块的间距全部沿用 900px 以上的派生值，不再另写像素 */
   .content { font-size: calc(var(--fs-body) - .5px); line-height: var(--lh-body); }
-  .content pre { padding: 16px 16px; font-size: 12.6px; margin: 1.6em -6px; }
-  .content blockquote { margin: 1.8em 0; }
+  .content pre { padding: 16px 16px; font-size: calc(var(--fs-body) * .727); margin: var(--block-gap) -6px; }
   .copy-btn { opacity: 1; }
 
   .post-nav { flex-direction: column; gap: 18px; margin-top: 52px; padding-top: 22px; }
@@ -1520,7 +1555,7 @@ body.is-single .progress { display: block; }
     --pat-pos: 10px;
   }
 
-  .idx-title { font-size: 1.26rem; }
+  .idx-title { font-size: calc(var(--fs-body) * 1.186); }
   .head-inner { gap: 10px; }
   .site-name { font-size: 1.12rem; }
   .site-nav a { font-size: 13px; }
@@ -1540,11 +1575,11 @@ body.is-single .progress { display: block; }
   .head-icon i { font-size: 15px; }
 
   .archive-item { gap: 12px; }
-  .archive-item .day { width: calc(var(--day-w) - 12px); padding-right: 12px; font-size: 11px; }
-  .archive-item .ttl { font-size: 15px; }
+  .archive-item .day { width: calc(var(--day-w) - 12px); padding-right: 12px; font-size: calc(var(--fs-label) * .957); }
+  .archive-item .ttl { font-size: calc(var(--fs-list) * .957); }
 
-  .content h2 { font-size: 1.32em; }
-  .content table { font-size: 13px; }
+  .content h2 { font-size: calc(var(--fs-body) * 1.32); }
+  .content table { font-size: calc(var(--fs-body) * .88); }
   .content th, .content td { padding: 8px 10px; }
 
   .site-foot { padding: 28px 0 34px; }
@@ -1563,8 +1598,8 @@ body.is-single .progress { display: block; }
 
   body { background-image: none; }
 
-  .idx-title { font-size: 1.18rem; }
-  .archive-item .ttl { font-size: 14.5px; }
+  .idx-title { font-size: calc(var(--fs-body) * 1.11); }
+  .archive-item .ttl { font-size: calc(var(--fs-list) * .926); }
 }
 
 /* 动效降级 */

@@ -68,6 +68,16 @@ if ($this->is('single')) {
   d.setAttribute('data-theme', t);
 })();
 </script>
+<link rel="stylesheet" href="<?php echo ink_asset('style.css'); ?>">
+<?php
+/*
+ * 后台设置必须在 style.css 之后注入。
+ *
+ * 两处都写 :root { --fs-body: … } 时优先级相同，后出现的赢。
+ * 之前这段 <style> 在 <link> 前面，于是后台改的字体、字号、行高、
+ * 纸宽全被 style.css 里的默认值盖掉 —— 设置项看起来"没生效"。
+ */
+?>
 <style>
 <?php
 /* 后台设置转成 CSS 变量：只输出真正被改动过的项，没动过就用 style.css 里的默认值 */
@@ -88,7 +98,6 @@ if ($inkAccent !== ''):
 }
 <?php endif; ?>
 </style>
-<link rel="stylesheet" href="<?php echo ink_asset('style.css'); ?>">
 <?php if (ink_ivicons()): ?>
 <link rel="stylesheet" href="<?php echo ink_asset('assets/css/icons.css'); ?>">
 <?php endif; ?>
